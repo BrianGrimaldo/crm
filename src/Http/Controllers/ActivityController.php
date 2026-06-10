@@ -1,0 +1,92 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Http\Controllers;
+
+use App\Models\Activity;
+use App\Models\Deal;
+
+class ActivityController
+{
+    private Activity $activityModel;
+
+    public function __construct()
+    {
+        $this->activityModel = new Activity();
+    }
+
+    /**
+     * Guarda una nueva actividad / intervención.
+     */
+    public function store(): void
+    {
+        // En este punto, el usuario ya pasó por el middleware. 
+        // Idealmente podríamos verificar permisos si es necesario.
+        $entityType = $_POST['entity_type'] ?? '';
+        $entityId = (int)($_POST['entity_id'] ?? 0);
+        $type = $_POST['type'] ?? '';
+        $description = trim($_POST['description'] ?? '');
+
+        if (!$entityType || !$entityId || !$type || empty($description)) {
+            $_SESSION['flash_error'] = "Todos los campos de la actividad son obligatorios.";
+            $this->redirectBack($entityType, $entityId);
+            exit;
+        }
+
+        $this->activityModel->log($entityType, $entityId, $type, $description);
+
+        // Si es una Oportunidad (Deal), aumentar probabilidad como pidió el cliente
+        if ($entityType === 'deal') {
+            $this->increaseDealProbability($entityId, $type);
+        }
+
+        $_SESSION['flash_success'] = "Intervención guardada exitosamente.";
+        $this->redirectBack($entityType, $entityId);
+        exit;
+    }
+
+    /**
+     * Incrementa la probabilidad del deal en base a la intervención.
+     */
+    private function increaseDealProbability(int $dealId, string $activityType): void
+    {
+        $dealModel = new Deal();
+        $deal = $dealModel->findWithRelations($dealId);
+        if (!$deal) return;
+
+        $currentProb = (int)$deal->probability;
+        $increase = match ($activityType) {
+            'Llamada' => 5,
+            'Correo' => 5,
+            'Visita' => 15,
+            'Nota' => 2,
+            default => 0
+        };
+
+        $newProb = min(100, $currentProb + $increase);
+
+        if ($newProb > $currentProb) {
+            $dealModel->update($dealId, ['probability' => $newProb]);
+            
+            // También registramos esto en el AuditLog
+            $auditLog = new \App\Models\AuditLog();
+            $auditLog->log('update_probability', 'deal', $dealId, ['probability' => $currentProb], ['probability' => $newProb]);
+        }
+    }
+
+    /**
+     * Redirige al usuario de vuelta a la página de edición de la entidad.
+     */
+    private function redirectBack(string $entityType, int $entityId): void
+    {
+        $url = match ($entityType) {
+            'deal' => "/crm_einsurglobal/public/deals/edit?id={$entityId}",
+            'contact' => "/crm_einsurglobal/public/contacts/edit?id={$entityId}",
+            'account' => "/crm_einsurglobal/public/accounts/edit?id={$entityId}",
+            default => '/crm_einsurglobal/public/dashboard'
+        };
+
+        header("Location: {$url}");
+    }
+}

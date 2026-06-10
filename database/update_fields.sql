@@ -1,0 +1,17 @@
+ALTER TABLE `contacts`
+ADD COLUMN `type` VARCHAR(50) DEFAULT 'Prospecto' AFTER `owner_id`,
+ADD COLUMN `linkedin` VARCHAR(255) DEFAULT NULL AFTER `department`,
+ADD COLUMN `country` VARCHAR(100) DEFAULT NULL AFTER `address`,
+ADD COLUMN `city` VARCHAR(100) DEFAULT NULL AFTER `country`,
+ADD COLUMN `postal_code` VARCHAR(20) DEFAULT NULL AFTER `city`;
+
+ALTER TABLE `deals`
+ADD COLUMN `status` VARCHAR(50) DEFAULT 'Abierto' AFTER `stage_id`;
+
+ALTER TABLE `accounts`
+ADD COLUMN `priority` VARCHAR(10) DEFAULT 'B' AFTER `owner_id`,
+ADD COLUMN `linkedin` VARCHAR(255) DEFAULT NULL AFTER `website`,
+ADD COLUMN `country` VARCHAR(100) DEFAULT NULL AFTER `shipping_address`,
+ADD COLUMN `city` VARCHAR(100) DEFAULT NULL AFTER `country`,
+ADD COLUMN `postal_code` VARCHAR(20) DEFAULT NULL AFTER `city`,
+ADD COLUMN `notes` TEXT DEFAULT NULL AFTER `postal_code`;
