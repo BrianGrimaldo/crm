@@ -249,4 +249,16 @@ class Deal extends BaseModel
         $stmt->execute([':tenant_id' => $tenantId]);
         return $stmt->fetchAll(PDO::FETCH_OBJ);
     }
+
+    /**
+     * Lista simple de deals del tenant para dropdowns.
+     */
+    public function getTenantDeals(): array
+    {
+        $tenantId = TenantContext::getTenantId();
+        $sql = "SELECT id, name FROM {$this->table} WHERE tenant_id = :tenant_id AND status = 'Abierto' ORDER BY name ASC";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([':tenant_id' => $tenantId]);
+        return $stmt->fetchAll(PDO::FETCH_OBJ);
+    }
 }

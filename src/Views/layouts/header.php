@@ -290,6 +290,18 @@ $currentPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
             </a>
             <?php endif; ?>
             <?php endif; ?>
+            <?php if (\App\Core\Permission::has('deals', 'view')): ?>
+            <a href="/crm_einsurglobal/public/oportunidades" class="<?= strpos($currentPath, 'oportunidades') !== false ? 'active' : '' ?>">
+                <i class="fas fa-handshake"></i> Oportunidades
+            </a>
+            <?php endif; ?>
+
+            <?php if (\App\Core\Permission::has('activities', 'view')): ?>
+            <a href="/crm_einsurglobal/public/tareas" class="<?= strpos($currentPath, 'tareas') !== false ? 'active' : '' ?>">
+                <i class="fas fa-check-square"></i> Bitácora de Tareas
+            </a>
+            <?php endif; ?>
+
             <?php if (\App\Core\Permission::has('reports', 'view')): ?>
             <a href="/crm_einsurglobal/public/reportes" class="<?= strpos($currentPath, 'reportes') !== false ? 'active' : '' ?>">
                 <i class="fas fa-chart-line"></i> Reportes y Excel
@@ -351,7 +363,7 @@ $currentPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
             
             <?php if (isset($_SESSION['available_tenants']) && count($_SESSION['available_tenants']) > 1): ?>
                 <div style="display: flex; align-items: center; gap: 0.8rem; background: #f1f5f9; padding: 0.3rem 0.8rem; border-radius: 8px;">
-                    <label style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">ðŸ¢ Empresa:</label>
+                    <label style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;"><i class="fas fa-building"></i> Empresa:</label>
                     <select class="form-control" style="width: auto; padding: 0.4rem 2rem 0.4rem 0.8rem; font-size: 0.95rem; font-weight: 600; color: #0f172a; border-color: transparent; background-color: transparent; cursor: pointer;" onchange="window.location.href='/crm_einsurglobal/public/switch-tenant?id='+this.value">
                         <?php foreach ($_SESSION['available_tenants'] as $t): ?>
                             <option value="<?= $t['id'] ?>" <?= $t['id'] == $_SESSION['tenant_id'] ? 'selected' : '' ?>>

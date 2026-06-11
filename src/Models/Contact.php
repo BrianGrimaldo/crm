@@ -71,4 +71,16 @@ class Contact extends BaseModel
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
         return (int)($result['total'] ?? 0);
     }
+
+    /**
+     * Lista simple de contactos del tenant para dropdowns.
+     */
+    public function getTenantContacts(): array
+    {
+        $tenantId = TenantContext::getTenantId();
+        $sql = "SELECT id, first_name, last_name FROM {$this->table} WHERE tenant_id = :tenant_id ORDER BY first_name ASC";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([':tenant_id' => $tenantId]);
+        return $stmt->fetchAll(PDO::FETCH_OBJ);
+    }
 }

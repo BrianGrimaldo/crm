@@ -68,6 +68,10 @@ class HomeController
             $chart_tipos = [];
         }
 
+        // Obtener actividades pendientes del día para el usuario
+        $taskModel = new \App\Models\Task();
+        $pendingTasks = $taskModel->getPendingForToday((int)$_SESSION['user_id']);
+
         require __DIR__ . '/../../Views/dashboard/index.php';
     }
 }

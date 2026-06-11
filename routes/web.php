@@ -92,6 +92,16 @@ use App\Http\Controllers\ReportController;
 $router->get('/reportes', ReportController::class, 'index', [TenantMiddleware::class]);
 $router->get('/reportes/exportar-ventas', ReportController::class, 'exportDeals', [TenantMiddleware::class]);
 
+// Tasks / Activities routes
+use App\Http\Controllers\TaskController;
+$router->get('/tareas', TaskController::class, 'index', [TenantMiddleware::class]);
+$router->get('/tareas/create', TaskController::class, 'create', [TenantMiddleware::class]);
+$router->post('/tareas', TaskController::class, 'store', [TenantMiddleware::class]);
+$router->get('/tareas/edit', TaskController::class, 'edit', [TenantMiddleware::class]);
+$router->post('/tareas/update', TaskController::class, 'update', [TenantMiddleware::class]);
+$router->post('/tareas/delete', TaskController::class, 'delete', [TenantMiddleware::class]);
+$router->post('/tareas/complete', TaskController::class, 'complete', [TenantMiddleware::class]);
+
 // Activities route
 $router->post('/activities', App\Http\Controllers\ActivityController::class, 'store', [TenantMiddleware::class]);
 

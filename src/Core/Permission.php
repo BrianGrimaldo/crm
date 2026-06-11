@@ -17,9 +17,10 @@ class Permission
     {
         $permissions = $_SESSION['permissions'] ?? [];
         $isOwner = $_SESSION['is_owner'] ?? false;
+        $isSuperadmin = $_SESSION['is_superadmin'] ?? false;
 
-        // El owner siempre tiene acceso total
-        if ($isOwner) {
+        // El owner o superadmin siempre tiene acceso total
+        if ($isOwner || $isSuperadmin) {
             return true;
         }
 
@@ -51,18 +52,19 @@ class Permission
 
     /**
      * Determina si el usuario actual debe ver solo sus propios registros.
-     * En este caso, el rol 'sales-rep' (Vendedor) está restringido.
+     * Restringe a cualquier usuario que no sea dueño o superadmin.
      */
     public static function isRestrictedToOwnRecords(): bool
     {
-        $role = $_SESSION['user_role'] ?? '';
         $isOwner = $_SESSION['is_owner'] ?? false;
+        $isSuperadmin = $_SESSION['is_superadmin'] ?? false;
         
-        if ($isOwner) {
+        if ($isOwner || $isSuperadmin) {
             return false;
         }
 
-        // Si es vendedor, restringir
-        return $role === 'sales-rep';
+        // Cualquier otro usuario (vendedores, gerentes, soporte) solo ve lo suyo
+        // o lo que el sistema permita por defecto.
+        return true;
     }
 }

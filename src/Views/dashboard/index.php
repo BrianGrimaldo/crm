@@ -305,6 +305,56 @@ $avgDealSize    = $openDealsCount > 0 ? round($totalPipeline / $openDealsCount) 
             <?php endif; ?>
         </div>
     </div>
+    
+    <!-- ═══════════════ Tareas de Hoy ═══════════════ -->
+    <div class="panel">
+        <div class="panel-head">
+            <div class="panel-title"><div class="panel-title-icon" style="background:rgba(59,130,246,.08);color:#3b82f6;"><i class="fas fa-check-square"></i></div> Mis Tareas de Hoy</div>
+            <a href="/crm_einsurglobal/public/tareas" style="font-size:0.8rem;color:#6366f1;font-weight:600;text-decoration:none;">Ver bitácora <i class="fas fa-arrow-right"></i></a>
+        </div>
+        <div class="activity-list">
+            <?php if (!empty($pendingTasks)): ?>
+                <?php foreach ($pendingTasks as $task): ?>
+                    <div class="activity-item">
+                        <div class="activity-icon" style="background: #e0f2fe; color: #0284c7;">
+                            <?php if ($task->related_type === 'deal'): ?>
+                                <i class="fas fa-handshake"></i>
+                            <?php else: ?>
+                                <i class="fas fa-phone"></i>
+                            <?php endif; ?>
+                        </div>
+                        <div class="activity-details" style="display:flex; justify-content:space-between; align-items:center; width:100%;">
+                            <div>
+                                <div class="activity-desc">
+                                    <strong style="color: #1e293b;"><?= htmlspecialchars($task->title) ?></strong>
+                                </div>
+                                <div class="activity-time" style="margin-top: 0.2rem;">
+                                    <?php if ($task->related_type === 'deal'): ?>
+                                        Trato: <?= htmlspecialchars($task->deal_name) ?>
+                                    <?php elseif ($task->related_type === 'contact'): ?>
+                                        Contacto: <?= htmlspecialchars($task->contact_first_name) ?>
+                                    <?php endif; ?>
+                                    &bull; <strong style="color:#ef4444;"><?= date('h:i A', strtotime($task->due_date)) ?></strong>
+                                </div>
+                            </div>
+                            <form action="/crm_einsurglobal/public/tareas/complete" method="POST">
+                                <input type="hidden" name="id" value="<?= $task->id ?>">
+                                <input type="hidden" name="redirect" value="/crm_einsurglobal/public/dashboard">
+                                <button type="submit" class="btn" style="background: #f1f5f9; padding: 0.3rem 0.6rem; color: #166534;" title="Completar">
+                                    <i class="fas fa-check"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <div style="text-align:center;color:#94a3b8;padding:2rem;">
+                    <i class="fas fa-glass-cheers" style="font-size: 2rem; margin-bottom: 0.5rem; color: #cbd5e1;"></i><br>
+                    ¡Todo al día! No tienes tareas pendientes.
+                </div>
+            <?php endif; ?>
+        </div>
+    </div>
 </div>
 
 <!-- ═══════════════ CHART.JS ═══════════════ -->
