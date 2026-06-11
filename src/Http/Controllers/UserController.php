@@ -29,8 +29,28 @@ class UserController
     public function create(): void
     {
         Permission::require('users', 'create');
+        
         $roleModel = new Role();
         $roles = $roleModel->getTenantRoles();
+        
+        $tenants = [];
+        $allRolesJson = '{}';
+        
+        if (isset($_SESSION['is_superadmin']) && $_SESSION['is_superadmin']) {
+            $db = \App\Core\Database::getInstance();
+            $stmtTenants = $db->query("SELECT id, name FROM tenants WHERE is_active = 1 ORDER BY name ASC");
+            $tenants = $stmtTenants->fetchAll(\PDO::FETCH_OBJ);
+            
+            $stmtRoles = $db->query("SELECT id, tenant_id, name FROM roles ORDER BY name ASC");
+            $allRolesRaw = $stmtRoles->fetchAll(\PDO::FETCH_OBJ);
+            
+            $groupedRoles = [];
+            foreach ($allRolesRaw as $r) {
+                $groupedRoles[$r->tenant_id][] = ['id' => $r->id, 'name' => $r->name];
+            }
+            $allRolesJson = json_encode($groupedRoles);
+        }
+        
         require __DIR__ . '/../../Views/users/create.php';
     }
 
@@ -53,8 +73,13 @@ class UserController
             exit;
         }
 
+        $targetTenantId = null;
+        if (isset($_SESSION['is_superadmin']) && $_SESSION['is_superadmin'] && !empty($_POST['tenant_id'])) {
+            $targetTenantId = (int)$_POST['tenant_id'];
+        }
+
         // En producción habría que validar si el email ya existe
-        $success = $this->userModel->createUserForTenant($data, $roleId);
+        $success = $this->userModel->createUserForTenant($data, $roleId, $targetTenantId);
 
         if ($success) {
             $_SESSION['flash_success'] = "Usuario {$data['first_name']} creado exitosamente.";

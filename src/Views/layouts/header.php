@@ -254,7 +254,8 @@ $currentPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
     <aside class="sidebar">
         <div class="sidebar-brand">
             <div class="logo-container">
-                <img src="/crm_einsurglobal/public/img/logoeglobal.png" alt="Einsur Global" style="max-width: 100%; max-height: 80px; object-fit: contain;">
+                <?php $logoUrl = $_SESSION['tenant_logo'] ?? '/crm_einsurglobal/public/img/logoeglobal.png'; ?>
+                <img src="<?= htmlspecialchars($logoUrl) ?>" alt="Logo Empresa" style="max-width: 100%; max-height: 80px; object-fit: contain;">
             </div>
         </div>
         
@@ -283,6 +284,11 @@ $currentPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
             <a href="/crm_einsurglobal/public/vendedores" class="<?= strpos($currentPath, 'vendedores') !== false ? 'active' : '' ?>">
                 <i class="fas fa-user-tie"></i> Control Vendedores
             </a>
+            <?php if (isset($_SESSION['is_superadmin']) && $_SESSION['is_superadmin']): ?>
+            <a href="/crm_einsurglobal/public/empresas" class="<?= strpos($currentPath, 'empresas') !== false ? 'active' : '' ?>">
+                <i class="fas fa-building-user"></i> Empresas
+            </a>
+            <?php endif; ?>
             <?php endif; ?>
             <?php if (\App\Core\Permission::has('users', 'view')): ?>
             <a href="/crm_einsurglobal/public/users" class="<?= strpos($currentPath, 'users') !== false ? 'active' : '' ?>">
@@ -319,10 +325,25 @@ $currentPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
     <!-- Main Content -->
     <main class="main-content">
-        <!-- Botón de menú móvil flotante -->
-        <button class="btn-menu" onclick="document.querySelector('.sidebar').classList.toggle('active')">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
-        </button>
+        <div class="topbar">
+            <!-- Botón de menú móvil flotante -->
+            <button class="btn-menu" style="margin-right: auto;" onclick="document.querySelector('.sidebar').classList.toggle('active')">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+            </button>
+            
+            <?php if (isset($_SESSION['available_tenants']) && count($_SESSION['available_tenants']) > 1): ?>
+                <div style="display: flex; align-items: center; gap: 0.8rem; background: #f1f5f9; padding: 0.3rem 0.8rem; border-radius: 8px;">
+                    <label style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">🏢 Empresa:</label>
+                    <select class="form-control" style="width: auto; padding: 0.4rem 2rem 0.4rem 0.8rem; font-size: 0.95rem; font-weight: 600; color: #0f172a; border-color: transparent; background-color: transparent; cursor: pointer;" onchange="window.location.href='/crm_einsurglobal/public/switch-tenant?id='+this.value">
+                        <?php foreach ($_SESSION['available_tenants'] as $t): ?>
+                            <option value="<?= $t['id'] ?>" <?= $t['id'] == $_SESSION['tenant_id'] ? 'selected' : '' ?>>
+                                <?= htmlspecialchars($t['name']) ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+            <?php endif; ?>
+        </div>
 
         <div class="content-area">
             <?php if (isset($_SESSION['flash_success'])): ?>

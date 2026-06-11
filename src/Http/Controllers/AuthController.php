@@ -38,7 +38,7 @@ class AuthController
         $db = Database::getInstance();
 
         // 1. Buscar al usuario globalmente
-        $stmt = $db->prepare("SELECT id, email, password_hash, is_active FROM users WHERE email = :email LIMIT 1");
+        $stmt = $db->prepare("SELECT id, email, password_hash, is_active, is_superadmin FROM users WHERE email = :email LIMIT 1");
         $stmt->execute([':email' => $email]);
         $user = $stmt->fetch(PDO::FETCH_OBJ);
 
@@ -58,7 +58,7 @@ class AuthController
 
         // 3. Obtener el tenant (empresa) y el rol al que pertenece el usuario
         $stmtTenant = $db->prepare("
-            SELECT t.id as tenant_id, t.name as tenant_name, 
+            SELECT t.id as tenant_id, t.name as tenant_name, t.logo_url as tenant_logo,
                    tu.role_id, tu.is_owner, r.slug as role_slug 
             FROM tenant_users tu
             JOIN tenants t ON t.id = tu.tenant_id
@@ -92,16 +92,33 @@ class AuthController
             }
         }
 
-        // 4. Iniciar sesión correctamente
+        // 4. Obtener todas las empresas disponibles para el selector
+        if ($user->is_superadmin) {
+            $stmtAllTenants = $db->prepare("SELECT id, name FROM tenants WHERE is_active = 1");
+            $stmtAllTenants->execute();
+        } else {
+            $stmtAllTenants = $db->prepare("
+                SELECT t.id, t.name 
+                FROM tenant_users tu
+                JOIN tenants t ON t.id = tu.tenant_id
+                WHERE tu.user_id = :user_id AND tu.is_active = 1 AND t.is_active = 1
+            ");
+            $stmtAllTenants->execute([':user_id' => $user->id]);
+        }
+        $_SESSION['available_tenants'] = $stmtAllTenants->fetchAll(PDO::FETCH_ASSOC);
+
+        // 5. Iniciar sesión correctamente
         // Evitamos Session Fixation
         session_regenerate_id(true);
 
         $_SESSION['user_id']     = $user->id;
         $_SESSION['tenant_id']   = $tenant->tenant_id;
         $_SESSION['tenant_name'] = $tenant->tenant_name;
+        $_SESSION['tenant_logo'] = $tenant->tenant_logo;
         $_SESSION['user_email']  = $user->email;
         $_SESSION['user_role']   = $tenant->role_slug ?? 'user';
         $_SESSION['is_owner']    = (bool)$tenant->is_owner;
+        $_SESSION['is_superadmin'] = (bool)$user->is_superadmin;
         $_SESSION['permissions'] = $permissions;
 
         header('Location: /crm_einsurglobal/public/dashboard');
@@ -123,6 +140,71 @@ class AuthController
     {
         $_SESSION['login_error'] = $message;
         header('Location: /crm_einsurglobal/public/login');
+        exit();
+    }
+
+    /**
+     * Cambia la sesión a otra empresa seleccionada por el usuario.
+     */
+    public function switchTenant(): void
+    {
+        $tenantId = (int)($_GET['id'] ?? 0);
+        if (!$tenantId || !isset($_SESSION['user_id'])) {
+            header('Location: /crm_einsurglobal/public/dashboard');
+            exit();
+        }
+
+        $db = Database::getInstance();
+        $user_id = $_SESSION['user_id'];
+        $is_superadmin = $_SESSION['is_superadmin'] ?? false;
+        $tenant = null;
+        $permissions = [];
+
+        if ($is_superadmin) {
+            $stmt = $db->prepare("SELECT id as tenant_id, name as tenant_name, logo_url as tenant_logo FROM tenants WHERE id = :id AND is_active = 1");
+            $stmt->execute([':id' => $tenantId]);
+            $tenant = $stmt->fetch(PDO::FETCH_OBJ);
+            if ($tenant) {
+                $tenant->role_slug = 'superadmin';
+                $tenant->is_owner = 1;
+                $permissions = ['*'];
+            }
+        } else {
+            $stmt = $db->prepare("
+                SELECT t.id as tenant_id, t.name as tenant_name, t.logo_url as tenant_logo,
+                       tu.role_id, tu.is_owner, r.slug as role_slug 
+                FROM tenant_users tu
+                JOIN tenants t ON t.id = tu.tenant_id
+                LEFT JOIN roles r ON r.id = tu.role_id
+                WHERE tu.user_id = :user_id AND tu.tenant_id = :tenant_id AND tu.is_active = 1 AND t.is_active = 1
+            ");
+            $stmt->execute([':user_id' => $user_id, ':tenant_id' => $tenantId]);
+            $tenant = $stmt->fetch(PDO::FETCH_OBJ);
+            
+            if ($tenant) {
+                if ($tenant->is_owner) {
+                    $permissions = ['*'];
+                } else if ($tenant->role_id) {
+                    $stmtPerms = $db->prepare("SELECT p.module, p.action FROM role_permissions rp JOIN permissions p ON p.id = rp.permission_id WHERE rp.role_id = :role_id");
+                    $stmtPerms->execute([':role_id' => $tenant->role_id]);
+                    $perms = $stmtPerms->fetchAll(PDO::FETCH_OBJ);
+                    foreach ($perms as $p) {
+                        $permissions[] = "{$p->module}.{$p->action}";
+                    }
+                }
+            }
+        }
+
+        if ($tenant) {
+            $_SESSION['tenant_id']   = $tenant->tenant_id;
+            $_SESSION['tenant_name'] = $tenant->tenant_name;
+            $_SESSION['tenant_logo'] = $tenant->tenant_logo;
+            $_SESSION['user_role']   = $tenant->role_slug ?? 'user';
+            $_SESSION['is_owner']    = (bool)$tenant->is_owner;
+            $_SESSION['permissions'] = $permissions;
+        }
+
+        header('Location: /crm_einsurglobal/public/dashboard');
         exit();
     }
 }

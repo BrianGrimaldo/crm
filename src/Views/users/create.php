@@ -56,6 +56,43 @@ require __DIR__ . '/../layouts/header.php';
             </div>
         </div>
 
+        <?php if (isset($_SESSION['is_superadmin']) && $_SESSION['is_superadmin'] && !empty($tenants)): ?>
+        <div style="display: grid; grid-template-columns: 1fr; gap: 1.5rem; margin-bottom: 2rem;">
+            <div class="form-group" style="margin-bottom: 0;">
+                <label for="tenant_id">Empresa a la que pertenecerá (Solo Superadmin) *</label>
+                <select id="tenant_id" name="tenant_id" class="form-control" required onchange="updateRoles()">
+                    <?php foreach ($tenants as $tenant): ?>
+                        <option value="<?= $tenant->id ?>" <?= $tenant->id == $_SESSION['tenant_id'] ? 'selected' : '' ?>>
+                            <?= htmlspecialchars($tenant->name) ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+        </div>
+
+        <script>
+            const allRoles = <?= $allRolesJson ?? '{}' ?>;
+            function updateRoles() {
+                const tenantId = document.getElementById('tenant_id').value;
+                const roleSelect = document.getElementById('role_id');
+                const currentRoles = allRoles[tenantId] || [];
+                
+                roleSelect.innerHTML = '<option value="">-- Selecciona un rol --</option>';
+                currentRoles.forEach(role => {
+                    const option = document.createElement('option');
+                    option.value = role.id;
+                    option.textContent = role.name;
+                    roleSelect.appendChild(option);
+                });
+            }
+            
+            // Inicializar roles en caso de que cambie la selección por defecto
+            document.addEventListener('DOMContentLoaded', function() {
+                updateRoles();
+            });
+        </script>
+        <?php endif; ?>
+
         <div style="margin-top: 2rem; text-align: right;">
             <button type="submit" class="btn btn-primary" style="padding: 1rem 2rem; font-size: 1.1rem;">
                 Crear e Invitar Usuario

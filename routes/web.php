@@ -16,6 +16,7 @@ use App\Http\Controllers\AuthController;
 $router->get('/login', AuthController::class, 'showLogin');
 $router->post('/login', AuthController::class, 'authenticate');
 $router->get('/logout', AuthController::class, 'logout');
+$router->get('/switch-tenant', AuthController::class, 'switchTenant');
 
 // Rutas protegidas (Requieren Tenant)
 use App\Http\Middleware\TenantMiddleware;
@@ -74,3 +75,12 @@ $router->post('/activities', App\Http\Controllers\ActivityController::class, 'st
 // Vendedores route (Superadmin only)
 use App\Http\Controllers\VendedoresController;
 $router->get('/vendedores', VendedoresController::class, 'index', [TenantMiddleware::class]);
+
+// Empresas route (Superadmin only)
+use App\Http\Controllers\TenantController;
+$router->get('/empresas', TenantController::class, 'index', [TenantMiddleware::class]);
+$router->get('/empresas/create', TenantController::class, 'create', [TenantMiddleware::class]);
+$router->post('/empresas', TenantController::class, 'store', [TenantMiddleware::class]);
+$router->get('/empresas/edit', TenantController::class, 'edit', [TenantMiddleware::class]);
+$router->post('/empresas/update', TenantController::class, 'update', [TenantMiddleware::class]);
+

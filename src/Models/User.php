@@ -76,11 +76,11 @@ class User extends BaseModel
     }
 
     /**
-     * Crea un usuario y lo asocia al tenant actual
+     * Crea un usuario y lo asocia al tenant (por defecto al actual, o al proporcionado)
      */
-    public function createUserForTenant(array $userData, int $roleId): bool
+    public function createUserForTenant(array $userData, int $roleId, ?int $tenantId = null): bool
     {
-        $tenantId = TenantContext::getTenantId();
+        $tenantId = $tenantId ?? TenantContext::getTenantId();
         
         try {
             $this->db->beginTransaction();
