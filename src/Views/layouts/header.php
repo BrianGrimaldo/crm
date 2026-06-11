@@ -80,7 +80,7 @@ $currentPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
             text-align: center;
         }
 
-        /* --- MENÚ --- */
+        /* --- MENÃš --- */
         .sidebar-menu { 
             flex-grow: 1; 
             overflow-y: auto; 
@@ -266,17 +266,17 @@ $currentPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
             </a>
 
             <div class="menu-header">CRM & Ventas</div>
-            <a href="/crm_einsurglobal/public/contacts" class="<?= strpos($currentPath, 'contacts') !== false ? 'active' : '' ?>">
+            <a href="/crm_einsurglobal/public/contactos" class="<?= strpos($currentPath, 'contactos') !== false ? 'active' : '' ?>">
                 <i class="fas fa-address-book"></i> Contactos
             </a>
-            <a href="/crm_einsurglobal/public/accounts" class="<?= strpos($currentPath, 'accounts') !== false ? 'active' : '' ?>">
+            <a href="/crm_einsurglobal/public/organizaciones" class="<?= strpos($currentPath, 'organizaciones') !== false ? 'active' : '' ?>">
                 <i class="fas fa-building"></i> Organizaciones
             </a>
-            <a href="/crm_einsurglobal/public/deals/pipeline" class="<?= strpos($currentPath, 'deals') !== false ? 'active' : '' ?>">
+            <a href="/crm_einsurglobal/public/oportunidades/pipeline" class="<?= strpos($currentPath, 'oportunidades') !== false ? 'active' : '' ?>">
                 <i class="fas fa-funnel-dollar"></i> Ventas
             </a>
 
-            <div class="menu-header">Administración</div>
+            <div class="menu-header">AdministraciÃ³n</div>
             <?php 
             $role = isset($_SESSION['user_role']) ? strtolower(str_replace('-', '', $_SESSION['user_role'])) : '';
             if ($role === 'superadmin' || $role === 'admin'): 
@@ -290,17 +290,35 @@ $currentPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
             </a>
             <?php endif; ?>
             <?php endif; ?>
+            <?php if (\App\Core\Permission::has('reports', 'view')): ?>
+            <a href="/crm_einsurglobal/public/reportes" class="<?= strpos($currentPath, 'reportes') !== false ? 'active' : '' ?>">
+                <i class="fas fa-chart-line"></i> Reportes y Excel
+            </a>
+            <?php endif; ?>
+
+            <?php if (\App\Core\Permission::has('products', 'view')): ?>
+            <a href="/crm_einsurglobal/public/productos" class="<?= strpos($currentPath, 'productos') !== false ? 'active' : '' ?>">
+                <i class="fas fa-boxes"></i> Inventario / Equipos
+            </a>
+            <?php endif; ?>
+            
             <?php if (\App\Core\Permission::has('users', 'view')): ?>
-            <a href="/crm_einsurglobal/public/users" class="<?= strpos($currentPath, 'users') !== false ? 'active' : '' ?>">
+            <a href="/crm_einsurglobal/public/usuarios" class="<?= strpos($currentPath, 'usuarios') !== false ? 'active' : '' ?>">
                 <i class="fas fa-users-cog"></i> Usuarios
             </a>
             <?php endif; ?>
-            <a href="/crm_einsurglobal/public/profile" class="<?= strpos($currentPath, 'profile') !== false ? 'active' : '' ?>">
+            <a href="/crm_einsurglobal/public/perfil" class="<?= strpos($currentPath, 'perfil') !== false ? 'active' : '' ?>">
                 <i class="fas fa-user-circle"></i> Mi Perfil
             </a>
             <?php if (\App\Core\Permission::has('settings', 'view')): ?>
+            <div style="margin: 1rem 1.5rem 0.5rem; font-size: 0.75rem; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px;">
+                ConfiguraciÃ³n
+            </div>
             <a href="/crm_einsurglobal/public/roles" class="<?= strpos($currentPath, 'roles') !== false ? 'active' : '' ?>">
                 <i class="fas fa-shield-alt"></i> Roles y Permisos
+            </a>
+            <a href="/crm_einsurglobal/public/configuracion/embudo" class="<?= strpos($currentPath, 'pipeline') !== false ? 'active' : '' ?>">
+                <i class="fas fa-stream"></i> Embudo de Ventas
             </a>
             <?php endif; ?>
         </div>
@@ -316,7 +334,7 @@ $currentPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
                         </span>
                     </div>
                 </div>
-                <a href="/crm_einsurglobal/public/logout" class="btn-logout" title="Cerrar Sesión">
+                <a href="/crm_einsurglobal/public/logout" class="btn-logout" title="Cerrar SesiÃ³n">
                     <i class="fas fa-sign-out-alt"></i>
                 </a>
             </div>
@@ -326,14 +344,14 @@ $currentPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
     <!-- Main Content -->
     <main class="main-content">
         <div class="topbar">
-            <!-- Botón de menú móvil flotante -->
+            <!-- BotÃ³n de menÃº mÃ³vil flotante -->
             <button class="btn-menu" style="margin-right: auto;" onclick="document.querySelector('.sidebar').classList.toggle('active')">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
             </button>
             
             <?php if (isset($_SESSION['available_tenants']) && count($_SESSION['available_tenants']) > 1): ?>
                 <div style="display: flex; align-items: center; gap: 0.8rem; background: #f1f5f9; padding: 0.3rem 0.8rem; border-radius: 8px;">
-                    <label style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">🏢 Empresa:</label>
+                    <label style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">ðŸ¢ Empresa:</label>
                     <select class="form-control" style="width: auto; padding: 0.4rem 2rem 0.4rem 0.8rem; font-size: 0.95rem; font-weight: 600; color: #0f172a; border-color: transparent; background-color: transparent; cursor: pointer;" onchange="window.location.href='/crm_einsurglobal/public/switch-tenant?id='+this.value">
                         <?php foreach ($_SESSION['available_tenants'] as $t): ?>
                             <option value="<?= $t['id'] ?>" <?= $t['id'] == $_SESSION['tenant_id'] ? 'selected' : '' ?>>

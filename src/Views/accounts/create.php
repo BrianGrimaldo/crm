@@ -1,23 +1,23 @@
 <?php
-$pageTitle = 'Nueva Organización - Einsur Global CRM';
+$pageTitle = 'Nueva OrganizaciÃ³n - Einsur Global CRM';
 require __DIR__ . '/../layouts/header.php';
 ?>
 
 <div class="page-header">
     <div>
-        <h1>Registrar Organización</h1>
-        <p>Añade una nueva empresa o cliente a tu portafolio.</p>
+        <h1>Registrar OrganizaciÃ³n</h1>
+        <p>AÃ±ade una nueva empresa o cliente a tu portafolio.</p>
     </div>
-    <a href="/crm_einsurglobal/public/accounts" class="btn" style="background: var(--surface); color: var(--text-main); border: 1px solid var(--border);">
+    <a href="/crm_einsurglobal/public/organizaciones" class="btn" style="background: var(--surface); color: var(--text-main); border: 1px solid var(--border);">
         Volver a la Lista
     </a>
 </div>
 
 <div class="card" style="max-width: 800px; padding: 2rem;">
-    <form action="/crm_einsurglobal/public/accounts" method="POST">
+    <form action="/crm_einsurglobal/public/organizaciones" method="POST">
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
             <div class="form-group">
-                <label for="name">Nombre de Organización *</label>
+                <label for="name">Nombre de OrganizaciÃ³n *</label>
                 <input type="text" id="name" name="name" class="form-control" required>
             </div>
             <div class="form-group">
@@ -41,7 +41,7 @@ require __DIR__ . '/../layouts/header.php';
                 </select>
             </div>
             <div class="form-group">
-                <label for="phone">Teléfono</label>
+                <label for="phone">TelÃ©fono</label>
                 <input type="text" id="phone" name="phone" class="form-control">
             </div>
         </div>
@@ -59,7 +59,7 @@ require __DIR__ . '/../layouts/header.php';
 
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
             <div class="form-group">
-                <label for="country">País</label>
+                <label for="country">PaÃ­s</label>
                 <input type="text" id="country" name="country" class="form-control">
             </div>
             <div class="form-group">
@@ -70,11 +70,11 @@ require __DIR__ . '/../layouts/header.php';
 
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
             <div class="form-group">
-                <label for="postal_code">Código Postal</label>
+                <label for="postal_code">CÃ³digo Postal</label>
                 <input type="text" id="postal_code" name="postal_code" class="form-control">
             </div>
             <div class="form-group">
-                <label for="billing_address">Dirección Física</label>
+                <label for="billing_address">DirecciÃ³n FÃ­sica</label>
                 <input type="text" id="billing_address" name="billing_address" class="form-control">
             </div>
         </div>
@@ -86,7 +86,7 @@ require __DIR__ . '/../layouts/header.php';
 
         <div style="margin-top: 1.5rem; text-align: right;">
             <button type="submit" class="btn btn-primary" style="padding: 1rem 2rem; font-size: 1.1rem;">
-                Guardar Organización
+                Guardar OrganizaciÃ³n
             </button>
         </div>
     </form>

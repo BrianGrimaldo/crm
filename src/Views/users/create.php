@@ -6,16 +6,16 @@ require __DIR__ . '/../layouts/header.php';
 <div class="page-header">
     <div>
         <h1>Invitar Nuevo Usuario</h1>
-        <p>Añade un nuevo miembro a tu equipo y asígnale un rol.</p>
+        <p>AÃ±ade un nuevo miembro a tu equipo y asÃ­gnale un rol.</p>
     </div>
-    <a href="/crm_einsurglobal/public/users" class="btn" style="background: var(--surface); color: var(--text-main); border: 1px solid var(--border);">
+    <a href="/crm_einsurglobal/public/usuarios" class="btn" style="background: var(--surface); color: var(--text-main); border: 1px solid var(--border);">
         Volver al Directorio
     </a>
 </div>
 
 <div class="card" style="max-width: 800px; padding: 2rem;">
-    <form action="/crm_einsurglobal/public/users" method="POST">
-        <h3 style="font-size: 1.2rem; color: var(--text-main); margin-bottom: 1.5rem; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem;">Información del Usuario</h3>
+    <form action="/crm_einsurglobal/public/usuarios" method="POST">
+        <h3 style="font-size: 1.2rem; color: var(--text-main); margin-bottom: 1.5rem; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem;">InformaciÃ³n del Usuario</h3>
         
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
             <div class="form-group" style="margin-bottom: 0;">
@@ -24,26 +24,26 @@ require __DIR__ . '/../layouts/header.php';
             </div>
             <div class="form-group" style="margin-bottom: 0;">
                 <label for="last_name">Apellidos</label>
-                <input type="text" id="last_name" name="last_name" class="form-control" placeholder="Ej: Pérez">
+                <input type="text" id="last_name" name="last_name" class="form-control" placeholder="Ej: PÃ©rez">
             </div>
         </div>
 
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
             <div class="form-group" style="margin-bottom: 0;">
-                <label for="email">Correo Electrónico *</label>
+                <label for="email">Correo ElectrÃ³nico *</label>
                 <input type="email" id="email" name="email" class="form-control" required placeholder="correo@empresa.com">
             </div>
             <div class="form-group" style="margin-bottom: 0;">
-                <label for="phone">Teléfono</label>
+                <label for="phone">TelÃ©fono</label>
                 <input type="text" id="phone" name="phone" class="form-control" placeholder="+52 55 1234 5678">
             </div>
         </div>
 
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem;">
             <div class="form-group" style="margin-bottom: 0;">
-                <label for="password">Contraseña Temporal *</label>
-                <input type="password" id="password" name="password" class="form-control" required placeholder="Asigna una contraseña inicial">
-                <small style="color: var(--text-muted); display: block; margin-top: 0.25rem;">El usuario podrá cambiarla luego en su perfil.</small>
+                <label for="password">ContraseÃ±a Temporal *</label>
+                <input type="password" id="password" name="password" class="form-control" required placeholder="Asigna una contraseÃ±a inicial">
+                <small style="color: var(--text-muted); display: block; margin-top: 0.25rem;">El usuario podrÃ¡ cambiarla luego en su perfil.</small>
             </div>
             <div class="form-group" style="margin-bottom: 0;">
                 <label for="role_id">Rol en el Sistema *</label>
@@ -59,7 +59,7 @@ require __DIR__ . '/../layouts/header.php';
         <?php if (isset($_SESSION['is_superadmin']) && $_SESSION['is_superadmin'] && !empty($tenants)): ?>
         <div style="display: grid; grid-template-columns: 1fr; gap: 1.5rem; margin-bottom: 2rem;">
             <div class="form-group" style="margin-bottom: 0;">
-                <label for="tenant_id">Empresa a la que pertenecerá (Solo Superadmin) *</label>
+                <label for="tenant_id">Empresa a la que pertenecerÃ¡ (Solo Superadmin) *</label>
                 <select id="tenant_id" name="tenant_id" class="form-control" required onchange="updateRoles()">
                     <?php foreach ($tenants as $tenant): ?>
                         <option value="<?= $tenant->id ?>" <?= $tenant->id == $_SESSION['tenant_id'] ? 'selected' : '' ?>>
@@ -86,7 +86,7 @@ require __DIR__ . '/../layouts/header.php';
                 });
             }
             
-            // Inicializar roles en caso de que cambie la selección por defecto
+            // Inicializar roles en caso de que cambie la selecciÃ³n por defecto
             document.addEventListener('DOMContentLoaded', function() {
                 updateRoles();
             });

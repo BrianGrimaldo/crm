@@ -46,15 +46,15 @@ class ProfileController
 
         if (empty($data['first_name']) || empty($data['last_name'])) {
             $_SESSION['flash_error'] = "El nombre y apellido son obligatorios.";
-            header('Location: /crm_einsurglobal/public/profile');
+            header('Location: /crm_einsurglobal/public/perfil');
             exit;
         }
 
-        // Cambio de contraseña (opcional)
+        // Cambio de contraseÃ±a (opcional)
         if (!empty($_POST['new_password'])) {
             if ($_POST['new_password'] !== $_POST['confirm_password']) {
-                $_SESSION['flash_error'] = "Las contraseñas no coinciden.";
-                header('Location: /crm_einsurglobal/public/profile');
+                $_SESSION['flash_error'] = "Las contraseÃ±as no coinciden.";
+                header('Location: /crm_einsurglobal/public/perfil');
                 exit;
             }
             $data['password_hash'] = password_hash($_POST['new_password'], PASSWORD_DEFAULT);
@@ -63,14 +63,14 @@ class ProfileController
         $success = $this->userModel->updateProfile($userId, $data);
 
         if ($success) {
-            // Actualizar variables de sesión si cambió el nombre
+            // Actualizar variables de sesiÃ³n si cambiÃ³ el nombre
             $_SESSION['user_name'] = $data['first_name'] . ' ' . $data['last_name'];
             $_SESSION['flash_success'] = "Perfil actualizado exitosamente.";
         } else {
             $_SESSION['flash_error'] = "Hubo un problema al actualizar el perfil.";
         }
 
-        header('Location: /crm_einsurglobal/public/profile');
+        header('Location: /crm_einsurglobal/public/perfil');
         exit;
     }
 }

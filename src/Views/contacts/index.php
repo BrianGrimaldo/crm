@@ -9,7 +9,7 @@ require __DIR__ . '/../layouts/header.php';
         <p>Gestiona los clientes y prospectos de tu empresa.</p>
     </div>
     <?php if (\App\Core\Permission::has('contacts', 'create')): ?>
-    <a href="/crm_einsurglobal/public/contacts/create" class="btn btn-primary">
+    <a href="/crm_einsurglobal/public/contactos/create" class="btn btn-primary">
         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
         Nuevo Contacto
     </a>
@@ -18,7 +18,7 @@ require __DIR__ . '/../layouts/header.php';
 
 <div class="card">
     <div style="padding: 1.5rem; border-bottom: 1px solid var(--border); display: flex; gap: 1rem;">
-        <form action="/crm_einsurglobal/public/contacts" method="GET" style="display: flex; gap: 1rem; flex: 1;">
+        <form action="/crm_einsurglobal/public/contactos" method="GET" style="display: flex; gap: 1rem; flex: 1;">
             <input type="text" name="search" class="form-control" placeholder="Buscar por nombre o correo..." value="<?= htmlspecialchars($_GET['search'] ?? '') ?>">
             <select name="type" class="form-control" style="max-width: 200px;">
                 <option value="">Todos los Tipos</option>
@@ -28,7 +28,7 @@ require __DIR__ . '/../layouts/header.php';
             </select>
             <button type="submit" class="btn btn-primary">Buscar</button>
             <?php if (!empty($_GET['search']) || !empty($_GET['type'])): ?>
-                <a href="/crm_einsurglobal/public/contacts" class="btn" style="background: var(--border); color: var(--text-main);">Limpiar</a>
+                <a href="/crm_einsurglobal/public/contactos" class="btn" style="background: var(--border); color: var(--text-main);">Limpiar</a>
             <?php endif; ?>
         </form>
     </div>
@@ -40,14 +40,14 @@ require __DIR__ . '/../layouts/header.php';
                     <th>Nombre Completo</th>
                     <th>Tipo</th>
                     <th>Gerente de Cuenta</th>
-                    <th>Organización</th>
-                    <th>Posición</th>
+                    <th>OrganizaciÃ³n</th>
+                    <th>PosiciÃ³n</th>
                     <th>Email</th>
                     <th>LinkedIn</th>
-                    <th>Teléfono</th>
-                    <th>País</th>
+                    <th>TelÃ©fono</th>
+                    <th>PaÃ­s</th>
                     <th>Ciudad</th>
-                    <th>Código Postal</th>
+                    <th>CÃ³digo Postal</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
@@ -83,10 +83,10 @@ require __DIR__ . '/../layouts/header.php';
                             <td>
                                 <div style="display: flex; gap: 0.5rem; align-items: center;">
                                     <?php if (\App\Core\Permission::has('contacts', 'update')): ?>
-                                        <a href="/crm_einsurglobal/public/contacts/edit?id=<?= $contact->id ?>" style="color: var(--primary-hover); text-decoration: none; font-weight: 600;">Editar</a>
+                                        <a href="/crm_einsurglobal/public/contactos/edit?id=<?= $contact->id ?>" style="color: var(--primary-hover); text-decoration: none; font-weight: 600;">Editar</a>
                                     <?php endif; ?>
                                     <?php if (\App\Core\Permission::has('contacts', 'delete')): ?>
-                                        <form action="/crm_einsurglobal/public/contacts/delete" method="POST" onsubmit="return confirm('¿Estás seguro de que deseas eliminar este contacto?');" style="display:inline; margin:0;">
+                                        <form action="/crm_einsurglobal/public/contactos/delete" method="POST" onsubmit="return confirm('Â¿EstÃ¡s seguro de que deseas eliminar este contacto?');" style="display:inline; margin:0;">
                                             <input type="hidden" name="id" value="<?= $contact->id ?>">
                                             <button type="submit" style="background: none; border: none; color: var(--error); cursor: pointer; font-weight: 600; font-family: inherit; font-size: inherit;">Eliminar</button>
                                         </form>

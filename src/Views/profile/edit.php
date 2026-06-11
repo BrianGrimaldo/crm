@@ -11,7 +11,7 @@ require __DIR__ . '/../layouts/header.php';
 </div>
 
 <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 2rem;">
-    <!-- Información Visual / Avatar -->
+    <!-- InformaciÃ³n Visual / Avatar -->
     <div class="card" style="padding: 2rem; text-align: center; height: fit-content;">
         <div style="width: 120px; height: 120px; border-radius: 50%; background: linear-gradient(135deg, var(--primary) 0%, #8b5cf6 100%); color: white; display: flex; align-items: center; justify-content: center; font-size: 3rem; font-weight: bold; margin: 0 auto 1.5rem auto; box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.3);">
             <?= strtoupper(substr($user->first_name, 0, 1) . substr($user->last_name ?? '', 0, 1)) ?>
@@ -25,9 +25,9 @@ require __DIR__ . '/../layouts/header.php';
         </span>
     </div>
 
-    <!-- Formulario de Edición -->
+    <!-- Formulario de EdiciÃ³n -->
     <div class="card" style="padding: 2rem;">
-        <form action="/crm_einsurglobal/public/profile/update" method="POST">
+        <form action="/crm_einsurglobal/public/perfil/update" method="POST">
             <h3 style="font-size: 1.2rem; color: var(--text-main); margin-bottom: 1.5rem; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem;">Datos Personales</h3>
             
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
@@ -43,27 +43,27 @@ require __DIR__ . '/../layouts/header.php';
 
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2.5rem;">
                 <div class="form-group" style="margin-bottom: 0;">
-                    <label for="email">Correo Electrónico (Solo Lectura)</label>
+                    <label for="email">Correo ElectrÃ³nico (Solo Lectura)</label>
                     <input type="email" id="email" class="form-control" value="<?= htmlspecialchars($user->email) ?>" disabled style="background-color: var(--bg-main); cursor: not-allowed;">
-                    <small style="color: var(--text-muted); display: block; margin-top: 0.25rem;">El correo es tu identificador único y no puede cambiarse.</small>
+                    <small style="color: var(--text-muted); display: block; margin-top: 0.25rem;">El correo es tu identificador Ãºnico y no puede cambiarse.</small>
                 </div>
                 <div class="form-group" style="margin-bottom: 0;">
-                    <label for="phone">Teléfono / Celular</label>
+                    <label for="phone">TelÃ©fono / Celular</label>
                     <input type="text" id="phone" name="phone" class="form-control" value="<?= htmlspecialchars($user->phone ?? '') ?>">
                 </div>
             </div>
 
-            <h3 style="font-size: 1.2rem; color: var(--text-main); margin-bottom: 1.5rem; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem;">Cambiar Contraseña</h3>
-            <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1.5rem;">Déjalo en blanco si no deseas cambiar tu contraseña actual.</p>
+            <h3 style="font-size: 1.2rem; color: var(--text-main); margin-bottom: 1.5rem; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem;">Cambiar ContraseÃ±a</h3>
+            <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1.5rem;">DÃ©jalo en blanco si no deseas cambiar tu contraseÃ±a actual.</p>
 
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem;">
                 <div class="form-group" style="margin-bottom: 0;">
-                    <label for="new_password">Nueva Contraseña</label>
-                    <input type="password" id="new_password" name="new_password" class="form-control" placeholder="••••••••">
+                    <label for="new_password">Nueva ContraseÃ±a</label>
+                    <input type="password" id="new_password" name="new_password" class="form-control" placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢">
                 </div>
                 <div class="form-group" style="margin-bottom: 0;">
-                    <label for="confirm_password">Confirmar Contraseña</label>
-                    <input type="password" id="confirm_password" name="confirm_password" class="form-control" placeholder="••••••••">
+                    <label for="confirm_password">Confirmar ContraseÃ±a</label>
+                    <input type="password" id="confirm_password" name="confirm_password" class="form-control" placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢">
                 </div>
             </div>
 

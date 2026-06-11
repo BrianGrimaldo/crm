@@ -9,11 +9,11 @@ require __DIR__ . '/../layouts/header.php';
         <p>Gestiona tus oportunidades en cada etapa del embudo.</p>
     </div>
     <div style="display: flex; gap: 1rem;">
-        <a href="/crm_einsurglobal/public/deals" class="btn btn-outline" style="background: var(--surface); color: var(--text-main); border: 1px solid var(--border);">
+        <a href="/crm_einsurglobal/public/oportunidades" class="btn btn-outline" style="background: var(--surface); color: var(--text-main); border: 1px solid var(--border);">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="margin-right: 0.5rem;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16" /></svg>
             Vista Lista
         </a>
-        <a href="/crm_einsurglobal/public/deals/create" class="btn btn-primary">
+        <a href="/crm_einsurglobal/public/oportunidades/create" class="btn btn-primary">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
             Nueva Oportunidad
         </a>
@@ -220,7 +220,7 @@ require __DIR__ . '/../layouts/header.php';
             
             <div class="kanban-cards" data-stage-id="<?= $stage->id ?>" ondragover="allowDrop(event)" ondrop="drop(event)" ondragenter="dragEnter(event)" ondragleave="dragLeave(event)">
                 <?php foreach ($stageDeals as $deal): ?>
-                    <div class="kanban-card" id="deal-<?= $deal->id ?>" draggable="true" ondragstart="drag(event)" data-deal-id="<?= $deal->id ?>" onclick="window.location.href='/crm_einsurglobal/public/deals/edit?id=<?= $deal->id ?>'">
+                    <div class="kanban-card" id="deal-<?= $deal->id ?>" draggable="true" ondragstart="drag(event)" data-deal-id="<?= $deal->id ?>" onclick="window.location.href='/crm_einsurglobal/public/oportunidades/edit?id=<?= $deal->id ?>'">
                         <div class="card-title"><?= htmlspecialchars($deal->name) ?></div>
                         <div class="card-amount">$<?= number_format((float)$deal->amount, 2) ?> <?= htmlspecialchars($deal->currency_code) ?></div>
                         
@@ -290,7 +290,7 @@ require __DIR__ . '/../layouts/header.php';
             
             // Llama a la API para guardar el cambio
             try {
-                let response = await fetch('/crm_einsurglobal/public/api/deals/move-stage', {
+                let response = await fetch('/crm_einsurglobal/public/api/oportunidades/move-stage', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ deal_id: dealId, stage_id: stageId })
@@ -304,7 +304,7 @@ require __DIR__ . '/../layouts/header.php';
                     window.location.reload(); 
                 }
             } catch (err) {
-                alert('Error de conexión');
+                alert('Error de conexiÃ³n');
                 window.location.reload();
             }
         }

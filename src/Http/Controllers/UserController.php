@@ -69,7 +69,7 @@ class UserController
 
         if (empty($data['first_name']) || empty($data['email']) || empty($data['password']) || !$roleId) {
             $_SESSION['flash_error'] = "Todos los campos obligatorios deben estar llenos.";
-            header('Location: /crm_einsurglobal/public/users/create');
+            header('Location: /crm_einsurglobal/public/usuarios/create');
             exit;
         }
 
@@ -78,15 +78,26 @@ class UserController
             $targetTenantId = (int)$_POST['tenant_id'];
         }
 
-        // En producción habría que validar si el email ya existe
+        // En producciÃ³n habrÃ­a que validar si el email ya existe
         $success = $this->userModel->createUserForTenant($data, $roleId, $targetTenantId);
 
         if ($success) {
+            try {
+                $tenantName = isset($_SESSION['is_superadmin']) && $_SESSION['is_superadmin'] && $targetTenantId
+                    ? "nuestra empresa" // O buscar el nombre del tenant
+                    : ($_SESSION['tenant_name'] ?? 'nuestra empresa');
+                
+                $emailService = new \App\Core\EmailService();
+                $emailService->sendWelcomeEmail($data['email'], $data['first_name'], $data['password'], $tenantName);
+            } catch (\Exception $e) {
+                // Ignore email errors to not break the flow
+            }
+
             $_SESSION['flash_success'] = "Usuario {$data['first_name']} creado exitosamente.";
-            header('Location: /crm_einsurglobal/public/users');
+            header('Location: /crm_einsurglobal/public/usuarios');
         } else {
-            $_SESSION['flash_error'] = "Hubo un problema al crear el usuario. Es posible que el correo ya esté en uso.";
-            header('Location: /crm_einsurglobal/public/users/create');
+            $_SESSION['flash_error'] = "Hubo un problema al crear el usuario. Es posible que el correo ya estÃ© en uso.";
+            header('Location: /crm_einsurglobal/public/usuarios/create');
         }
         exit;
     }

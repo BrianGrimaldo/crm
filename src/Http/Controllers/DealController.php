@@ -61,7 +61,7 @@ class DealController
     }
 
     /**
-     * Formulario de creación de oportunidad.
+     * Formulario de creaciÃ³n de oportunidad.
      */
     public function create(): void
     {
@@ -96,7 +96,7 @@ class DealController
 
         if (empty($data['name']) || empty($data['stage_id'])) {
             $_SESSION['flash_error'] = "El nombre y la etapa son obligatorios.";
-            header('Location: /crm_einsurglobal/public/deals/create');
+            header('Location: /crm_einsurglobal/public/oportunidades/create');
             exit;
         }
 
@@ -104,12 +104,12 @@ class DealController
         $this->auditLog->log('create', 'deal', $dealId, null, $data);
 
         $_SESSION['flash_success'] = "Oportunidad creada exitosamente.";
-        header('Location: /crm_einsurglobal/public/deals/pipeline');
+        header('Location: /crm_einsurglobal/public/oportunidades/pipeline');
         exit;
     }
 
     /**
-     * Formulario de edición.
+     * Formulario de ediciÃ³n.
      */
     public function edit(): void
     {
@@ -119,7 +119,7 @@ class DealController
 
         if (!$deal) {
             $_SESSION['flash_error'] = "Oportunidad no encontrada.";
-            header('Location: /crm_einsurglobal/public/deals');
+            header('Location: /crm_einsurglobal/public/oportunidades');
             exit;
         }
 
@@ -157,7 +157,7 @@ class DealController
 
         if (empty($data['name']) || empty($data['stage_id'])) {
             $_SESSION['flash_error'] = "El nombre y la etapa son obligatorios.";
-            header("Location: /crm_einsurglobal/public/deals/edit?id={$id}");
+            header("Location: /crm_einsurglobal/public/oportunidades/edit?id={$id}");
             exit;
         }
 
@@ -167,7 +167,7 @@ class DealController
         $this->auditLog->log('update', 'deal', $id, (array)$oldDeal, $data);
 
         $_SESSION['flash_success'] = "Oportunidad actualizada exitosamente.";
-        header('Location: /crm_einsurglobal/public/deals/pipeline');
+        header('Location: /crm_einsurglobal/public/oportunidades/pipeline');
         exit;
     }
 
@@ -188,7 +188,7 @@ class DealController
             $_SESSION['flash_error'] = "No se pudo eliminar la oportunidad.";
         }
 
-        header('Location: /crm_einsurglobal/public/deals');
+        header('Location: /crm_einsurglobal/public/oportunidades');
         exit;
     }
 
@@ -205,7 +205,7 @@ class DealController
         $newStageId = (int)($input['stage_id'] ?? 0);
 
         if (!$id || !$newStageId) {
-            echo json_encode(['status' => 'error', 'message' => 'Datos inválidos.']);
+            echo json_encode(['status' => 'error', 'message' => 'Datos invÃ¡lidos.']);
             return;
         }
 

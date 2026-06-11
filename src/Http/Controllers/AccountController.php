@@ -55,16 +55,16 @@ class AccountController
         ];
 
         if (empty($data['name'])) {
-            $_SESSION['flash_error'] = "El nombre de la organización es obligatorio.";
-            header('Location: /crm_einsurglobal/public/accounts/create');
+            $_SESSION['flash_error'] = "El nombre de la organizaciÃ³n es obligatorio.";
+            header('Location: /crm_einsurglobal/public/organizaciones/create');
             exit;
         }
 
         $accountId = $this->accountModel->create($data);
         $this->auditLog->log('create', 'account', $accountId, null, $data);
 
-        $_SESSION['flash_success'] = "Organización creada exitosamente.";
-        header('Location: /crm_einsurglobal/public/accounts');
+        $_SESSION['flash_success'] = "OrganizaciÃ³n creada exitosamente.";
+        header('Location: /crm_einsurglobal/public/organizaciones');
         exit;
     }
 
@@ -75,8 +75,8 @@ class AccountController
         $account = $this->accountModel->find($id);
 
         if (!$account) {
-            $_SESSION['flash_error'] = "Organización no encontrada.";
-            header('Location: /crm_einsurglobal/public/accounts');
+            $_SESSION['flash_error'] = "OrganizaciÃ³n no encontrada.";
+            header('Location: /crm_einsurglobal/public/organizaciones');
             exit;
         }
 
@@ -107,7 +107,7 @@ class AccountController
 
         if (empty($data['name'])) {
             $_SESSION['flash_error'] = "El nombre es obligatorio.";
-            header("Location: /crm_einsurglobal/public/accounts/edit?id={$id}");
+            header("Location: /crm_einsurglobal/public/organizaciones/edit?id={$id}");
             exit;
         }
 
@@ -116,12 +116,12 @@ class AccountController
 
         if ($success) {
             $this->auditLog->log('update', 'account', $id, (array)$oldAccount, $data);
-            $_SESSION['flash_success'] = "Organización actualizada exitosamente.";
+            $_SESSION['flash_success'] = "OrganizaciÃ³n actualizada exitosamente.";
         } else {
-            $_SESSION['flash_error'] = "No se pudo actualizar la organización.";
+            $_SESSION['flash_error'] = "No se pudo actualizar la organizaciÃ³n.";
         }
 
-        header('Location: /crm_einsurglobal/public/accounts');
+        header('Location: /crm_einsurglobal/public/organizaciones');
         exit;
     }
 
@@ -134,12 +134,12 @@ class AccountController
 
         if ($success) {
             $this->auditLog->log('delete', 'account', $id, (array)$oldAccount, null);
-            $_SESSION['flash_success'] = "Organización eliminada.";
+            $_SESSION['flash_success'] = "OrganizaciÃ³n eliminada.";
         } else {
-            $_SESSION['flash_error'] = "No se pudo eliminar la organización.";
+            $_SESSION['flash_error'] = "No se pudo eliminar la organizaciÃ³n.";
         }
 
-        header('Location: /crm_einsurglobal/public/accounts');
+        header('Location: /crm_einsurglobal/public/organizaciones');
         exit;
     }
 }

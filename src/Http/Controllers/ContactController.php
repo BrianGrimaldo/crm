@@ -41,7 +41,7 @@ class ContactController
     }
 
     /**
-     * Muestra el formulario de creación.
+     * Muestra el formulario de creaciÃ³n.
      */
     public function create(): void
     {
@@ -79,7 +79,7 @@ class ContactController
 
         if (empty($data['first_name'])) {
             $_SESSION['flash_error'] = "El nombre es obligatorio.";
-            header('Location: /crm_einsurglobal/public/contacts/create');
+            header('Location: /crm_einsurglobal/public/contactos/create');
             exit;
         }
 
@@ -87,7 +87,7 @@ class ContactController
         $this->auditLog->log('create', 'contact', $contactId, null, $data);
 
         $_SESSION['flash_success'] = "Contacto creado exitosamente.";
-        header('Location: /crm_einsurglobal/public/contacts');
+        header('Location: /crm_einsurglobal/public/contactos');
         exit;
     }
 
@@ -102,7 +102,7 @@ class ContactController
 
         if (!$contact) {
             $_SESSION['flash_error'] = "Contacto no encontrado.";
-            header('Location: /crm_einsurglobal/public/contacts');
+            header('Location: /crm_einsurglobal/public/contactos');
             exit;
         }
 
@@ -142,7 +142,7 @@ class ContactController
 
         if (empty($data['first_name'])) {
             $_SESSION['flash_error'] = "El nombre es obligatorio.";
-            header("Location: /crm_einsurglobal/public/contacts/edit?id={$id}");
+            header("Location: /crm_einsurglobal/public/contactos/edit?id={$id}");
             exit;
         }
 
@@ -156,7 +156,7 @@ class ContactController
             $_SESSION['flash_error'] = "No se pudo actualizar el contacto.";
         }
 
-        header('Location: /crm_einsurglobal/public/contacts');
+        header('Location: /crm_einsurglobal/public/contactos');
         exit;
     }
 
@@ -177,7 +177,7 @@ class ContactController
             $_SESSION['flash_error'] = "No se pudo eliminar el contacto.";
         }
 
-        header('Location: /crm_einsurglobal/public/contacts');
+        header('Location: /crm_einsurglobal/public/contactos');
         exit;
     }
 }
