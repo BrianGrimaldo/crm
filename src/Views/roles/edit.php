@@ -17,9 +17,9 @@ $actionLabels = [
 
 <div class="page-header">
     <div>
-        <h1>Editar Rol: <?= htmlspecialchars($role->name) ?></h1>
+        <h1>Editar Rol: <?= htmlspecialchars($roleData->name) ?></h1>
         <p>Modifica los permisos asignados a este rol.
-            <?php if ($role->is_system): ?>
+            <?php if ($roleData->is_system): ?>
                 <span style="background: #DBEAFE; color: #1E40AF; padding: 0.15rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: 600; margin-left: 0.5rem;">ROL DE SISTEMA</span>
             <?php endif; ?>
         </p>
@@ -31,16 +31,16 @@ $actionLabels = [
 
 <div class="card" style="padding: 2rem;">
     <form action="/crm_einsurglobal/public/roles/update" method="POST">
-        <input type="hidden" name="id" value="<?= $role->id ?>">
+        <input type="hidden" name="id" value="<?= $roleData->id ?>">
 
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem;">
             <div class="form-group">
                 <label for="name">Nombre del Rol *</label>
-                <input type="text" id="name" name="name" class="form-control" value="<?= htmlspecialchars($role->name) ?>" required>
+                <input type="text" id="name" name="name" class="form-control" value="<?= htmlspecialchars($roleData->name) ?>" required>
             </div>
             <div class="form-group">
                 <label for="description">Descripción</label>
-                <input type="text" id="description" name="description" class="form-control" value="<?= htmlspecialchars($role->description ?? '') ?>">
+                <input type="text" id="description" name="description" class="form-control" value="<?= htmlspecialchars($roleData->description ?? '') ?>">
             </div>
         </div>
 

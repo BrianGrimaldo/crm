@@ -81,9 +81,9 @@ class RoleController
         Permission::require('settings', 'update');
 
         $id = (int)($_GET['id'] ?? 0);
-        $role = $this->roleModel->findTenantRole($id);
+        $roleData = $this->roleModel->findTenantRole($id);
 
-        if (!$role) {
+        if (!$roleData) {
             $_SESSION['flash_error'] = "Rol no encontrado.";
             header('Location: /crm_einsurglobal/public/roles');
             exit;
@@ -103,9 +103,9 @@ class RoleController
         Permission::require('settings', 'update');
 
         $id = (int)($_POST['id'] ?? 0);
-        $role = $this->roleModel->findTenantRole($id);
+        $roleData = $this->roleModel->findTenantRole($id);
 
-        if (!$role) {
+        if (!$roleData) {
             $_SESSION['flash_error'] = "Rol no encontrado.";
             header('Location: /crm_einsurglobal/public/roles');
             exit;
@@ -122,7 +122,7 @@ class RoleController
 
         // Actualizar datos del rol (no slug si es de sistema)
         $updateData = ['name' => $name, 'description' => $description];
-        if (!$role->is_system) {
+        if (!$roleData->is_system) {
             $updateData['slug'] = strtolower(preg_replace('/[^a-zA-Z0-9]+/', '-', $name));
         }
         $this->roleModel->updateRole($id, $updateData);
