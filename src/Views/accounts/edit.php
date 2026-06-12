@@ -1,12 +1,12 @@
 <?php
-$pageTitle = 'Editar OrganizaciÃ³n - Einsur Global CRM';
+$pageTitle = 'Editar Organización - Einsur Global CRM';
 require __DIR__ . '/../layouts/header.php';
 ?>
 
 <div class="page-header">
     <div>
-        <h1>Editar OrganizaciÃ³n</h1>
-        <p>Actualiza la informaciÃ³n de la empresa.</p>
+        <h1>Editar Organización</h1>
+        <p>Actualiza la información de la empresa.</p>
     </div>
     <a href="/crm_einsurglobal/public/organizaciones" class="btn" style="background: var(--surface); color: var(--text-main); border: 1px solid var(--border);">
         Volver a la Lista
@@ -19,7 +19,7 @@ require __DIR__ . '/../layouts/header.php';
         
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
             <div class="form-group">
-                <label for="name">Nombre de OrganizaciÃ³n *</label>
+                <label for="name">Nombre de Organización *</label>
                 <input type="text" id="name" name="name" class="form-control" value="<?= htmlspecialchars($account->name) ?>" required>
             </div>
             <div class="form-group">
@@ -43,7 +43,7 @@ require __DIR__ . '/../layouts/header.php';
                 </select>
             </div>
             <div class="form-group">
-                <label for="phone">TelÃ©fono</label>
+                <label for="phone">Teléfono</label>
                 <input type="text" id="phone" name="phone" class="form-control" value="<?= htmlspecialchars($account->phone ?? '') ?>">
             </div>
         </div>
@@ -61,7 +61,7 @@ require __DIR__ . '/../layouts/header.php';
 
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
             <div class="form-group">
-                <label for="country">PaÃ­s</label>
+                <label for="country">País</label>
                 <input type="text" id="country" name="country" class="form-control" value="<?= htmlspecialchars($account->country ?? '') ?>">
             </div>
             <div class="form-group">
@@ -72,11 +72,11 @@ require __DIR__ . '/../layouts/header.php';
 
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
             <div class="form-group">
-                <label for="postal_code">CÃ³digo Postal</label>
+                <label for="postal_code">Código Postal</label>
                 <input type="text" id="postal_code" name="postal_code" class="form-control" value="<?= htmlspecialchars($account->postal_code ?? '') ?>">
             </div>
             <div class="form-group">
-                <label for="billing_address">DirecciÃ³n FÃ­sica</label>
+                <label for="billing_address">Dirección Física</label>
                 <input type="text" id="billing_address" name="billing_address" class="form-control" value="<?= htmlspecialchars($account->billing_address ?? '') ?>">
             </div>
         </div>
@@ -88,7 +88,7 @@ require __DIR__ . '/../layouts/header.php';
 
         <div style="margin-top: 1.5rem; text-align: right;">
             <button type="submit" class="btn btn-primary" style="padding: 1rem 2rem; font-size: 1.1rem;">
-                Actualizar OrganizaciÃ³n
+                Actualizar Organización
             </button>
         </div>
     </form>

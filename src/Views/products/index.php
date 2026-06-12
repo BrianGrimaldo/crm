@@ -6,7 +6,7 @@ require __DIR__ . '/../layouts/header.php';
 <div class="page-header">
     <div>
         <h1>Inventario / Productos</h1>
-        <p>Gestiona los equipos y productos disponibles en tu almacÃ©n.</p>
+        <p>Gestiona los equipos y productos disponibles en tu almacén.</p>
     </div>
     <a href="/crm_einsurglobal/public/productos/create" class="btn btn-primary">
         <i class="fas fa-plus"></i> Nuevo Producto

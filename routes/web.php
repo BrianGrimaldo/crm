@@ -3,13 +3,13 @@
 declare(strict_types=1);
 
 /**
- * Define las rutas de la aplicaciÃ³n web.
- * Esta variable $router estÃ¡ disponible porque el archivo es requerido desde public/index.php
+ * Define las rutas de la aplicación web.
+ * Esta variable $router está disponible porque el archivo es requerido desde public/index.php
  */
 
 use App\Http\Controllers\HomeController;
 
-// Rutas pÃºblicas
+// Rutas públicas
 $router->get('/', HomeController::class, 'index');
 
 use App\Http\Controllers\AuthController;

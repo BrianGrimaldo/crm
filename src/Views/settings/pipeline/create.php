@@ -5,7 +5,7 @@ require __DIR__ . '/../../layouts/header.php';
 
 <div class="page-header">
     <div>
-        <h1>AÃ±adir Etapa de Venta</h1>
+        <h1>Añadir Etapa de Venta</h1>
         <p>Crea una nueva etapa para el embudo.</p>
     </div>
     <a href="/crm_einsurglobal/public/configuracion/embudo" class="btn" style="background: var(--surface); border: 1px solid var(--border);">Volver</a>
@@ -20,7 +20,7 @@ require __DIR__ . '/../../layouts/header.php';
 
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
             <div class="form-group" style="margin-bottom: 0;">
-                <label for="position">PosiciÃ³n (Orden)</label>
+                <label for="position">Posición (Orden)</label>
                 <input type="number" id="position" name="position" class="form-control" value="0" placeholder="0 = Al final">
             </div>
             <div class="form-group" style="margin-bottom: 0;">

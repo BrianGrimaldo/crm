@@ -6,7 +6,7 @@ require __DIR__ . '/../layouts/header.php';
 <div class="page-header">
     <div>
         <h1>Crear Oportunidad de Venta</h1>
-        <p>AÃ±ade un nuevo prospecto o trato a tu embudo.</p>
+        <p>Añade un nuevo prospecto o trato a tu embudo.</p>
     </div>
     <a href="/crm_einsurglobal/public/oportunidades/pipeline" class="btn" style="background: var(--surface); color: var(--text-main); border: 1px solid var(--border);">
         Volver al Pipeline
@@ -22,9 +22,9 @@ require __DIR__ . '/../layouts/header.php';
 
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
             <div class="form-group">
-                <label for="account_id">OrganizaciÃ³n</label>
+                <label for="account_id">Organización</label>
                 <select id="account_id" name="account_id" class="form-control">
-                    <option value="">-- Seleccionar OrganizaciÃ³n --</option>
+                    <option value="">-- Seleccionar Organización --</option>
                     <?php if(!empty($accounts)): foreach($accounts as $account): ?>
                         <option value="<?= $account->id ?>"><?= htmlspecialchars($account->name) ?></option>
                     <?php endforeach; endif; ?>
@@ -81,9 +81,9 @@ require __DIR__ . '/../layouts/header.php';
                 <select id="source" name="source" class="form-control">
                     <option value="">-- Seleccionar --</option>
                     <option value="Redes sociales">Redes sociales</option>
-                    <option value="CampaÃ±a de correo">CampaÃ±a de correo</option>
+                    <option value="Campaña de correo">Campaña de correo</option>
                     <option value="Centro de llamadas">Centro de llamadas</option>
-                    <option value="RecomendaciÃ³n">RecomendaciÃ³n</option>
+                    <option value="Recomendación">Recomendación</option>
                     <option value="Web">Web</option>
                     <option value="Otro">Otro</option>
                 </select>
@@ -91,7 +91,7 @@ require __DIR__ . '/../layouts/header.php';
         </div>
 
         <div class="form-group">
-            <label for="description">Notas / DescripciÃ³n</label>
+            <label for="description">Notas / Descripción</label>
             <textarea id="description" name="description" class="form-control" rows="4" placeholder="Detalles de la oportunidad..."></textarea>
         </div>
 

@@ -61,7 +61,7 @@ class DealController
     }
 
     /**
-     * Formulario de creaciÃ³n de oportunidad.
+     * Formulario de creación de oportunidad.
      */
     public function create(): void
     {
@@ -109,7 +109,7 @@ class DealController
     }
 
     /**
-     * Formulario de ediciÃ³n.
+     * Formulario de edición.
      */
     public function edit(): void
     {
@@ -205,7 +205,7 @@ class DealController
         $newStageId = (int)($input['stage_id'] ?? 0);
 
         if (!$id || !$newStageId) {
-            echo json_encode(['status' => 'error', 'message' => 'Datos invÃ¡lidos.']);
+            echo json_encode(['status' => 'error', 'message' => 'Datos inválidos.']);
             return;
         }
 

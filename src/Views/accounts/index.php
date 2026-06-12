@@ -6,12 +6,12 @@ require __DIR__ . '/../layouts/header.php';
 <div class="page-header">
     <div>
         <h1>Directorio de Organizaciones</h1>
-        <p>Gestiona las empresas con las que interactÃºas.</p>
+        <p>Gestiona las empresas con las que interactúas.</p>
     </div>
     <?php if (\App\Core\Permission::has('accounts', 'create')): ?>
     <a href="/crm_einsurglobal/public/organizaciones/create" class="btn btn-primary">
         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
-        Nueva OrganizaciÃ³n
+        Nueva Organización
     </a>
     <?php endif; ?>
 </div>
@@ -43,11 +43,11 @@ require __DIR__ . '/../layouts/header.php';
                     <th>Gerente de Cuenta</th>
                     <th>Sitio web</th>
                     <th>LinkedIn</th>
-                    <th>TelÃ©fono</th>
-                    <th>PaÃ­s</th>
-                    <th>DirecciÃ³n</th>
+                    <th>Teléfono</th>
+                    <th>País</th>
+                    <th>Dirección</th>
                     <th>Ciudad</th>
-                    <th>CÃ³digo Postal</th>
+                    <th>Código Postal</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
@@ -96,7 +96,7 @@ require __DIR__ . '/../layouts/header.php';
                                         <a href="/crm_einsurglobal/public/organizaciones/edit?id=<?= $account->id ?>" style="color: var(--primary-hover); text-decoration: none; font-weight: 600;">Editar</a>
                                     <?php endif; ?>
                                     <?php if (\App\Core\Permission::has('accounts', 'delete')): ?>
-                                        <form action="/crm_einsurglobal/public/organizaciones/delete" method="POST" onsubmit="return confirm('Â¿EstÃ¡s seguro de que deseas eliminar esta organizaciÃ³n?');" style="display:inline; margin:0;">
+                                        <form action="/crm_einsurglobal/public/organizaciones/delete" method="POST" onsubmit="return confirm('¿Estás seguro de que deseas eliminar esta organización?');" style="display:inline; margin:0;">
                                             <input type="hidden" name="id" value="<?= $account->id ?>">
                                             <button type="submit" style="background: none; border: none; color: var(--error); cursor: pointer; font-weight: 600; font-family: inherit; font-size: inherit;">Eliminar</button>
                                         </form>

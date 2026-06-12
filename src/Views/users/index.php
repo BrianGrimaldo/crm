@@ -22,8 +22,8 @@ require __DIR__ . '/../layouts/header.php';
             <thead>
                 <tr>
                     <th>Nombre</th>
-                    <th>Correo ElectrÃ³nico</th>
-                    <th>TelÃ©fono</th>
+                    <th>Correo Electrónico</th>
+                    <th>Teléfono</th>
                     <th>Rol</th>
                     <th>Estado</th>
                     <th>Acciones</th>
@@ -54,7 +54,7 @@ require __DIR__ . '/../layouts/header.php';
                             <td><?= htmlspecialchars($u->phone ?? '-') ?></td>
                             <td>
                                 <span style="background: var(--surface); padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.8rem; border: 1px solid var(--border);">
-                                    <?= htmlspecialchars($u->role_name ?? 'Usuario EstÃ¡ndar') ?>
+                                    <?= htmlspecialchars($u->role_name ?? 'Usuario Estándar') ?>
                                 </span>
                             </td>
                             <td>

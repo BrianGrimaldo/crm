@@ -21,7 +21,7 @@ require __DIR__ . '/../../layouts/header.php';
 
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
             <div class="form-group" style="margin-bottom: 0;">
-                <label for="position">PosiciÃ³n (Orden)</label>
+                <label for="position">Posición (Orden)</label>
                 <input type="number" id="position" name="position" class="form-control" value="<?= $stage->position ?>">
             </div>
             <div class="form-group" style="margin-bottom: 0;">
@@ -47,7 +47,7 @@ require __DIR__ . '/../../layouts/header.php';
         <button type="submit" class="btn btn-primary">Actualizar Etapa</button>
     </form>
     
-    <form action="/crm_einsurglobal/public/configuracion/embudo/delete" method="POST" onsubmit="return confirm('Â¿EstÃ¡s seguro de eliminar esta etapa? Si hay tratos en ella, podrÃ­as tener problemas.');">
+    <form action="/crm_einsurglobal/public/configuracion/embudo/delete" method="POST" onsubmit="return confirm('¿Estás seguro de eliminar esta etapa? Si hay tratos en ella, podrías tener problemas.');">
         <input type="hidden" name="id" value="<?= $stage->id ?>">
         <button type="submit" class="btn" style="background: rgba(239,68,68,0.1); color: #ef4444; border: 1px solid #ef4444; width: 100%;">
             <i class="fas fa-trash"></i> Eliminar Etapa

@@ -304,7 +304,7 @@ require __DIR__ . '/../layouts/header.php';
                     window.location.reload(); 
                 }
             } catch (err) {
-                alert('Error de conexiÃ³n');
+                alert('Error de conexión');
                 window.location.reload();
             }
         }

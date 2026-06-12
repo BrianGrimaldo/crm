@@ -342,11 +342,11 @@ $currentPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
             <a href="/crm_einsurglobal/public/organizaciones" class="<?= strpos($currentPath, 'organizaciones') !== false ? 'active' : '' ?>">
                 <i class="fas fa-building"></i> Organizaciones
             </a>
-            <a href="/crm_einsurglobal/public/oportunidades/pipeline" class="<?= strpos($currentPath, 'oportunidades') !== false ? 'active' : '' ?>">
+            <a href="/crm_einsurglobal/public/oportunidades/pipeline" class="<?= strpos($currentPath, 'oportunidades/pipeline') !== false ? 'active' : '' ?>">
                 <i class="fas fa-funnel-dollar"></i> Ventas
             </a>
 
-            <div class="menu-header">AdministraciÃ³n</div>
+            <div class="menu-header">Administración</div>
             <?php 
             $role = isset($_SESSION['user_role']) ? strtolower(str_replace('-', '', $_SESSION['user_role'])) : '';
             if ($role === 'superadmin' || $role === 'admin'): 
@@ -361,7 +361,7 @@ $currentPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
             <?php endif; ?>
             <?php endif; ?>
             <?php if (\App\Core\Permission::has('deals', 'view')): ?>
-            <a href="/crm_einsurglobal/public/oportunidades" class="<?= strpos($currentPath, 'oportunidades') !== false ? 'active' : '' ?>">
+            <a href="/crm_einsurglobal/public/oportunidades" class="<?= (strpos($currentPath, 'oportunidades') !== false && strpos($currentPath, 'oportunidades/pipeline') === false) ? 'active' : '' ?>">
                 <i class="fas fa-handshake"></i> Oportunidades
             </a>
             <?php endif; ?>
@@ -372,11 +372,9 @@ $currentPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
             </a>
             <?php endif; ?>
 
-            <?php if (\App\Core\Permission::has('tickets', 'view')): ?>
-            <a href="/crm_einsurglobal/public/tickets" class="<?= strpos($currentPath, 'tickets') !== false ? 'active' : '' ?>">
+            <a href="https://ticketseg.einsursupply.com/" target="_blank" class="<?= strpos($currentPath, 'tickets') !== false ? 'active' : '' ?>">
                 <i class="fas fa-headset"></i> Soporte y Tickets
             </a>
-            <?php endif; ?>
 
             <?php if (\App\Core\Permission::has('reports', 'view')): ?>
             <a href="/crm_einsurglobal/public/reportes" class="<?= strpos($currentPath, 'reportes') !== false ? 'active' : '' ?>">
@@ -400,7 +398,7 @@ $currentPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
             </a>
             <?php if (\App\Core\Permission::has('settings', 'view')): ?>
             <div style="margin: 1rem 1.5rem 0.5rem; font-size: 0.75rem; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px;">
-                ConfiguraciÃ³n
+                Configuración
             </div>
             <a href="/crm_einsurglobal/public/roles" class="<?= strpos($currentPath, 'roles') !== false ? 'active' : '' ?>">
                 <i class="fas fa-shield-alt"></i> Roles y Permisos
@@ -422,7 +420,7 @@ $currentPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
                         </span>
                     </div>
                 </div>
-                <a href="/crm_einsurglobal/public/logout" class="btn-logout" title="Cerrar SesiÃ³n">
+                <a href="/crm_einsurglobal/public/logout" class="btn-logout" title="Cerrar Sesión">
                     <i class="fas fa-sign-out-alt"></i>
                 </a>
             </div>
@@ -432,7 +430,7 @@ $currentPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
     <!-- Main Content -->
     <main class="main-content">
         <div class="topbar">
-            <!-- BotÃ³n de menÃº mÃ³vil flotante -->
+            <!-- Botón de menú móvil flotante -->
             <button class="btn-menu" style="margin-right: auto;" onclick="document.querySelector('.sidebar').classList.toggle('active')">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
             </button>

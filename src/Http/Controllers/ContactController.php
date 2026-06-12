@@ -41,7 +41,7 @@ class ContactController
     }
 
     /**
-     * Muestra el formulario de creaciÃ³n.
+     * Muestra el formulario de creación.
      */
     public function create(): void
     {
@@ -206,10 +206,120 @@ class ContactController
                 exit;
             }
 
-            $emailService = new \App\Core\EmailService();
-            $fullName = $contact->first_name . ' ' . $contact->last_name;
+            // Intentar usar las credenciales SMTP del vendedor actual
+            $userId = (int)($_SESSION['user_id'] ?? 0);
+            $smtpConfig = \App\Core\EmailService::getUserSmtpConfig($userId);
+            $emailService = new \App\Core\EmailService($smtpConfig);
+            // Procesar archivos adjuntos si existen
+            $attachments = [];
+            if (isset($_FILES['attachments']) && !empty($_FILES['attachments']['name'][0])) {
+                $totalFiles = count($_FILES['attachments']['name']);
+                for ($i = 0; $i < $totalFiles; $i++) {
+                    if ($_FILES['attachments']['error'][$i] === UPLOAD_ERR_OK) {
+                        $attachments[] = [
+                            'path' => $_FILES['attachments']['tmp_name'][$i],
+                            'name' => $_FILES['attachments']['name'][$i]
+                        ];
+                    }
+                }
+            }
             
-            $success = $emailService->send($contact->email, $fullName, $subject, $body);
+            // Convertir texto plano a HTML respetando saltos de línea para el cuerpo
+            $bodyHtml = nl2br(htmlspecialchars($body));
+            $embeddedImages = [];
+            
+            // Adjuntar plantilla de firma automática si el usuario escribió sus datos
+            if (!empty($smtpConfig['email_signature'])) {
+                $rawLines = explode("\n", str_replace("\r", "", strip_tags($smtpConfig['email_signature'])));
+                $formattedLines = [];
+                
+                $contentLinesCount = 0;
+                foreach ($rawLines as $line) {
+                    $trimLine = trim($line);
+                    if ($trimLine === '') {
+                        $formattedLines[] = '<br>';
+                        continue;
+                    }
+                    
+                    $contentLinesCount++;
+                    $lineHtml = htmlspecialchars($line);
+                    
+                    // Atentamente en negrita
+                    if (stripos($trimLine, 'atentamente') !== false) {
+                        $formattedLines[] = '<span style="font-weight: bold; color: #323130;">' . $lineHtml . '</span><br>';
+                        continue;
+                    }
+                    
+                    // Nombre (la primera línea de contenido después de Atentamente)
+                    if ($contentLinesCount === 2 || preg_match('/^(ING\.|LIC\.|C\.P\.|ARQ\.|MTRO\.|DR\.)/i', $trimLine)) {
+                        $formattedLines[] = '<span style="font-weight: bold; color: #323130;">' . $lineHtml . '</span><br>';
+                        continue;
+                    }
+                    
+                    // EINSUR SUPPLY o GLOBAL en azul
+                    if (stripos($trimLine, 'EINSUR') !== false && stripos($trimLine, 'www') === false) {
+                        $lineHtml = preg_replace('/(EINSUR\s*(SUPPLY|GLOBAL)?)/i', '<span style="color: #4472c4;">$1</span>', $lineHtml);
+                        $formattedLines[] = $lineHtml . '<br>';
+                        continue;
+                    }
+                    
+                    // Enlace web en azul
+                    if (stripos($trimLine, 'www.') !== false) {
+                        $lineHtml = preg_replace('/(www\.[a-z0-9.-]+\.[a-z]{2,})/i', '<a href="http://$1" style="color: #4472c4; text-decoration: underline;">$1</a>', $lineHtml);
+                        $formattedLines[] = $lineHtml . '<br>';
+                        continue;
+                    }
+                    
+                    // Texto normal
+                    $formattedLines[] = '<span style="color: #323130;">' . $lineHtml . '</span><br>';
+                }
+                
+                $userTextHtml = implode("", $formattedLines);
+                
+                // Buscar la imagen del logo en el servidor local
+                $customLogo = dirname(__DIR__, 3) . '/public/img/company_signature_logo.png';
+                $defaultLogo = dirname(__DIR__, 3) . '/public/img/logoeglobal.png';
+                $logoPath = file_exists($customLogo) ? $customLogo : $defaultLogo;
+                $logoSrc = '';
+                
+                if (file_exists($logoPath)) {
+                    $embeddedImages[] = [
+                        'path' => $logoPath,
+                        'cid' => 'logo_einsur'
+                    ];
+                    $logoSrc = 'cid:logo_einsur';
+                }
+                
+                $signatureHtml = '
+                <br><br>
+                <table cellpadding="0" cellspacing="0" border="0" style="font-family: Arial, sans-serif; font-size: 13.5px; margin-top: 20px;">
+                    <tr>
+                        <td style="padding-right: 20px; vertical-align: middle;">
+                            <img src="' . $logoSrc . '" width="150" style="display: block; max-width: 150px; height: auto;" alt="EINSUR Logo">
+                        </td>
+                        <td style="padding-left: 0px; vertical-align: middle; line-height: 1.4;">
+                            ' . $userTextHtml . '
+                        </td>
+                    </tr>
+                </table>';
+                
+                $bodyHtml .= $signatureHtml;
+            }
+
+            // Envolver el correo en una estructura XHTML estándar para evitar que Outlook lo degrade a texto plano
+            $finalHtml = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Correo</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: Arial, sans-serif; font-size: 14px; color: #323130; line-height: 1.5;">
+    ' . $bodyHtml . '
+</body>
+</html>';
+            
+            $fullName = trim($contact->first_name . ' ' . $contact->last_name);
+            $success = $emailService->send($contact->email, $fullName, $subject, $finalHtml, $attachments, $embeddedImages);
 
             if ($success) {
                 // Registrar en la bitácora de actividades
@@ -218,7 +328,8 @@ class ContactController
                 
                 echo json_encode(['success' => true, 'message' => '¡Correo electrónico enviado con éxito!']);
             } else {
-                echo json_encode(['success' => false, 'message' => 'No se pudo enviar el correo. Por favor verifique la configuración de su servidor SMTP en el archivo .env.']);
+                $errorInfo = $emailService->getErrorInfo() ?? 'Revisa tu configuración SMTP.';
+                echo json_encode(['success' => false, 'message' => 'Error al enviar: ' . $errorInfo]);
             }
         } catch (\Exception $e) {
             echo json_encode(['success' => false, 'message' => 'Ocurrió un error inesperado: ' . $e->getMessage()]);

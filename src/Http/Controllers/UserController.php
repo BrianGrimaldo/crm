@@ -78,7 +78,7 @@ class UserController
             $targetTenantId = (int)$_POST['tenant_id'];
         }
 
-        // En producciÃ³n habrÃ­a que validar si el email ya existe
+        // En producción habría que validar si el email ya existe
         $success = $this->userModel->createUserForTenant($data, $roleId, $targetTenantId);
 
         if ($success) {
@@ -96,7 +96,7 @@ class UserController
             $_SESSION['flash_success'] = "Usuario {$data['first_name']} creado exitosamente.";
             header('Location: /crm_einsurglobal/public/usuarios');
         } else {
-            $_SESSION['flash_error'] = "Hubo un problema al crear el usuario. Es posible que el correo ya estÃ© en uso.";
+            $_SESSION['flash_error'] = "Hubo un problema al crear el usuario. Es posible que el correo ya esté en uso.";
             header('Location: /crm_einsurglobal/public/usuarios/create');
         }
         exit;

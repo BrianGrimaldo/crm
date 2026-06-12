@@ -40,14 +40,14 @@ require __DIR__ . '/../layouts/header.php';
                     <th>Nombre Completo</th>
                     <th>Tipo</th>
                     <th>Gerente de Cuenta</th>
-                    <th>OrganizaciÃ³n</th>
-                    <th>PosiciÃ³n</th>
+                    <th>Organización</th>
+                    <th>Posición</th>
                     <th>Email</th>
                     <th>LinkedIn</th>
-                    <th>TelÃ©fono</th>
-                    <th>PaÃ­s</th>
+                    <th>Teléfono</th>
+                    <th>País</th>
                     <th>Ciudad</th>
-                    <th>CÃ³digo Postal</th>
+                    <th>Código Postal</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
@@ -72,7 +72,7 @@ require __DIR__ . '/../layouts/header.php';
                                 <?php if (!empty($contact->email)): ?>
                                     <div style="display: flex; align-items: center; gap: 0.5rem;">
                                         <span><?= htmlspecialchars($contact->email) ?></span>
-                                        <button onclick="openEmailModal(<?= $contact->id ?>, '<?= htmlspecialchars($contact->first_name . ' ' . $contact->last_name) ?>')" class="btn" style="padding: 0.3rem 0.5rem; background: rgba(110, 223, 246, 0.1); color: var(--accent); border-radius: 6px; font-size: 0.8rem;" title="Enviar correo vía SMTP">
+                                        <button onclick='openEmailModal(<?= (int)$contact->id ?>, <?= htmlspecialchars(json_encode(trim($contact->first_name . " " . $contact->last_name)), ENT_QUOTES, "UTF-8") ?>)' class="btn" style="padding: 0.3rem 0.5rem; background: rgba(110, 223, 246, 0.1); color: var(--accent); border-radius: 6px; font-size: 0.8rem;" title="Enviar correo vía SMTP">
                                             <i class="fas fa-paper-plane"></i>
                                         </button>
                                     </div>
@@ -98,7 +98,7 @@ require __DIR__ . '/../layouts/header.php';
                                         <a href="https://wa.me/<?= preg_replace('/[^0-9]/', '', $contact->phone) ?>" target="_blank" style="padding: 0.3rem 0.5rem; background: rgba(37, 211, 102, 0.1); color: #25d366; border-radius: 6px; font-size: 0.8rem; text-decoration: none;" title="Abrir chat de WhatsApp">
                                             <i class="fab fa-whatsapp"></i>
                                         </a>
-                                        <button onclick="openCallLogModal(<?= $contact->id ?>, '<?= htmlspecialchars($contact->first_name . ' ' . $contact->last_name) ?>')" class="btn" style="padding: 0.3rem 0.5rem; background: rgba(245, 158, 11, 0.1); color: #f59e0b; border-radius: 6px; font-size: 0.8rem;" title="Registrar llamada en bitácora">
+                                        <button onclick='openCallLogModal(<?= $contact->id ?>, <?= htmlspecialchars(json_encode($contact->first_name . " " . $contact->last_name), ENT_QUOTES, "UTF-8") ?>)' class="btn" style="padding: 0.3rem 0.5rem; background: rgba(245, 158, 11, 0.1); color: #f59e0b; border-radius: 6px; font-size: 0.8rem;" title="Registrar llamada en bitácora">
                                             <i class="fas fa-phone-slash"></i>
                                         </button>
                                     </div>
@@ -132,26 +132,75 @@ require __DIR__ . '/../layouts/header.php';
 
 <!-- ═══════════════ MODALES OMNICANAL ═══════════════ -->
 
-<!-- Modal Enviar Correo -->
-<div id="emailModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2000; align-items: center; justify-content: center;">
-    <div class="panel" style="width: 100%; max-width: 600px; background: white; border-radius: 18px; padding: 2rem; box-shadow: var(--shadow-lg);">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-            <h3 style="font-size: 1.25rem; font-weight: 800; color: var(--primary); margin: 0;"><i class="fas fa-paper-plane" style="color: var(--accent); margin-right: 0.5rem;"></i> Enviar Correo a <span id="emailModalContactName"></span></h3>
-            <button onclick="closeEmailModal()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text-muted);">&times;</button>
+<!-- Modal Enviar Correo (Estilo Outlook) -->
+<div id="emailModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); z-index: 2000; align-items: center; justify-content: center; backdrop-filter: blur(2px);">
+    <div style="width: 100%; max-width: 650px; background: #fff; border-radius: 8px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.15); font-family: 'Segoe UI', system-ui, sans-serif;">
+        
+        <!-- Cabecera estilo ventana Windows/Outlook -->
+        <div style="background: #f3f2f1; padding: 0.75rem 1rem; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #edebe9;">
+            <div style="font-size: 0.9rem; font-weight: 600; color: #323130; display: flex; align-items: center; gap: 0.5rem;">
+                <i class="far fa-envelope" style="color: #0078d4;"></i> Mensaje Nuevo
+            </div>
+            <button type="button" onclick="closeEmailModal()" style="background: transparent; border: none; font-size: 1.2rem; color: #605e5c; cursor: pointer; line-height: 1; padding: 0 0.5rem;">&times;</button>
         </div>
-        <form id="emailForm" onsubmit="sendEmailAjax(event)">
+
+        <form id="emailForm" onsubmit="sendEmailAjax(event)" enctype="multipart/form-data" style="display: flex; flex-direction: column; flex-grow: 1;">
             <input type="hidden" id="emailContactId" name="contact_id">
-            <div class="form-group">
-                <label for="emailSubject">Asunto</label>
-                <input type="text" id="emailSubject" name="subject" class="form-control" placeholder="Escribe el asunto del correo..." required>
+            
+            <!-- Barra de herramientas superior -->
+            <div style="padding: 0.5rem 1rem; background: #fff; border-bottom: 1px solid #edebe9; display: flex; gap: 0.5rem;">
+                <button type="submit" id="emailSubmitBtn" style="background: #0078d4; color: white; border: none; padding: 0.4rem 1rem; border-radius: 4px; font-size: 0.85rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 0.4rem;">
+                    <i class="fas fa-paper-plane"></i> Enviar
+                </button>
+                <label for="emailAttachments" style="background: transparent; color: #323130; border: 1px solid transparent; padding: 0.4rem 0.8rem; border-radius: 4px; font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; gap: 0.4rem; transition: background 0.2s;">
+                    <i class="fas fa-paperclip" style="color: #605e5c;"></i> Adjuntar
+                </label>
+                <input type="file" id="emailAttachments" name="attachments[]" multiple style="display: none;" onchange="updateAttachmentList(this)">
+                <button type="button" onclick="closeEmailModal()" style="background: transparent; color: #323130; border: 1px solid transparent; padding: 0.4rem 0.8rem; border-radius: 4px; font-size: 0.85rem; cursor: pointer; margin-left: auto;">
+                    Descartar
+                </button>
             </div>
-            <div class="form-group">
-                <label for="emailBody">Cuerpo del Mensaje</label>
-                <textarea id="emailBody" name="body" class="form-control" rows="8" placeholder="Escribe el mensaje aquí..." required></textarea>
+
+            <!-- Información de envío y campos -->
+            <div style="padding: 1rem 1.5rem; display: flex; flex-direction: column; gap: 0.5rem;">
+                
+                <?php
+                    $userId = (int)($_SESSION['user_id'] ?? 0);
+                    $smtpConfig = null;
+                    try {
+                        $smtpConfig = \App\Core\EmailService::getUserSmtpConfig($userId);
+                    } catch (\Throwable $e) {}
+                ?>
+                <?php if ($smtpConfig): ?>
+                    <div style="font-size: 0.85rem; color: #605e5c; display: flex; align-items: center; border-bottom: 1px solid #edebe9; padding-bottom: 0.5rem;">
+                        <span style="width: 50px; color: #a19f9d;">De:</span>
+                        <strong><?= htmlspecialchars($smtpConfig['smtp_email']) ?></strong>
+                    </div>
+                <?php else: ?>
+                    <div style="font-size: 0.85rem; color: #a80000; display: flex; align-items: center; border-bottom: 1px solid #edebe9; padding-bottom: 0.5rem; background: #fdf3f4;">
+                        <span style="width: 50px; color: #a19f9d;">De:</span>
+                        <span>[Genérico] <a href="/crm_einsurglobal/public/perfil" style="color:#0078d4; text-decoration:underline;">Configura tu correo aquí</a></span>
+                    </div>
+                <?php endif; ?>
+
+                <div style="font-size: 0.85rem; color: #323130; display: flex; align-items: center; border-bottom: 1px solid #edebe9; padding-bottom: 0.5rem;">
+                    <span style="width: 50px; color: #a19f9d;">Para:</span>
+                    <strong id="emailModalContactName"></strong>
+                </div>
+
+                <div style="display: flex; align-items: center; border-bottom: 1px solid #edebe9;">
+                    <span style="width: 50px; color: #a19f9d; font-size: 0.85rem;">Asunto:</span>
+                    <input type="text" id="emailSubject" name="subject" required style="flex-grow: 1; border: none; padding: 0.5rem 0; font-size: 0.95rem; font-family: inherit; color: #323130; outline: none; background: transparent;">
+                </div>
+
+                <!-- Lista de archivos adjuntos (se llena dinámicamente con JS) -->
+                <div id="attachmentList" style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.5rem;"></div>
+
             </div>
-            <div style="display: flex; justify-content: flex-end; gap: 1rem; margin-top: 1.5rem;">
-                <button type="button" onclick="closeEmailModal()" class="btn" style="background: var(--border); color: var(--text-main);">Cancelar</button>
-                <button type="submit" class="btn btn-primary" id="emailSubmitBtn">Enviar Correo</button>
+
+            <!-- Cuerpo del mensaje -->
+            <div style="padding: 0 1.5rem 1.5rem 1.5rem; flex-grow: 1; display: flex; flex-direction: column;">
+                <textarea id="emailBody" name="body" required style="width: 100%; min-height: 250px; border: none; resize: none; font-family: 'Segoe UI', system-ui, sans-serif; font-size: 0.95rem; color: #323130; outline: none; line-height: 1.5;" placeholder="Escribe tu mensaje aquí..."></textarea>
             </div>
         </form>
     </div>
@@ -181,16 +230,36 @@ require __DIR__ . '/../layouts/header.php';
 </div>
 
 <script>
+window.onerror = function(msg, url, line, col, error) {
+    alert("Error de Javascript: " + msg + "\nEn la línea: " + line);
+    return false;
+};
+
 function openEmailModal(contactId, contactName) {
     document.getElementById('emailContactId').value = contactId;
     document.getElementById('emailModalContactName').innerText = contactName;
     document.getElementById('emailSubject').value = '';
     document.getElementById('emailBody').value = '';
+    document.getElementById('emailAttachments').value = '';
+    document.getElementById('attachmentList').innerHTML = '';
     document.getElementById('emailModal').style.display = 'flex';
 }
 
 function closeEmailModal() {
     document.getElementById('emailModal').style.display = 'none';
+}
+
+function updateAttachmentList(input) {
+    const list = document.getElementById('attachmentList');
+    list.innerHTML = '';
+    if (input.files && input.files.length > 0) {
+        Array.from(input.files).forEach(file => {
+            const badge = document.createElement('div');
+            badge.style.cssText = 'background: #f3f2f1; border: 1px solid #edebe9; padding: 0.3rem 0.6rem; border-radius: 4px; font-size: 0.8rem; color: #323130; display: flex; align-items: center; gap: 0.4rem;';
+            badge.innerHTML = `<i class="fas fa-file-alt" style="color: #605e5c;"></i> ${file.name} <span style="color:#a19f9d; font-size:0.7rem;">(${(file.size/1024/1024).toFixed(2)} MB)</span>`;
+            list.appendChild(badge);
+        });
+    }
 }
 
 function openCallLogModal(contactId, contactName) {

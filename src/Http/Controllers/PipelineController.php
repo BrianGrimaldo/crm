@@ -50,7 +50,7 @@ class PipelineController
             exit;
         }
 
-        // Si la posiciÃ³n es 0, calcular la mÃ¡xima + 1
+        // Si la posición es 0, calcular la máxima + 1
         if ($data['position'] === 0) {
             $stages = $this->pipelineModel->allOrdered();
             $maxPos = 0;

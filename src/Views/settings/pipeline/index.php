@@ -9,7 +9,7 @@ require __DIR__ . '/../../layouts/header.php';
         <p>Configura las etapas por las que pasan tus tratos.</p>
     </div>
     <a href="/crm_einsurglobal/public/configuracion/embudo/create" class="btn btn-primary">
-        <i class="fas fa-plus"></i> AÃ±adir Etapa
+        <i class="fas fa-plus"></i> Añadir Etapa
     </a>
 </div>
 
@@ -17,7 +17,7 @@ require __DIR__ . '/../../layouts/header.php';
     <table>
         <thead>
             <tr>
-                <th>PosiciÃ³n</th>
+                <th>Posición</th>
                 <th>Nombre</th>
                 <th>Color</th>
                 <th>Probabilidad</th>

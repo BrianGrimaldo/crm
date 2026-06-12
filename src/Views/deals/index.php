@@ -169,10 +169,10 @@ require __DIR__ . '/../layouts/header.php';
                 <tr>
                     <th>Nombre</th>
                     <th>Encargado</th>
-                    <th>OrganizaciÃ³n</th>
+                    <th>Organización</th>
                     <th>Estado</th>
                     <th>Etapa</th>
-                    <th>RazÃ³n de pÃ©rdida</th>
+                    <th>Razón de pérdida</th>
                     <th>Fuente</th>
                     <th>Valor</th>
                     <th>Probabilidad</th>
@@ -254,7 +254,7 @@ require __DIR__ . '/../layouts/header.php';
                                         </a>
                                     <?php endif; ?>
                                     <?php if (\App\Core\Permission::has('deals', 'delete')): ?>
-                                        <form action="/crm_einsurglobal/public/oportunidades/delete" method="POST" onsubmit="return confirm('Â¿EstÃ¡s seguro de que deseas eliminar esta oportunidad?');" style="display:inline; margin:0;">
+                                        <form action="/crm_einsurglobal/public/oportunidades/delete" method="POST" onsubmit="return confirm('¿Estás seguro de que deseas eliminar esta oportunidad?');" style="display:inline; margin:0;">
                                             <input type="hidden" name="id" value="<?= $deal->id ?>">
                                             <button type="submit" class="action-btn action-delete" title="Eliminar">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>

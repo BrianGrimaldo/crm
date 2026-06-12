@@ -6,7 +6,7 @@ require __DIR__ . '/../layouts/header.php';
 <div class="page-header">
     <div>
         <h1>Editar Contacto</h1>
-        <p>Actualiza la informaciÃ³n de este contacto.</p>
+        <p>Actualiza la información de este contacto.</p>
     </div>
     <a href="/crm_einsurglobal/public/contactos" class="btn" style="background: var(--surface); color: var(--text-main); border: 1px solid var(--border);">
         Volver a la Lista
@@ -30,11 +30,11 @@ require __DIR__ . '/../layouts/header.php';
 
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
             <div class="form-group">
-                <label for="email">Correo ElectrÃ³nico</label>
+                <label for="email">Correo Electrónico</label>
                 <input type="email" id="email" name="email" class="form-control" value="<?= htmlspecialchars($contact->email ?? '') ?>">
             </div>
             <div class="form-group">
-                <label for="phone">TelÃ©fono / Celular</label>
+                <label for="phone">Teléfono / Celular</label>
                 <input type="text" id="phone" name="phone" class="form-control" value="<?= htmlspecialchars($contact->phone ?? '') ?>">
             </div>
         </div>
@@ -49,9 +49,9 @@ require __DIR__ . '/../layouts/header.php';
                 </select>
             </div>
             <div class="form-group">
-                <label for="account_id">OrganizaciÃ³n</label>
+                <label for="account_id">Organización</label>
                 <select id="account_id" name="account_id" class="form-control">
-                    <option value="">-- Seleccionar OrganizaciÃ³n --</option>
+                    <option value="">-- Seleccionar Organización --</option>
                     <?php if(!empty($accounts)): foreach($accounts as $account): ?>
                         <option value="<?= $account->id ?>" <?= ($contact->account_id ?? '') == $account->id ? 'selected' : '' ?>>
                             <?= htmlspecialchars($account->name) ?>
@@ -63,7 +63,7 @@ require __DIR__ . '/../layouts/header.php';
 
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
             <div class="form-group">
-                <label for="job_title">PosiciÃ³n (Cargo)</label>
+                <label for="job_title">Posición (Cargo)</label>
                 <input type="text" id="job_title" name="job_title" class="form-control" value="<?= htmlspecialchars($contact->job_title ?? '') ?>">
             </div>
             <div class="form-group">
@@ -78,7 +78,7 @@ require __DIR__ . '/../layouts/header.php';
                 <input type="url" id="linkedin" name="linkedin" class="form-control" value="<?= htmlspecialchars($contact->linkedin ?? '') ?>" placeholder="https://linkedin.com/in/usuario">
             </div>
             <div class="form-group">
-                <label for="country">PaÃ­s</label>
+                <label for="country">País</label>
                 <input type="text" id="country" name="country" class="form-control" value="<?= htmlspecialchars($contact->country ?? '') ?>">
             </div>
         </div>
@@ -89,7 +89,7 @@ require __DIR__ . '/../layouts/header.php';
                 <input type="text" id="city" name="city" class="form-control" value="<?= htmlspecialchars($contact->city ?? '') ?>">
             </div>
             <div class="form-group">
-                <label for="postal_code">CÃ³digo Postal</label>
+                <label for="postal_code">Código Postal</label>
                 <input type="text" id="postal_code" name="postal_code" class="form-control" value="<?= htmlspecialchars($contact->postal_code ?? '') ?>">
             </div>
         </div>

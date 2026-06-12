@@ -6,7 +6,7 @@ require __DIR__ . '/../layouts/header.php';
 <div class="page-header">
     <div>
         <h1>Editar Oportunidad</h1>
-        <p>Actualiza la informaciÃ³n y el estado de la venta.</p>
+        <p>Actualiza la información y el estado de la venta.</p>
     </div>
     <a href="/crm_einsurglobal/public/oportunidades/pipeline" class="btn" style="background: var(--surface); color: var(--text-main); border: 1px solid var(--border);">
         Volver al Pipeline
@@ -24,9 +24,9 @@ require __DIR__ . '/../layouts/header.php';
 
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
             <div class="form-group">
-                <label for="account_id">OrganizaciÃ³n</label>
+                <label for="account_id">Organización</label>
                 <select id="account_id" name="account_id" class="form-control">
-                    <option value="">-- Seleccionar OrganizaciÃ³n --</option>
+                    <option value="">-- Seleccionar Organización --</option>
                     <?php if(!empty($accounts)): foreach($accounts as $account): ?>
                         <option value="<?= $account->id ?>" <?= $deal->account_id == $account->id ? 'selected' : '' ?>>
                             <?= htmlspecialchars($account->name) ?>
@@ -89,9 +89,9 @@ require __DIR__ . '/../layouts/header.php';
                 <select id="source" name="source" class="form-control">
                     <option value="">-- Seleccionar --</option>
                     <option value="Redes sociales" <?= ($deal->source ?? '') == 'Redes sociales' ? 'selected' : '' ?>>Redes sociales</option>
-                    <option value="CampaÃ±a de correo" <?= ($deal->source ?? '') == 'CampaÃ±a de correo' ? 'selected' : '' ?>>CampaÃ±a de correo</option>
+                    <option value="Campaña de correo" <?= ($deal->source ?? '') == 'Campaña de correo' ? 'selected' : '' ?>>Campaña de correo</option>
                     <option value="Centro de llamadas" <?= ($deal->source ?? '') == 'Centro de llamadas' ? 'selected' : '' ?>>Centro de llamadas</option>
-                    <option value="RecomendaciÃ³n" <?= ($deal->source ?? '') == 'RecomendaciÃ³n' ? 'selected' : '' ?>>RecomendaciÃ³n</option>
+                    <option value="Recomendación" <?= ($deal->source ?? '') == 'Recomendación' ? 'selected' : '' ?>>Recomendación</option>
                     <option value="Web" <?= ($deal->source ?? '') == 'Web' ? 'selected' : '' ?>>Web</option>
                     <option value="Otro" <?= ($deal->source ?? '') == 'Otro' ? 'selected' : '' ?>>Otro</option>
                 </select>
@@ -99,12 +99,12 @@ require __DIR__ . '/../layouts/header.php';
         </div>
 
         <div class="form-group">
-            <label for="lost_reason">RazÃ³n de pÃ©rdida (Si aplica)</label>
+            <label for="lost_reason">Razón de pérdida (Si aplica)</label>
             <input type="text" id="lost_reason" name="lost_reason" class="form-control" value="<?= htmlspecialchars($deal->lost_reason ?? '') ?>">
         </div>
 
         <div class="form-group">
-            <label for="description">Notas / DescripciÃ³n</label>
+            <label for="description">Notas / Descripción</label>
             <textarea id="description" name="description" class="form-control" rows="4"><?= htmlspecialchars((string)$deal->description) ?></textarea>
         </div>
 
