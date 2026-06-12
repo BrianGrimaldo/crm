@@ -29,6 +29,7 @@ $router->post('/contactos', ContactController::class, 'store', [TenantMiddleware
 $router->get('/contactos/edit', ContactController::class, 'edit', [TenantMiddleware::class]);
 $router->post('/contactos/update', ContactController::class, 'update', [TenantMiddleware::class]);
 $router->post('/contactos/delete', ContactController::class, 'delete', [TenantMiddleware::class]);
+$router->post('/api/contactos/send-email', ContactController::class, 'sendEmail', [TenantMiddleware::class]);
 
 use App\Http\Controllers\DealController;
 use App\Http\Controllers\AccountController;
@@ -105,6 +106,15 @@ $router->post('/tareas/complete', TaskController::class, 'complete', [TenantMidd
 // Activities route
 $router->post('/activities', App\Http\Controllers\ActivityController::class, 'store', [TenantMiddleware::class]);
 
+// Support / Tickets routes
+use App\Http\Controllers\TicketController;
+$router->get('/tickets', TicketController::class, 'index', [TenantMiddleware::class]);
+$router->get('/tickets/create', TicketController::class, 'create', [TenantMiddleware::class]);
+$router->post('/tickets', TicketController::class, 'store', [TenantMiddleware::class]);
+$router->get('/tickets/show', TicketController::class, 'show', [TenantMiddleware::class]);
+$router->post('/tickets/comment', TicketController::class, 'addComment', [TenantMiddleware::class]);
+$router->post('/tickets/update-status', TicketController::class, 'updateStatus', [TenantMiddleware::class]);
+
 // Vendedores route (Superadmin only)
 use App\Http\Controllers\VendedoresController;
 $router->get('/vendedores', VendedoresController::class, 'index', [TenantMiddleware::class]);
@@ -116,4 +126,12 @@ $router->get('/empresas/create', TenantController::class, 'create', [TenantMiddl
 $router->post('/empresas', TenantController::class, 'store', [TenantMiddleware::class]);
 $router->get('/empresas/edit', TenantController::class, 'edit', [TenantMiddleware::class]);
 $router->post('/empresas/update', TenantController::class, 'update', [TenantMiddleware::class]);
+
+// Client Portal Routes (Public / Passwordless Access)
+use App\Http\Controllers\PortalController;
+$router->get('/portal', PortalController::class, 'showLogin');
+$router->post('/portal/login', PortalController::class, 'authenticate');
+$router->get('/portal/dashboard', PortalController::class, 'dashboard');
+$router->post('/portal/ticket', PortalController::class, 'createTicket');
+$router->get('/portal/logout', PortalController::class, 'logout');
 

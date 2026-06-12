@@ -180,4 +180,49 @@ class ContactController
         header('Location: /crm_einsurglobal/public/contactos');
         exit;
     }
+
+    /**
+     * Envía un correo electrónico a un contacto vía SMTP (PHPMailer).
+     */
+    public function sendEmail(): void
+    {
+        header('Content-Type: application/json');
+        
+        try {
+            Permission::require('contacts', 'update');
+
+            $contactId = (int)($_POST['contact_id'] ?? 0);
+            $subject = trim($_POST['subject'] ?? '');
+            $body = trim($_POST['body'] ?? '');
+
+            if (!$contactId || !$subject || !$body) {
+                echo json_encode(['success' => false, 'message' => 'El asunto y el cuerpo del mensaje son obligatorios.']);
+                exit;
+            }
+
+            $contact = $this->contactModel->find($contactId);
+            if (!$contact || empty($contact->email)) {
+                echo json_encode(['success' => false, 'message' => 'Contacto no encontrado o sin correo electrónico registrado.']);
+                exit;
+            }
+
+            $emailService = new \App\Core\EmailService();
+            $fullName = $contact->first_name . ' ' . $contact->last_name;
+            
+            $success = $emailService->send($contact->email, $fullName, $subject, $body);
+
+            if ($success) {
+                // Registrar en la bitácora de actividades
+                $activityModel = new \App\Models\Activity();
+                $activityModel->log('contact', $contactId, 'Correo', "Asunto: {$subject}. Mensaje: " . substr(strip_tags($body), 0, 150) . "...");
+                
+                echo json_encode(['success' => true, 'message' => '¡Correo electrónico enviado con éxito!']);
+            } else {
+                echo json_encode(['success' => false, 'message' => 'No se pudo enviar el correo. Por favor verifique la configuración de su servidor SMTP en el archivo .env.']);
+            }
+        } catch (\Exception $e) {
+            echo json_encode(['success' => false, 'message' => 'Ocurrió un error inesperado: ' . $e->getMessage()]);
+        }
+        exit;
+    }
 }

@@ -238,6 +238,13 @@ unset($_SESSION['login_error']);
 
                 <button type="submit" class="btn-submit">Iniciar Sesión</button>
             </form>
+
+            <div style="margin-top: 1.5rem; text-align: center; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 1.2rem;">
+                <a href="/crm_einsurglobal/public/portal" style="color: var(--primary); text-decoration: none; font-size: 0.9rem; font-weight: 600; transition: color 0.3s; display: inline-flex; align-items: center; gap: 0.5rem;" onmouseover="this.style.color='#ffffff'" onmouseout="this.style.color='var(--primary)'">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                    ¿Eres cliente? Accede al Portal de Soporte
+                </a>
+            </div>
         </div>
     </div>
 

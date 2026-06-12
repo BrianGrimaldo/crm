@@ -372,6 +372,12 @@ $currentPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
             </a>
             <?php endif; ?>
 
+            <?php if (\App\Core\Permission::has('tickets', 'view')): ?>
+            <a href="/crm_einsurglobal/public/tickets" class="<?= strpos($currentPath, 'tickets') !== false ? 'active' : '' ?>">
+                <i class="fas fa-headset"></i> Soporte y Tickets
+            </a>
+            <?php endif; ?>
+
             <?php if (\App\Core\Permission::has('reports', 'view')): ?>
             <a href="/crm_einsurglobal/public/reportes" class="<?= strpos($currentPath, 'reportes') !== false ? 'active' : '' ?>">
                 <i class="fas fa-chart-line"></i> Reportes y Excel
