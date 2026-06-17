@@ -176,7 +176,7 @@
     <nav>
         <div class="logo">EINSUR GLOBAL CRM</div>
         <div class="nav-links">
-            <a href="/crm_einsurglobal/public/login" class="btn btn-primary" style="padding: 0.6rem 1.5rem; margin-left: 1rem;">Iniciar Sesión</a>
+            <a href="/login" class="btn btn-primary" style="padding: 0.6rem 1.5rem; margin-left: 1rem;">Iniciar Sesión</a>
         </div>
     </nav>
 
@@ -185,7 +185,7 @@
             <h1>Gestión inteligente para tu empresa</h1>
             <p>El sistema Multi-Tenant de Einsur Global te permite administrar clientes, ventas y operaciones desde una plataforma centralizada y segura.</p>
             <div>
-                <a href="/crm_einsurglobal/public/login" class="btn btn-primary">Acceder al Sistema</a>
+                <a href="/login" class="btn btn-primary">Acceder al Sistema</a>
             </div>
         </div>
     </main>

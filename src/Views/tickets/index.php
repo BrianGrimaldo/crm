@@ -9,7 +9,7 @@ require __DIR__ . '/../layouts/header.php';
         <p>Monitorea y resuelve las solicitudes de soporte técnico de tus clientes.</p>
     </div>
     <?php if (\App\Core\Permission::has('tickets', 'create')): ?>
-    <a href="/crm_einsurglobal/public/tickets/create" class="btn btn-primary">
+    <a href="/tickets/create" class="btn btn-primary">
         <i class="fas fa-plus"></i> Nuevo Ticket
     </a>
     <?php endif; ?>
@@ -87,7 +87,7 @@ require __DIR__ . '/../layouts/header.php';
                     <?php foreach ($tickets as $t): ?>
                         <tr>
                             <td>
-                                <a href="/crm_einsurglobal/public/tickets/show?id=<?= $t->id ?>" style="font-weight: 700; color: var(--primary); text-decoration: none;">
+                                <a href="/tickets/show?id=<?= $t->id ?>" style="font-weight: 700; color: var(--primary); text-decoration: none;">
                                     <?= htmlspecialchars($t->subject) ?>
                                 </a>
                                 <br><small style="color: var(--text-muted);"><?= htmlspecialchars($t->category ?? 'General') ?></small>
@@ -139,7 +139,7 @@ require __DIR__ . '/../layouts/header.php';
                             </td>
                             <td><?= date('d/m/Y H:i', strtotime($t->created_at)) ?></td>
                             <td>
-                                <a href="/crm_einsurglobal/public/tickets/show?id=<?= $t->id ?>" style="color: var(--primary-hover); text-decoration: none; font-weight: 600;">Atender</a>
+                                <a href="/tickets/show?id=<?= $t->id ?>" style="color: var(--primary-hover); text-decoration: none; font-weight: 600;">Atender</a>
                             </td>
                         </tr>
                     <?php endforeach; ?>

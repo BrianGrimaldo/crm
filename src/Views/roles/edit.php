@@ -24,13 +24,13 @@ $actionLabels = [
             <?php endif; ?>
         </p>
     </div>
-    <a href="/crm_einsurglobal/public/roles" class="btn" style="background: var(--surface); color: var(--text-main); border: 1px solid var(--border);">
+    <a href="/roles" class="btn" style="background: var(--surface); color: var(--text-main); border: 1px solid var(--border);">
         Volver a Roles
     </a>
 </div>
 
 <div class="card" style="padding: 2rem;">
-    <form action="/crm_einsurglobal/public/roles/update" method="POST">
+    <form action="/roles/update" method="POST">
         <input type="hidden" name="id" value="<?= $roleData->id ?>">
 
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem;">

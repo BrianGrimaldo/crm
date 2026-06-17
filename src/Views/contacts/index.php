@@ -9,7 +9,7 @@ require __DIR__ . '/../layouts/header.php';
         <p>Gestiona los clientes y prospectos de tu empresa.</p>
     </div>
     <?php if (\App\Core\Permission::has('contacts', 'create')): ?>
-    <a href="/crm_einsurglobal/public/contactos/create" class="btn btn-primary">
+    <a href="/contactos/create" class="btn btn-primary">
         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
         Nuevo Contacto
     </a>
@@ -18,7 +18,7 @@ require __DIR__ . '/../layouts/header.php';
 
 <div class="card">
     <div style="padding: 1.5rem; border-bottom: 1px solid var(--border); display: flex; gap: 1rem;">
-        <form action="/crm_einsurglobal/public/contactos" method="GET" style="display: flex; gap: 1rem; flex: 1;">
+        <form action="/contactos" method="GET" style="display: flex; gap: 1rem; flex: 1;">
             <input type="text" name="search" class="form-control" placeholder="Buscar por nombre o correo..." value="<?= htmlspecialchars($_GET['search'] ?? '') ?>">
             <select name="type" class="form-control" style="max-width: 200px;">
                 <option value="">Todos los Tipos</option>
@@ -28,96 +28,97 @@ require __DIR__ . '/../layouts/header.php';
             </select>
             <button type="submit" class="btn btn-primary">Buscar</button>
             <?php if (!empty($_GET['search']) || !empty($_GET['type'])): ?>
-                <a href="/crm_einsurglobal/public/contactos" class="btn" style="background: var(--border); color: var(--text-main);">Limpiar</a>
+                <a href="/contactos" class="btn" style="background: var(--border); color: var(--text-main);">Limpiar</a>
             <?php endif; ?>
         </form>
     </div>
 
-    <div class="table-responsive">
-        <table style="min-width: 1500px;">
-            <thead>
+    <div class="table-responsive" style="border-radius: 0 0 12px 12px; overflow: hidden;">
+        <table style="width: 100%; min-width: 1000px; border-collapse: separate; border-spacing: 0;">
+            <thead style="background: #f8fafc;">
                 <tr>
-                    <th>Nombre Completo</th>
-                    <th>Tipo</th>
-                    <th>Gerente de Cuenta</th>
-                    <th>Organización</th>
-                    <th>Posición</th>
-                    <th>Email</th>
-                    <th>LinkedIn</th>
-                    <th>Teléfono</th>
-                    <th>País</th>
-                    <th>Ciudad</th>
-                    <th>Código Postal</th>
-                    <th>Acciones</th>
+                    <th style="padding: 1rem 1.5rem; text-align: left; font-size: 0.8rem; color: #64748b; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid #e2e8f0;">Contacto</th>
+                    <th style="padding: 1rem 1.5rem; text-align: left; font-size: 0.8rem; color: #64748b; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid #e2e8f0;">Empresa / Asignación</th>
+                    <th style="padding: 1rem 1.5rem; text-align: left; font-size: 0.8rem; color: #64748b; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid #e2e8f0;">Vías de Contacto</th>
+                    <th style="padding: 1rem 1.5rem; text-align: left; font-size: 0.8rem; color: #64748b; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid #e2e8f0;">Estado</th>
+                    <th style="padding: 1rem 1.5rem; text-align: right; font-size: 0.8rem; color: #64748b; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid #e2e8f0;">Acciones</th>
                 </tr>
             </thead>
             <tbody>
                 <?php if (empty($contacts)): ?>
                     <tr>
-                        <td colspan="12" style="text-align: center; padding: 3rem;">
-                            <p style="color: var(--text-muted);">No se encontraron contactos.</p>
+                        <td colspan="5" style="text-align: center; padding: 4rem 2rem;">
+                            <div style="font-size: 3rem; color: #cbd5e1; margin-bottom: 1rem;"><i class="fas fa-users-slash"></i></div>
+                            <h3 style="color: #475569; font-size: 1.2rem; margin-bottom: 0.5rem;">No se encontraron contactos</h3>
+                            <p style="color: #94a3b8; font-size: 0.95rem;">Intenta ajustando los filtros de búsqueda o agrega un nuevo contacto.</p>
                         </td>
                     </tr>
                 <?php else: ?>
                     <?php foreach ($contacts as $contact): ?>
-                        <tr>
-                            <td>
-                                <strong><?= htmlspecialchars($contact->first_name . ' ' . $contact->last_name) ?></strong>
-                            </td>
-                            <td><?= htmlspecialchars($contact->type ?? 'Prospecto') ?></td>
-                            <td><?= htmlspecialchars($contact->owner_name ?? 'Sin Asignar') ?></td>
-                            <td><?= htmlspecialchars($contact->account_name ?? '-') ?></td>
-                            <td><?= htmlspecialchars($contact->job_title ?? '-') ?></td>
-                            <td>
-                                <?php if (!empty($contact->email)): ?>
-                                    <div style="display: flex; align-items: center; gap: 0.5rem;">
-                                        <span><?= htmlspecialchars($contact->email) ?></span>
-                                        <button onclick='openEmailModal(<?= (int)$contact->id ?>, <?= htmlspecialchars(json_encode(trim($contact->first_name . " " . $contact->last_name)), ENT_QUOTES, "UTF-8") ?>)' class="btn" style="padding: 0.3rem 0.5rem; background: rgba(110, 223, 246, 0.1); color: var(--accent); border-radius: 6px; font-size: 0.8rem;" title="Enviar correo vía SMTP">
-                                            <i class="fas fa-paper-plane"></i>
-                                        </button>
+                        <tr style="transition: background-color 0.2s ease;" onmouseover="this.style.backgroundColor='#f1f5f9'" onmouseout="this.style.backgroundColor='transparent'">
+                            <td style="padding: 1.2rem 1.5rem; border-bottom: 1px solid #f1f5f9;">
+                                <div style="display: flex; align-items: center; gap: 1rem;">
+                                    <div style="width: 42px; height: 42px; border-radius: 50%; background: linear-gradient(135deg, var(--primary) 0%, #8b5cf6 100%); color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.1rem; flex-shrink: 0; box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.2);">
+                                        <?= strtoupper(substr($contact->first_name, 0, 1) . substr($contact->last_name, 0, 1)) ?>
                                     </div>
-                                <?php else: ?>
-                                    -
-                                <?php endif; ?>
-                            </td>
-                            <td style="text-align: center;">
-                                <?php if (!empty($contact->linkedin)): ?>
-                                    <a href="<?= htmlspecialchars($contact->linkedin) ?>" target="_blank" style="color: #0077b5; font-size: 1.25rem;" title="Perfil de LinkedIn">
-                                        <i class="fab fa-linkedin"></i>
-                                    </a>
-                                <?php else: ?>
-                                    -
-                                <?php endif; ?>
-                            </td>
-                            <td>
-                                <?php if (!empty($contact->phone)): ?>
-                                    <div style="display: flex; align-items: center; gap: 0.5rem;">
-                                        <a href="tel:<?= htmlspecialchars($contact->phone) ?>" style="color: var(--text-main); text-decoration: none;" title="Llamar directamente">
-                                            <i class="fas fa-phone-alt" style="color: var(--primary); margin-right: 0.3rem;"></i><?= htmlspecialchars($contact->phone) ?>
-                                        </a>
-                                        <a href="https://wa.me/<?= preg_replace('/[^0-9]/', '', $contact->phone) ?>" target="_blank" style="padding: 0.3rem 0.5rem; background: rgba(37, 211, 102, 0.1); color: #25d366; border-radius: 6px; font-size: 0.8rem; text-decoration: none;" title="Abrir chat de WhatsApp">
-                                            <i class="fab fa-whatsapp"></i>
-                                        </a>
-                                        <button onclick='openCallLogModal(<?= $contact->id ?>, <?= htmlspecialchars(json_encode($contact->first_name . " " . $contact->last_name), ENT_QUOTES, "UTF-8") ?>)' class="btn" style="padding: 0.3rem 0.5rem; background: rgba(245, 158, 11, 0.1); color: #f59e0b; border-radius: 6px; font-size: 0.8rem;" title="Registrar llamada en bitácora">
-                                            <i class="fas fa-phone-slash"></i>
-                                        </button>
+                                    <div>
+                                        <div style="font-weight: 700; color: #1e293b; font-size: 0.95rem; display: flex; align-items: center; gap: 0.5rem;">
+                                            <?= htmlspecialchars($contact->first_name . ' ' . $contact->last_name) ?>
+                                            <?php if (!empty($contact->linkedin)): ?>
+                                                <a href="<?= htmlspecialchars($contact->linkedin) ?>" target="_blank" style="color: #0a66c2; font-size: 0.9rem;" title="Ver LinkedIn"><i class="fab fa-linkedin"></i></a>
+                                            <?php endif; ?>
+                                        </div>
+                                        <div style="font-size: 0.85rem; color: #64748b; margin-top: 0.2rem;"><i class="fas fa-id-badge" style="margin-right: 0.4rem; color: #94a3b8;"></i><?= htmlspecialchars($contact->job_title ?: 'Puesto no especificado') ?></div>
                                     </div>
-                                <?php else: ?>
-                                    -
-                                <?php endif; ?>
+                                </div>
                             </td>
-                            <td><?= htmlspecialchars($contact->country ?? '-') ?></td>
-                            <td><?= htmlspecialchars($contact->city ?? '-') ?></td>
-                            <td><?= htmlspecialchars($contact->postal_code ?? '-') ?></td>
-                            <td>
-                                <div style="display: flex; gap: 0.5rem; align-items: center;">
-                                    <?php if (\App\Core\Permission::has('contacts', 'update')): ?>
-                                        <a href="/crm_einsurglobal/public/contactos/edit?id=<?= $contact->id ?>" style="color: var(--primary-hover); text-decoration: none; font-weight: 600;">Editar</a>
+                            <td style="padding: 1.2rem 1.5rem; border-bottom: 1px solid #f1f5f9;">
+                                <div style="font-weight: 600; color: #334155; font-size: 0.9rem;"><i class="far fa-building" style="margin-right: 0.4rem; color: #94a3b8;"></i><?= htmlspecialchars($contact->account_name ?: 'Independiente') ?></div>
+                                <div style="font-size: 0.8rem; color: #64748b; margin-top: 0.3rem;"><i class="far fa-user-circle" style="margin-right: 0.4rem; color: #94a3b8;"></i>Resp: <span style="font-weight: 500; color: #475569;"><?= htmlspecialchars($contact->owner_name ?: 'Sin Asignar') ?></span></div>
+                            </td>
+                            <td style="padding: 1.2rem 1.5rem; border-bottom: 1px solid #f1f5f9;">
+                                <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                                    <?php if (!empty($contact->email)): ?>
+                                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                            <a href="mailto:<?= htmlspecialchars($contact->email) ?>" style="color: #475569; text-decoration: none; font-size: 0.85rem; display: flex; align-items: center; gap: 0.4rem; font-weight: 500;"><i class="far fa-envelope" style="color: #94a3b8; font-size: 0.9rem;"></i> <?= htmlspecialchars($contact->email) ?></a>
+                                            <button onclick='openEmailModal(<?= (int)$contact->id ?>, <?= htmlspecialchars(json_encode(trim($contact->first_name . " " . $contact->last_name)), ENT_QUOTES, "UTF-8") ?>)' style="padding: 0.2rem 0.5rem; background: #e0f2fe; color: #0284c7; border-radius: 6px; font-size: 0.75rem; border: none; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='#bae6fd'" onmouseout="this.style.background='#e0f2fe'" title="Enviar correo vía CRM"><i class="fas fa-paper-plane"></i></button>
+                                        </div>
+                                    <?php else: ?>
+                                        <span style="color: #cbd5e1; font-size: 0.85rem;"><i class="far fa-envelope" style="margin-right: 0.4rem;"></i>Sin correo</span>
                                     <?php endif; ?>
+                                    
+                                    <?php if (!empty($contact->phone)): ?>
+                                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                            <a href="tel:<?= htmlspecialchars($contact->phone) ?>" style="color: #475569; text-decoration: none; font-size: 0.85rem; display: flex; align-items: center; gap: 0.4rem; font-weight: 500;"><i class="fas fa-phone-alt" style="color: #94a3b8; font-size: 0.9rem;"></i> <?= htmlspecialchars($contact->phone) ?></a>
+                                            <a href="https://wa.me/<?= preg_replace('/[^0-9]/', '', $contact->phone) ?>" target="_blank" style="padding: 0.2rem 0.5rem; background: #dcfce7; color: #16a34a; border-radius: 6px; font-size: 0.85rem; text-decoration: none; transition: all 0.2s;" onmouseover="this.style.background='#bbf7d0'" onmouseout="this.style.background='#dcfce7'" title="Abrir WhatsApp"><i class="fab fa-whatsapp"></i></a>
+                                        </div>
+                                    <?php else: ?>
+                                        <span style="color: #cbd5e1; font-size: 0.85rem;"><i class="fas fa-phone-alt" style="margin-right: 0.4rem;"></i>Sin teléfono</span>
+                                    <?php endif; ?>
+                                </div>
+                            </td>
+                            <td style="padding: 1.2rem 1.5rem; border-bottom: 1px solid #f1f5f9;">
+                                <?php 
+                                $type = $contact->type ?? 'Prospecto';
+                                $badgeBg = $type === 'Cliente' ? '#dcfce7' : ($type === 'Prospecto' ? '#fef3c7' : '#f1f5f9');
+                                $badgeCol = $type === 'Cliente' ? '#166534' : ($type === 'Prospecto' ? '#92400e' : '#475569');
+                                ?>
+                                <span style="display: inline-flex; align-items: center; justify-content: center; padding: 0.35rem 0.85rem; background: <?= $badgeBg ?>; color: <?= $badgeCol ?>; border-radius: 999px; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.03em;">
+                                    <?= htmlspecialchars($type) ?>
+                                </span>
+                            </td>
+                            <td style="padding: 1.2rem 1.5rem; border-bottom: 1px solid #f1f5f9; text-align: right;">
+                                <div style="display: flex; justify-content: flex-end; gap: 0.4rem;">
+                                    <button onclick='openCallLogModal(<?= $contact->id ?>, <?= htmlspecialchars(json_encode($contact->first_name . " " . $contact->last_name), ENT_QUOTES, "UTF-8") ?>)' style="width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; background: #fff; border: 1px solid #e2e8f0; color: #f59e0b; border-radius: 8px; cursor: pointer; transition: all 0.2s; box-shadow: 0 1px 2px rgba(0,0,0,0.05);" onmouseover="this.style.background='#fef3c7'" onmouseout="this.style.background='#fff'" title="Registrar Llamada"><i class="fas fa-phone-volume"></i></button>
+                                    
+                                    <?php if (\App\Core\Permission::has('contacts', 'update')): ?>
+                                        <a href="/contactos/edit?id=<?= $contact->id ?>" style="width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; background: #fff; border: 1px solid #e2e8f0; color: #3b82f6; border-radius: 8px; text-decoration: none; transition: all 0.2s; box-shadow: 0 1px 2px rgba(0,0,0,0.05);" onmouseover="this.style.background='#eff6ff'" onmouseout="this.style.background='#fff'" title="Editar"><i class="fas fa-edit"></i></a>
+                                    <?php endif; ?>
+                                    
                                     <?php if (\App\Core\Permission::has('contacts', 'delete')): ?>
-                                        <form action="/crm_einsurglobal/public/contactos/delete" method="POST" onsubmit="return confirm('¿Está seguro de que deseas eliminar este contacto?');" style="display:inline; margin:0;">
+                                        <form action="/contactos/delete" method="POST" onsubmit="return confirm('¿Está seguro de que deseas eliminar a <?= htmlspecialchars($contact->first_name) ?>? Esta acción no se puede deshacer.');" style="display: inline; margin: 0;">
                                             <input type="hidden" name="id" value="<?= $contact->id ?>">
-                                            <button type="submit" style="background: none; border: none; color: var(--error); cursor: pointer; font-weight: 600; font-family: inherit; font-size: inherit;">Eliminar</button>
+                                            <button type="submit" style="width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; background: #fff; border: 1px solid #e2e8f0; color: #ef4444; border-radius: 8px; cursor: pointer; transition: all 0.2s; box-shadow: 0 1px 2px rgba(0,0,0,0.05);" onmouseover="this.style.background='#fef2f2'" onmouseout="this.style.background='#fff'" title="Eliminar"><i class="fas fa-trash-alt"></i></button>
                                         </form>
                                     <?php endif; ?>
                                 </div>
@@ -179,7 +180,7 @@ require __DIR__ . '/../layouts/header.php';
                 <?php else: ?>
                     <div style="font-size: 0.85rem; color: #a80000; display: flex; align-items: center; border-bottom: 1px solid #edebe9; padding-bottom: 0.5rem; background: #fdf3f4;">
                         <span style="width: 50px; color: #a19f9d;">De:</span>
-                        <span>[Genérico] <a href="/crm_einsurglobal/public/perfil" style="color:#0078d4; text-decoration:underline;">Configura tu correo aquí</a></span>
+                        <span>[Genérico] <a href="/perfil" style="color:#0078d4; text-decoration:underline;">Configura tu correo aquí</a></span>
                     </div>
                 <?php endif; ?>
 
@@ -213,7 +214,7 @@ require __DIR__ . '/../layouts/header.php';
             <h3 style="font-size: 1.25rem; font-weight: 800; color: var(--primary); margin: 0;"><i class="fas fa-phone-alt" style="color: #f59e0b; margin-right: 0.5rem;"></i> Registrar Llamada a <span id="callModalContactName"></span></h3>
             <button onclick="closeCallLogModal()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text-muted);">&times;</button>
         </div>
-        <form action="/crm_einsurglobal/public/activities" method="POST">
+        <form action="/activities" method="POST">
             <input type="hidden" id="callContactId" name="entity_id">
             <input type="hidden" name="entity_type" value="contact">
             <input type="hidden" name="type" value="Llamada">
@@ -282,7 +283,7 @@ function sendEmailAjax(e) {
 
     const formData = new FormData(document.getElementById('emailForm'));
 
-    fetch('/crm_einsurglobal/public/api/contactos/send-email', {
+    fetch('/api/contactos/send-email', {
         method: 'POST',
         body: formData
     })

@@ -8,13 +8,13 @@ require __DIR__ . '/../layouts/header.php';
         <h1>Editar Empresa: <?= htmlspecialchars($empresa->name) ?></h1>
         <p>Actualiza la información de la compañía y su logotipo.</p>
     </div>
-    <a href="/crm_einsurglobal/public/empresas" class="btn" style="background: var(--surface); color: var(--text-main); border: 1px solid var(--border);">
+    <a href="/empresas" class="btn" style="background: var(--surface); color: var(--text-main); border: 1px solid var(--border);">
         Volver
     </a>
 </div>
 
 <div class="card" style="max-width: 800px; padding: 2rem;">
-    <form action="/crm_einsurglobal/public/empresas/update" method="POST" enctype="multipart/form-data">
+    <form action="/empresas/update" method="POST" enctype="multipart/form-data">
         <input type="hidden" name="id" value="<?= $empresa->id ?>">
         
         <h3 style="font-size: 1.2rem; color: var(--text-main); margin-bottom: 1.5rem; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem;">Datos de la Empresa</h3>

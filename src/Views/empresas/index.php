@@ -8,7 +8,7 @@ require __DIR__ . '/../layouts/header.php';
         <h1>Empresas Registradas</h1>
         <p>Gestiona todas las empresas (tenants) del sistema.</p>
     </div>
-    <a href="/crm_einsurglobal/public/empresas/create" class="btn btn-primary">
+    <a href="/empresas/create" class="btn btn-primary">
         <i class="fas fa-plus"></i> Nueva Empresa
     </a>
 </div>
@@ -54,7 +54,7 @@ require __DIR__ . '/../layouts/header.php';
                     <?php endif; ?>
                 </td>
                 <td>
-                    <a href="/crm_einsurglobal/public/empresas/edit?id=<?= $empresa->id ?>" class="btn" style="padding: 0.5rem 1rem; background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1;">
+                    <a href="/empresas/edit?id=<?= $empresa->id ?>" class="btn" style="padding: 0.5rem 1rem; background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1;">
                         <i class="fas fa-edit"></i> Editar
                     </a>
                 </td>

@@ -51,7 +51,7 @@ class RoleController
 
         if (empty($name)) {
             $_SESSION['flash_error'] = "El nombre del rol es obligatorio.";
-            header('Location: /crm_einsurglobal/public/roles/create');
+            header('Location: /roles/create');
             exit;
         }
 
@@ -69,7 +69,7 @@ class RoleController
         }
 
         $_SESSION['flash_success'] = "Rol '{$name}' creado exitosamente.";
-        header('Location: /crm_einsurglobal/public/roles');
+        header('Location: /roles');
         exit;
     }
 
@@ -85,7 +85,7 @@ class RoleController
 
         if (!$roleData) {
             $_SESSION['flash_error'] = "Rol no encontrado.";
-            header('Location: /crm_einsurglobal/public/roles');
+            header('Location: /roles');
             exit;
         }
 
@@ -107,7 +107,7 @@ class RoleController
 
         if (!$roleData) {
             $_SESSION['flash_error'] = "Rol no encontrado.";
-            header('Location: /crm_einsurglobal/public/roles');
+            header('Location: /roles');
             exit;
         }
 
@@ -116,7 +116,7 @@ class RoleController
 
         if (empty($name)) {
             $_SESSION['flash_error'] = "El nombre del rol es obligatorio.";
-            header("Location: /crm_einsurglobal/public/roles/edit?id={$id}");
+            header("Location: /roles/edit?id={$id}");
             exit;
         }
 
@@ -132,7 +132,7 @@ class RoleController
         $this->roleModel->syncPermissions($id, array_map('intval', $permissionIds));
 
         $_SESSION['flash_success'] = "Rol '{$name}' actualizado exitosamente.";
-        header('Location: /crm_einsurglobal/public/roles');
+        header('Location: /roles');
         exit;
     }
 
@@ -152,7 +152,7 @@ class RoleController
             $_SESSION['flash_error'] = "No se pudo eliminar el rol. Los roles del sistema no pueden eliminarse.";
         }
 
-        header('Location: /crm_einsurglobal/public/roles');
+        header('Location: /roles');
         exit;
     }
 }

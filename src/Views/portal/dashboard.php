@@ -276,7 +276,7 @@
             <span class="user-name"><?= htmlspecialchars($_SESSION['portal_contact_name']) ?></span>
             <span class="tenant-name"><?= htmlspecialchars($_SESSION['portal_tenant_name']) ?></span>
         </div>
-        <a href="/crm_einsurglobal/public/portal/logout" class="btn-logout">
+        <a href="/portal/logout" class="btn-logout">
             <i class="fas fa-sign-out-alt"></i>
             <span>Cerrar Sesión</span>
         </a>
@@ -394,7 +394,7 @@
                 <h2 class="section-title"><i class="fas fa-plus-circle"></i> Reportar un Problema</h2>
                 <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1.25rem;">Abre una nueva solicitud de soporte y uno de nuestros agentes la atenderá de inmediato.</p>
                 
-                <form action="/crm_einsurglobal/public/portal/ticket" method="POST">
+                <form action="/portal/ticket" method="POST">
                     <div class="form-group">
                         <label for="subject" class="form-label">Asunto / Resumen del problema *</label>
                         <input type="text" id="subject" name="subject" class="form-control" placeholder="Ej. Falla en cargador de laptop" required>

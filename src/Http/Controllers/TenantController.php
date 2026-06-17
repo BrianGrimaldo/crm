@@ -56,22 +56,22 @@ class TenantController
             $targetPath = $uploadDir . $fileName;
             
             if (move_uploaded_file($_FILES['logo']['tmp_name'], $targetPath)) {
-                $data['logo_url'] = '/crm_einsurglobal/public/img/logos/' . $fileName;
+                $data['logo_url'] = '/img/logos/' . $fileName;
             }
         }
 
         if (empty($data['name'])) {
             $_SESSION['flash_error'] = "El nombre de la empresa es requerido.";
-            header('Location: /crm_einsurglobal/public/empresas/create');
+            header('Location: /empresas/create');
             exit;
         }
 
         if ($this->tenantModel->create($data) > 0) {
             $_SESSION['flash_success'] = "Empresa creada exitosamente.";
-            header('Location: /crm_einsurglobal/public/empresas');
+            header('Location: /empresas');
         } else {
             $_SESSION['flash_error'] = "Error al crear la empresa.";
-            header('Location: /crm_einsurglobal/public/empresas/create');
+            header('Location: /empresas/create');
         }
         exit;
     }
@@ -82,7 +82,7 @@ class TenantController
         $empresa = $this->tenantModel->findById($id);
 
         if (!$empresa) {
-            header('Location: /crm_einsurglobal/public/empresas');
+            header('Location: /empresas');
             exit;
         }
 
@@ -113,13 +113,13 @@ class TenantController
             $targetPath = $uploadDir . $fileName;
             
             if (move_uploaded_file($_FILES['logo']['tmp_name'], $targetPath)) {
-                $data['logo_url'] = '/crm_einsurglobal/public/img/logos/' . $fileName;
+                $data['logo_url'] = '/img/logos/' . $fileName;
             }
         }
 
         if (empty($data['name'])) {
             $_SESSION['flash_error'] = "El nombre de la empresa es requerido.";
-            header("Location: /crm_einsurglobal/public/empresas/edit?id=$id");
+            header("Location: /empresas/edit?id=$id");
             exit;
         }
 
@@ -134,10 +134,10 @@ class TenantController
                 }
             }
             
-            header('Location: /crm_einsurglobal/public/empresas');
+            header('Location: /empresas');
         } else {
             $_SESSION['flash_error'] = "Error al actualizar la empresa.";
-            header("Location: /crm_einsurglobal/public/empresas/edit?id=$id");
+            header("Location: /empresas/edit?id=$id");
         }
         exit;
     }

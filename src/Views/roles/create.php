@@ -20,13 +20,13 @@ $actionLabels = [
         <h1>Crear Nuevo Rol</h1>
         <p>Define un rol y asigna permisos por módulo.</p>
     </div>
-    <a href="/crm_einsurglobal/public/roles" class="btn" style="background: var(--surface); color: var(--text-main); border: 1px solid var(--border);">
+    <a href="/roles" class="btn" style="background: var(--surface); color: var(--text-main); border: 1px solid var(--border);">
         Volver a Roles
     </a>
 </div>
 
 <div class="card" style="padding: 2rem;">
-    <form action="/crm_einsurglobal/public/roles" method="POST">
+    <form action="/roles" method="POST">
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem;">
             <div class="form-group">
                 <label for="name">Nombre del Rol *</label>

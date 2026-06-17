@@ -8,13 +8,13 @@ require __DIR__ . '/../layouts/header.php';
         <h1>Registrar Organización</h1>
         <p>Añade una nueva empresa o cliente a tu portafolio.</p>
     </div>
-    <a href="/crm_einsurglobal/public/organizaciones" class="btn" style="background: var(--surface); color: var(--text-main); border: 1px solid var(--border);">
+    <a href="/organizaciones" class="btn" style="background: var(--surface); color: var(--text-main); border: 1px solid var(--border);">
         Volver a la Lista
     </a>
 </div>
 
 <div class="card" style="max-width: 800px; padding: 2rem;">
-    <form action="/crm_einsurglobal/public/organizaciones" method="POST">
+    <form action="/organizaciones" method="POST">
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
             <div class="form-group">
                 <label for="name">Nombre de Organización *</label>

@@ -81,10 +81,10 @@ class ActivityController
     private function redirectBack(string $entityType, int $entityId): void
     {
         $url = match ($entityType) {
-            'deal' => "/crm_einsurglobal/public/deals/edit?id={$entityId}",
-            'contact' => "/crm_einsurglobal/public/contacts/edit?id={$entityId}",
-            'account' => "/crm_einsurglobal/public/accounts/edit?id={$entityId}",
-            default => '/crm_einsurglobal/public/dashboard'
+            'deal' => "/deals/edit?id={$entityId}",
+            'contact' => "/contacts/edit?id={$entityId}",
+            'account' => "/accounts/edit?id={$entityId}",
+            default => '/dashboard'
         };
 
         header("Location: {$url}");

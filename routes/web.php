@@ -31,6 +31,13 @@ $router->post('/contactos/update', ContactController::class, 'update', [TenantMi
 $router->post('/contactos/delete', ContactController::class, 'delete', [TenantMiddleware::class]);
 $router->post('/api/contactos/send-email', ContactController::class, 'sendEmail', [TenantMiddleware::class]);
 
+// Import routes
+use App\Http\Controllers\ImportController;
+$router->get('/importar',            ImportController::class, 'index',    [TenantMiddleware::class]);
+$router->post('/importar/preview',   ImportController::class, 'preview',  [TenantMiddleware::class]);
+$router->post('/importar/commit',    ImportController::class, 'commit',   [TenantMiddleware::class]);
+$router->get('/importar/plantilla',  ImportController::class, 'template', [TenantMiddleware::class]);
+
 use App\Http\Controllers\DealController;
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\ProfileController;
@@ -92,6 +99,8 @@ $router->post('/productos/delete', ProductController::class, 'delete', [TenantMi
 use App\Http\Controllers\ReportController;
 $router->get('/reportes', ReportController::class, 'index', [TenantMiddleware::class]);
 $router->get('/reportes/exportar-ventas', ReportController::class, 'exportDeals', [TenantMiddleware::class]);
+$router->get('/reportes/exportar-timeline', ReportController::class, 'exportTimeline', [TenantMiddleware::class]);
+$router->get('/analiticas', ReportController::class, 'analytics', [TenantMiddleware::class]);
 
 // Tasks / Activities routes
 use App\Http\Controllers\TaskController;

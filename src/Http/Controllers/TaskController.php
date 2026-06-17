@@ -75,16 +75,16 @@ class TaskController
 
         if (empty($data['title'])) {
             $_SESSION['flash_error'] = "El título de la tarea es requerido.";
-            header('Location: /crm_einsurglobal/public/tareas/create');
+            header('Location: /tareas/create');
             exit;
         }
 
         if ($this->taskModel->create($data)) {
             $_SESSION['flash_success'] = "Tarea creada exitosamente.";
-            header('Location: /crm_einsurglobal/public/tareas');
+            header('Location: /tareas');
         } else {
             $_SESSION['flash_error'] = "Error al crear la tarea.";
-            header('Location: /crm_einsurglobal/public/tareas/create');
+            header('Location: /tareas/create');
         }
         exit;
     }
@@ -98,7 +98,7 @@ class TaskController
 
         if (!$task) {
             $_SESSION['flash_error'] = "Tarea no encontrada.";
-            header('Location: /crm_einsurglobal/public/tareas');
+            header('Location: /tareas');
             exit;
         }
 
@@ -138,16 +138,16 @@ class TaskController
 
         if (empty($data['title'])) {
             $_SESSION['flash_error'] = "El título de la tarea es requerido.";
-            header("Location: /crm_einsurglobal/public/tareas/edit?id=$id");
+            header("Location: /tareas/edit?id=$id");
             exit;
         }
 
         if ($this->taskModel->update($id, $data)) {
             $_SESSION['flash_success'] = "Tarea actualizada exitosamente.";
-            header('Location: /crm_einsurglobal/public/tareas');
+            header('Location: /tareas');
         } else {
             $_SESSION['flash_error'] = "Error al actualizar la tarea.";
-            header("Location: /crm_einsurglobal/public/tareas/edit?id=$id");
+            header("Location: /tareas/edit?id=$id");
         }
         exit;
     }
@@ -162,7 +162,7 @@ class TaskController
         } else {
             $_SESSION['flash_error'] = "Error al eliminar la tarea.";
         }
-        header('Location: /crm_einsurglobal/public/tareas');
+        header('Location: /tareas');
         exit;
     }
     
@@ -171,7 +171,7 @@ class TaskController
         Permission::require('activities', 'update');
         
         $id = (int)($_POST['id'] ?? 0);
-        $redirect = $_POST['redirect'] ?? '/crm_einsurglobal/public/tareas';
+        $redirect = $_POST['redirect'] ?? '/tareas';
         
         if ($this->taskModel->updateStatus($id, 'completed')) {
             $_SESSION['flash_success'] = "¡Tarea marcada como completada!";

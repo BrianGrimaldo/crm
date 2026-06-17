@@ -69,7 +69,7 @@ class UserController
 
         if (empty($data['first_name']) || empty($data['email']) || empty($data['password']) || !$roleId) {
             $_SESSION['flash_error'] = "Todos los campos obligatorios deben estar llenos.";
-            header('Location: /crm_einsurglobal/public/usuarios/create');
+            header('Location: /usuarios/create');
             exit;
         }
 
@@ -94,10 +94,10 @@ class UserController
             }
 
             $_SESSION['flash_success'] = "Usuario {$data['first_name']} creado exitosamente.";
-            header('Location: /crm_einsurglobal/public/usuarios');
+            header('Location: /usuarios');
         } else {
             $_SESSION['flash_error'] = "Hubo un problema al crear el usuario. Es posible que el correo ya esté en uso.";
-            header('Location: /crm_einsurglobal/public/usuarios/create');
+            header('Location: /usuarios/create');
         }
         exit;
     }

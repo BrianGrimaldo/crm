@@ -171,24 +171,26 @@ $avgDealSize    = $openDealsCount > 0 ? round($totalPipeline / $openDealsCount) 
 <!-- ═══════════════ ROW 1: Revenue + Donut + Funnel ═══════════════ -->
 <div class="dash-grid g-3">
     <!-- Tendencia de Ingresos -->
-    <div class="panel">
+    <div class="panel" style="cursor:pointer;" onclick="window.location.href='/analiticas'">
         <div class="panel-head">
             <div class="panel-title"><div class="panel-title-icon" style="background:rgba(16,185,129,.08);color:#10b981;"><i class="fas fa-chart-line"></i></div> Tendencia de Ingresos</div>
-            <span class="panel-badge" style="background:rgba(99,102,241,.08);color:#6366f1;">6 meses</span>
+            <a href="/analiticas" style="font-size:0.75rem;color:#6366f1;font-weight:700;text-decoration:none;display:flex;align-items:center;gap:0.3rem;">Ver completo <i class="fas fa-arrow-right" style="font-size:0.65rem;"></i></a>
         </div>
         <div style="position:relative;height:260px;"><canvas id="revenueChart"></canvas></div>
     </div>
     <!-- Negocios por Etapa -->
-    <div class="panel">
+    <div class="panel" style="cursor:pointer;" onclick="window.location.href='/analiticas'">
         <div class="panel-head">
             <div class="panel-title"><div class="panel-title-icon" style="background:rgba(168,85,247,.08);color:#a855f7;"><i class="fas fa-chart-pie"></i></div> Negocios por Etapa</div>
+            <a href="/analiticas" style="font-size:0.75rem;color:#6366f1;font-weight:700;text-decoration:none;display:flex;align-items:center;gap:0.3rem;">Ver completo <i class="fas fa-arrow-right" style="font-size:0.65rem;"></i></a>
         </div>
         <div style="position:relative;height:260px;"><canvas id="stageChart"></canvas></div>
     </div>
     <!-- Embudo de Ventas -->
-    <div class="panel">
+    <div class="panel" style="cursor:pointer;" onclick="window.location.href='/analiticas'">
         <div class="panel-head">
             <div class="panel-title"><div class="panel-title-icon" style="background:rgba(245,158,11,.08);color:#f59e0b;"><i class="fas fa-hourglass-half"></i></div> Embudo de Ventas</div>
+            <a href="/analiticas" style="font-size:0.75rem;color:#6366f1;font-weight:700;text-decoration:none;display:flex;align-items:center;gap:0.3rem;">Ver completo <i class="fas fa-arrow-right" style="font-size:0.65rem;"></i></a>
         </div>
         <?php if (!empty($dealsSummary)):
             $maxCount = max(array_map(fn($s) => (int)$s->deal_count, $dealsSummary)) ?: 1;
@@ -212,29 +214,17 @@ $avgDealSize    = $openDealsCount > 0 ? round($totalPipeline / $openDealsCount) 
     </div>
 </div>
 
-<!-- ═══════════════ ROW 2: Equipos (solo si hay datos) ═══════════════ -->
-<?php if (!empty($chart_tipos) || !empty($chart_estados)): ?>
-<div class="dash-grid <?= (!empty($chart_tipos) && !empty($chart_estados)) ? 'g-2' : '' ?>">
-    <?php if (!empty($chart_tipos)): ?>
-    <div class="panel">
-        <div class="panel-head">
-            <div class="panel-title"><div class="panel-title-icon" style="background:rgba(0,45,98,.08);color:#002D62;"><i class="fas fa-laptop"></i></div> Tipos de Equipo</div>
-        </div>
-        <div style="position:relative;height:240px;"><canvas id="chartTipos"></canvas></div>
-    </div>
-    <?php endif; ?>
-    <?php if (!empty($chart_estados)): ?>
-    <div class="panel">
-        <div class="panel-head">
-            <div class="panel-title"><div class="panel-title-icon" style="background:rgba(25,135,84,.08);color:#198754;"><i class="fas fa-box"></i></div> Estado Inventario</div>
-        </div>
-        <div style="position:relative;height:240px;"><canvas id="chartEstados"></canvas></div>
-    </div>
-    <?php endif; ?>
-</div>
-<?php endif; ?>
+<!-- ROW 2 removed: no inventory charts -->
 
-<!-- ═══════════════ ROW 3: Top Deals + Sellers + Activity ═══════════════ -->
+<!-- ═══════════════ ROW 3: Top Deals + Sellers + Activity (solo admin/gerente) + Tareas ═══════════════ -->
+<?php
+    $dashRole = strtolower(str_replace('-', '', $_SESSION['user_role'] ?? ''));
+    $isManager = in_array($dashRole, ['superadmin', 'admin', 'salesmgr', 'gerente']) 
+                 || !empty($_SESSION['is_superadmin']) 
+                 || !empty($_SESSION['is_owner']);
+?>
+
+<?php if ($isManager): ?>
 <div class="dash-grid g-3">
     <!-- Top Deals -->
     <div class="panel">
@@ -319,12 +309,18 @@ $avgDealSize    = $openDealsCount > 0 ? round($totalPipeline / $openDealsCount) 
             <?php endif; ?>
         </div>
     </div>
+<?php endif; ?>
     
-    <!-- ═══════════════ Tareas de Hoy ═══════════════ -->
+    <!-- ═══════════════ Tareas de Hoy (visible para todos) ═══════════════ -->
+<?php if ($isManager): ?>
     <div class="panel">
+<?php else: ?>
+    <div class="dash-grid" style="grid-template-columns: 1fr;">
+    <div class="panel">
+<?php endif; ?>
         <div class="panel-head">
             <div class="panel-title"><div class="panel-title-icon" style="background:rgba(59,130,246,.08);color:#3b82f6;"><i class="fas fa-check-square"></i></div> Mis Tareas de Hoy</div>
-            <a href="/crm_einsurglobal/public/tareas" style="font-size:0.8rem;color:#6366f1;font-weight:600;text-decoration:none;">Ver bitácora <i class="fas fa-arrow-right"></i></a>
+            <a href="/tareas" style="font-size:0.8rem;color:#6366f1;font-weight:600;text-decoration:none;">Ver bitácora <i class="fas fa-arrow-right"></i></a>
         </div>
         <div class="activity-list">
             <?php if (!empty($pendingTasks)): ?>
@@ -351,9 +347,9 @@ $avgDealSize    = $openDealsCount > 0 ? round($totalPipeline / $openDealsCount) 
                                     &bull; <strong style="color:#ef4444;"><?= date('h:i A', strtotime($task->due_date)) ?></strong>
                                 </div>
                             </div>
-                            <form action="/crm_einsurglobal/public/tareas/complete" method="POST">
+                            <form action="/tareas/complete" method="POST">
                                 <input type="hidden" name="id" value="<?= $task->id ?>">
-                                <input type="hidden" name="redirect" value="/crm_einsurglobal/public/dashboard">
+                                <input type="hidden" name="redirect" value="/dashboard">
                                 <button type="submit" class="btn" style="background: #f1f5f9; padding: 0.3rem 0.6rem; color: #166534;" title="Completar">
                                     <i class="fas fa-check"></i>
                                 </button>
@@ -369,7 +365,11 @@ $avgDealSize    = $openDealsCount > 0 ? round($totalPipeline / $openDealsCount) 
             <?php endif; ?>
         </div>
     </div>
+<?php if ($isManager): ?>
 </div>
+<?php else: ?>
+</div>
+<?php endif; ?>
 
 <!-- ═══════════════ CHART.JS ═══════════════ -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
@@ -438,51 +438,7 @@ new Chart(sCtx,{
     }
 });
 
-// ── Equipment: Types (Donut) ───────────────
-<?php if (!empty($chart_tipos)): ?>
-const tCtx = document.getElementById('chartTipos').getContext('2d');
-new Chart(tCtx,{
-    type:'doughnut',
-    data:{
-        labels:[<?php foreach($chart_tipos as $c) echo "'".htmlspecialchars($c['tipo_equipo'])."',"; ?>],
-        datasets:[{
-            data:[<?php foreach($chart_tipos as $c) echo $c['cantidad'].","; ?>],
-            backgroundColor:['#002D62','#0aa2c0','#198754','#ffc107','#dc3545','#6f42c1','#fd7e14','#20c997','#6c757d','#0dcaf0'],
-            borderWidth:2, borderColor:'#fff', hoverOffset:5
-        }]
-    },
-    options:{
-        responsive:true, maintainAspectRatio:false, cutout:'62%',
-        plugins:{
-            legend:{position:'right',labels:{color:textColor,padding:10,font:{size:10,weight:'600'},boxWidth:10,usePointStyle:true,pointStyle:'circle'}},
-            tooltip:{callbacks:{label:ctx=>` ${ctx.label}: ${ctx.parsed}`}}
-        }
-    }
-});
-<?php endif; ?>
-
-// ── Equipment: States (Pie) ────────────────
-<?php if (!empty($chart_estados)): ?>
-const eCtx = document.getElementById('chartEstados').getContext('2d');
-new Chart(eCtx,{
-    type:'pie',
-    data:{
-        labels:[<?php foreach($chart_estados as $c) echo "'".htmlspecialchars($c['estado'])."',"; ?>],
-        datasets:[{
-            data:[<?php foreach($chart_estados as $c) echo $c['cantidad'].","; ?>],
-            backgroundColor:['#002D62','#dc3545','#198754','#343a40','#ffc107'],
-            borderWidth:2, borderColor:'#fff', hoverOffset:5
-        }]
-    },
-    options:{
-        responsive:true, maintainAspectRatio:false,
-        plugins:{
-            legend:{position:'right',labels:{color:textColor,padding:10,font:{size:10,weight:'600'},boxWidth:10,usePointStyle:true,pointStyle:'circle'}},
-            tooltip:{callbacks:{label:ctx=>` ${ctx.label}: ${ctx.parsed}`}}
-        }
-    }
-});
-<?php endif; ?>
+// Inventory charts removed
 </script>
 
 <?php require __DIR__ . '/../layouts/footer.php'; ?>

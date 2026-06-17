@@ -44,16 +44,16 @@ class ProductController
 
         if (empty($data['name'])) {
             $_SESSION['flash_error'] = "El nombre del producto/equipo es requerido.";
-            header('Location: /crm_einsurglobal/public/productos/create');
+            header('Location: /productos/create');
             exit;
         }
 
         if ($this->productModel->create($data)) {
             $_SESSION['flash_success'] = "Producto creado exitosamente.";
-            header('Location: /crm_einsurglobal/public/productos');
+            header('Location: /productos');
         } else {
             $_SESSION['flash_error'] = "Error al crear el producto.";
-            header('Location: /crm_einsurglobal/public/productos/create');
+            header('Location: /productos/create');
         }
         exit;
     }
@@ -67,7 +67,7 @@ class ProductController
 
         if (!$product) {
             $_SESSION['flash_error'] = "Producto no encontrado.";
-            header('Location: /crm_einsurglobal/public/productos');
+            header('Location: /productos');
             exit;
         }
 
@@ -90,16 +90,16 @@ class ProductController
 
         if (empty($data['name'])) {
             $_SESSION['flash_error'] = "El nombre del producto es requerido.";
-            header("Location: /crm_einsurglobal/public/productos/edit?id=$id");
+            header("Location: /productos/edit?id=$id");
             exit;
         }
 
         if ($this->productModel->update($id, $data)) {
             $_SESSION['flash_success'] = "Producto actualizado exitosamente.";
-            header('Location: /crm_einsurglobal/public/productos');
+            header('Location: /productos');
         } else {
             $_SESSION['flash_error'] = "Error al actualizar el producto.";
-            header("Location: /crm_einsurglobal/public/productos/edit?id=$id");
+            header("Location: /productos/edit?id=$id");
         }
         exit;
     }
@@ -114,7 +114,7 @@ class ProductController
         } else {
             $_SESSION['flash_error'] = "Error al eliminar el producto.";
         }
-        header('Location: /crm_einsurglobal/public/productos');
+        header('Location: /productos');
         exit;
     }
 }

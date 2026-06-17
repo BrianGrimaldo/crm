@@ -8,13 +8,13 @@ require __DIR__ . '/../layouts/header.php';
         <h1>Crear Oportunidad de Venta</h1>
         <p>Añade un nuevo prospecto o trato a tu embudo.</p>
     </div>
-    <a href="/crm_einsurglobal/public/oportunidades/pipeline" class="btn" style="background: var(--surface); color: var(--text-main); border: 1px solid var(--border);">
+    <a href="/oportunidades/pipeline" class="btn" style="background: var(--surface); color: var(--text-main); border: 1px solid var(--border);">
         Volver al Pipeline
     </a>
 </div>
 
 <div class="card" style="max-width: 800px; padding: 2rem;">
-    <form action="/crm_einsurglobal/public/oportunidades" method="POST">
+    <form action="/oportunidades" method="POST">
         <div class="form-group">
             <label for="name">Nombre de la Oportunidad *</label>
             <input type="text" id="name" name="name" class="form-control" placeholder="Ej. Venta de licencias anuales" required>
@@ -42,20 +42,12 @@ require __DIR__ . '/../layouts/header.php';
         </div>
 
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
-            <div class="form-group">
+            <div class="form-group" style="grid-column: 1 / -1;">
                 <label for="stage_id">Etapa Inicial *</label>
                 <select id="stage_id" name="stage_id" class="form-control" required>
                     <?php foreach ($stages as $stage): ?>
                         <option value="<?= $stage->id ?>"><?= htmlspecialchars($stage->name) ?></option>
                     <?php endforeach; ?>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="status">Estado</label>
-                <select id="status" name="status" class="form-control">
-                    <option value="Abierto">Abierto</option>
-                    <option value="Ganado">Ganado</option>
-                    <option value="Perdido">Perdido</option>
                 </select>
             </div>
         </div>

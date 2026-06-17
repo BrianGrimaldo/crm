@@ -8,13 +8,13 @@ require __DIR__ . '/../layouts/header.php';
         <h1>Invitar Nuevo Usuario</h1>
         <p>Añade un nuevo miembro a tu equipo y asígnale un rol.</p>
     </div>
-    <a href="/crm_einsurglobal/public/usuarios" class="btn" style="background: var(--surface); color: var(--text-main); border: 1px solid var(--border);">
+    <a href="/usuarios" class="btn" style="background: var(--surface); color: var(--text-main); border: 1px solid var(--border);">
         Volver al Directorio
     </a>
 </div>
 
 <div class="card" style="max-width: 800px; padding: 2rem;">
-    <form action="/crm_einsurglobal/public/usuarios" method="POST">
+    <form action="/usuarios" method="POST">
         <h3 style="font-size: 1.2rem; color: var(--text-main); margin-bottom: 1.5rem; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem;">Información del Usuario</h3>
         
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">

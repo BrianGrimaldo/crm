@@ -248,7 +248,7 @@
             </div>
         <?php endif; ?>
 
-        <form action="/crm_einsurglobal/public/portal/login" method="POST">
+        <form action="/portal/login" method="POST">
             <div class="form-group">
                 <label for="email" class="form-label">Correo Registrado</label>
                 <div class="input-wrapper">
@@ -263,7 +263,7 @@
             </button>
         </form>
 
-        <a href="/crm_einsurglobal/public/login" class="back-to-crm">
+        <a href="/login" class="back-to-crm">
             <i class="fas fa-arrow-left"></i> Regresar al login del Personal
         </a>
     </div>

@@ -79,7 +79,7 @@ class ContactController
 
         if (empty($data['first_name'])) {
             $_SESSION['flash_error'] = "El nombre es obligatorio.";
-            header('Location: /crm_einsurglobal/public/contactos/create');
+            header('Location: /contactos/create');
             exit;
         }
 
@@ -87,7 +87,7 @@ class ContactController
         $this->auditLog->log('create', 'contact', $contactId, null, $data);
 
         $_SESSION['flash_success'] = "Contacto creado exitosamente.";
-        header('Location: /crm_einsurglobal/public/contactos');
+        header('Location: /contactos');
         exit;
     }
 
@@ -102,7 +102,7 @@ class ContactController
 
         if (!$contact) {
             $_SESSION['flash_error'] = "Contacto no encontrado.";
-            header('Location: /crm_einsurglobal/public/contactos');
+            header('Location: /contactos');
             exit;
         }
 
@@ -142,7 +142,7 @@ class ContactController
 
         if (empty($data['first_name'])) {
             $_SESSION['flash_error'] = "El nombre es obligatorio.";
-            header("Location: /crm_einsurglobal/public/contactos/edit?id={$id}");
+            header("Location: /contactos/edit?id={$id}");
             exit;
         }
 
@@ -156,7 +156,7 @@ class ContactController
             $_SESSION['flash_error'] = "No se pudo actualizar el contacto.";
         }
 
-        header('Location: /crm_einsurglobal/public/contactos');
+        header('Location: /contactos');
         exit;
     }
 
@@ -177,7 +177,7 @@ class ContactController
             $_SESSION['flash_error'] = "No se pudo eliminar el contacto.";
         }
 
-        header('Location: /crm_einsurglobal/public/contactos');
+        header('Location: /contactos');
         exit;
     }
 
@@ -230,80 +230,7 @@ class ContactController
             
             // Adjuntar plantilla de firma automática si el usuario escribió sus datos
             if (!empty($smtpConfig['email_signature'])) {
-                $rawLines = explode("\n", str_replace("\r", "", strip_tags($smtpConfig['email_signature'])));
-                $formattedLines = [];
-                
-                $contentLinesCount = 0;
-                foreach ($rawLines as $line) {
-                    $trimLine = trim($line);
-                    if ($trimLine === '') {
-                        $formattedLines[] = '<br>';
-                        continue;
-                    }
-                    
-                    $contentLinesCount++;
-                    $lineHtml = htmlspecialchars($line);
-                    
-                    // Atentamente en negrita
-                    if (stripos($trimLine, 'atentamente') !== false) {
-                        $formattedLines[] = '<span style="font-weight: bold; color: #323130;">' . $lineHtml . '</span><br>';
-                        continue;
-                    }
-                    
-                    // Nombre (la primera línea de contenido después de Atentamente)
-                    if ($contentLinesCount === 2 || preg_match('/^(ING\.|LIC\.|C\.P\.|ARQ\.|MTRO\.|DR\.)/i', $trimLine)) {
-                        $formattedLines[] = '<span style="font-weight: bold; color: #323130;">' . $lineHtml . '</span><br>';
-                        continue;
-                    }
-                    
-                    // EINSUR SUPPLY o GLOBAL en azul
-                    if (stripos($trimLine, 'EINSUR') !== false && stripos($trimLine, 'www') === false) {
-                        $lineHtml = preg_replace('/(EINSUR\s*(SUPPLY|GLOBAL)?)/i', '<span style="color: #4472c4;">$1</span>', $lineHtml);
-                        $formattedLines[] = $lineHtml . '<br>';
-                        continue;
-                    }
-                    
-                    // Enlace web en azul
-                    if (stripos($trimLine, 'www.') !== false) {
-                        $lineHtml = preg_replace('/(www\.[a-z0-9.-]+\.[a-z]{2,})/i', '<a href="http://$1" style="color: #4472c4; text-decoration: underline;">$1</a>', $lineHtml);
-                        $formattedLines[] = $lineHtml . '<br>';
-                        continue;
-                    }
-                    
-                    // Texto normal
-                    $formattedLines[] = '<span style="color: #323130;">' . $lineHtml . '</span><br>';
-                }
-                
-                $userTextHtml = implode("", $formattedLines);
-                
-                // Buscar la imagen del logo en el servidor local
-                $customLogo = dirname(__DIR__, 3) . '/public/img/company_signature_logo.png';
-                $defaultLogo = dirname(__DIR__, 3) . '/public/img/logoeglobal.png';
-                $logoPath = file_exists($customLogo) ? $customLogo : $defaultLogo;
-                $logoSrc = '';
-                
-                if (file_exists($logoPath)) {
-                    $embeddedImages[] = [
-                        'path' => $logoPath,
-                        'cid' => 'logo_einsur'
-                    ];
-                    $logoSrc = 'cid:logo_einsur';
-                }
-                
-                $signatureHtml = '
-                <br><br>
-                <table cellpadding="0" cellspacing="0" border="0" style="font-family: Arial, sans-serif; font-size: 13.5px; margin-top: 20px;">
-                    <tr>
-                        <td style="padding-right: 20px; vertical-align: middle;">
-                            <img src="' . $logoSrc . '" width="150" style="display: block; max-width: 150px; height: auto;" alt="EINSUR Logo">
-                        </td>
-                        <td style="padding-left: 0px; vertical-align: middle; line-height: 1.4;">
-                            ' . $userTextHtml . '
-                        </td>
-                    </tr>
-                </table>';
-                
-                $bodyHtml .= $signatureHtml;
+                $bodyHtml .= $this->formatEmailSignature($smtpConfig['email_signature'], $embeddedImages);
             }
 
             // Envolver el correo en una estructura XHTML estándar para evitar que Outlook lo degrade a texto plano
@@ -335,5 +262,84 @@ class ContactController
             echo json_encode(['success' => false, 'message' => 'Ocurrió un error inesperado: ' . $e->getMessage()]);
         }
         exit;
+    }
+
+    /**
+     * Da formato HTML y añade estilos a la firma de correo del usuario.
+     */
+    private function formatEmailSignature(string $rawSignature, array &$embeddedImages): string
+    {
+        $rawLines = explode("\n", str_replace("\r", "", strip_tags($rawSignature)));
+        $formattedLines = [];
+        $contentLinesCount = 0;
+        
+        foreach ($rawLines as $line) {
+            $trimLine = trim($line);
+            if ($trimLine === '') {
+                $formattedLines[] = '<br>';
+                continue;
+            }
+            
+            $contentLinesCount++;
+            $lineHtml = htmlspecialchars($line);
+            
+            // Atentamente en negrita
+            if (stripos($trimLine, 'atentamente') !== false) {
+                $formattedLines[] = '<span style="font-weight: bold; color: #323130;">' . $lineHtml . '</span><br>';
+                continue;
+            }
+            
+            // Nombre (la primera línea de contenido después de Atentamente)
+            if ($contentLinesCount === 2 || preg_match('/^(ING\.|LIC\.|C\.P\.|ARQ\.|MTRO\.|DR\.)/i', $trimLine)) {
+                $formattedLines[] = '<span style="font-weight: bold; color: #323130;">' . $lineHtml . '</span><br>';
+                continue;
+            }
+            
+            // EINSUR SUPPLY o GLOBAL en azul
+            if (stripos($trimLine, 'EINSUR') !== false && stripos($trimLine, 'www') === false) {
+                $lineHtml = preg_replace('/(EINSUR\s*(SUPPLY|GLOBAL)?)/i', '<span style="color: #4472c4;">$1</span>', $lineHtml);
+                $formattedLines[] = $lineHtml . '<br>';
+                continue;
+            }
+            
+            // Enlace web en azul
+            if (stripos($trimLine, 'www.') !== false) {
+                $lineHtml = preg_replace('/(www\.[a-z0-9.-]+\.[a-z]{2,})/i', '<a href="http://$1" style="color: #4472c4; text-decoration: underline;">$1</a>', $lineHtml);
+                $formattedLines[] = $lineHtml . '<br>';
+                continue;
+            }
+            
+            // Texto normal
+            $formattedLines[] = '<span style="color: #323130;">' . $lineHtml . '</span><br>';
+        }
+        
+        $userTextHtml = implode("", $formattedLines);
+        
+        // Buscar la imagen del logo en el servidor local
+        $customLogo = dirname(__DIR__, 3) . '/public/img/company_signature_logo.png';
+        $defaultLogo = dirname(__DIR__, 3) . '/public/img/logoeglobal.png';
+        $logoPath = file_exists($customLogo) ? $customLogo : $defaultLogo;
+        $logoSrc = '';
+        
+        if (file_exists($logoPath)) {
+            $embeddedImages[] = [
+                'path' => $logoPath,
+                'cid' => 'logo_einsur'
+            ];
+            $logoSrc = 'cid:logo_einsur';
+        }
+        
+        return '
+        <br><br>
+        <table cellpadding="0" cellspacing="0" border="0" style="font-family: Arial, sans-serif; font-size: 13.5px; margin-top: 20px;">
+            <tr>
+                <td style="padding-right: 20px; vertical-align: middle;">
+                    <img src="' . $logoSrc . '" width="150" style="display: block; max-width: 150px; height: auto;" alt="EINSUR Logo">
+                </td>
+                <td style="padding-left: 0px; vertical-align: middle; line-height: 1.4;">
+                    ' . $userTextHtml . '
+                </td>
+            </tr>
+        </table>';
     }
 }

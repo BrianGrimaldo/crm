@@ -11,24 +11,38 @@ use App\Models\Deal;
 
 class HomeController
 {
-    public function index(): void
+    private Contact $contactModel;
+    private AuditLog $auditLogModel;
+    private Account $accountModel;
+    private Deal $dealModel;
+    private \App\Models\Task $taskModel;
+
+    public function __construct()
     {
-        require __DIR__ . '/../../Views/home/index.php';
+        $this->contactModel = new Contact();
+        $this->auditLogModel = new AuditLog();
+        $this->accountModel = new Account();
+        $this->dealModel = new Deal();
+        $this->taskModel = new \App\Models\Task();
     }
 
-
+    public function index(): void
+    {
+        $path = function_exists('url') ? \url('/login') : '/login';
+        header('Location: ' . $path);
+        exit;
+    }
 
     public function dashboard(): void
     {
         $tenantId = \App\Core\TenantContext::getTenantId();
         $tenantName = $_SESSION['tenant_name'] ?? 'Empresa';
         
-        $dealModel = new Deal();
-        $dealStats = $dealModel->getDashboardStats();
-        $dealsSummary = $dealModel->summaryByStage();
-        $dealsByMonth = $dealModel->getDealsByMonth();
-        $topOpenDeals = $dealModel->getTopOpenDeals(5);
-        $statsByOwner = $dealModel->getStatsByOwner();
+        $dealStats = $this->dealModel->getDashboardStats();
+        $dealsSummary = $this->dealModel->summaryByStage();
+        $dealsByMonth = $this->dealModel->getDealsByMonth();
+        $topOpenDeals = $this->dealModel->getTopOpenDeals(5);
+        $statsByOwner = $this->dealModel->getStatsByOwner();
         
         $totalDeals = $dealStats['total_deals'] ?? 0;
         $wonDeals = $dealStats['won_deals_count'] ?? 0;
@@ -37,14 +51,11 @@ class HomeController
         $conversionRate = $closedDeals > 0 ? round(($wonDeals / $closedDeals) * 100, 1) : 0;
         $totalPipelineAmount = $dealStats['open_deals_amount'] ?? 0;
 
-        $contactModel = new Contact();
-        $totalContacts = $contactModel->getTotalContacts();
+        $totalContacts = $this->contactModel->getTotalContacts();
 
-        $accountModel = new Account();
-        $totalAccounts = $accountModel->getTotalAccounts();
+        $totalAccounts = $this->accountModel->getTotalAccounts();
 
-        $auditLogModel = new AuditLog();
-        $recentActivities = $auditLogModel->getRecentActivity(8);
+        $recentActivities = $this->auditLogModel->getRecentActivity(8);
 
         // Datos para Chart.js (JSON)
         $chartMonthLabels = json_encode(array_map(fn($r) => $r->month_label, $dealsByMonth));
@@ -55,22 +66,11 @@ class HomeController
         $stageCounts  = json_encode(array_map(fn($r) => (int)$r->deal_count, $dealsSummary));
         $stageColors  = json_encode(array_map(fn($r) => $r->color ?? '#94a3b8', $dealsSummary));
 
-        // Datos para Gráficos de Inventario/Equipos
-        $db = \App\Core\Database::getInstance();
-        try {
-            $sql_estados_chart = "SELECT estado, COUNT(*) as cantidad FROM equipos GROUP BY estado";
-            $chart_estados = $db->query($sql_estados_chart)->fetchAll(\PDO::FETCH_ASSOC);
-            
-            $sql_tipos_chart = "SELECT tipo_equipo, COUNT(*) as cantidad FROM equipos GROUP BY tipo_equipo ORDER BY cantidad DESC";
-            $chart_tipos = $db->query($sql_tipos_chart)->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
-            $chart_estados = [];
-            $chart_tipos = [];
-        }
+        $chart_estados = [];
+        $chart_tipos = [];
 
         // Obtener actividades pendientes del día para el usuario
-        $taskModel = new \App\Models\Task();
-        $pendingTasks = $taskModel->getPendingForToday((int)$_SESSION['user_id']);
+        $pendingTasks = $this->taskModel->getPendingForToday((int)$_SESSION['user_id']);
 
         require __DIR__ . '/../../Views/dashboard/index.php';
     }

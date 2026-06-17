@@ -8,11 +8,11 @@ require __DIR__ . '/../layouts/header.php';
         <h1>Registrar Nuevo Producto / Equipo</h1>
         <p>Añade un nuevo ítem a tu catálogo de inventario.</p>
     </div>
-    <a href="/crm_einsurglobal/public/productos" class="btn" style="background: var(--surface); border: 1px solid var(--border);">Volver</a>
+    <a href="/productos" class="btn" style="background: var(--surface); border: 1px solid var(--border);">Volver</a>
 </div>
 
 <div class="card" style="max-width: 800px; padding: 2rem;">
-    <form action="/crm_einsurglobal/public/productos" method="POST">
+    <form action="/productos" method="POST">
         <h3 style="font-size: 1.2rem; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem;">Información Básica</h3>
         
         <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 1.5rem; margin-bottom: 1.5rem;">

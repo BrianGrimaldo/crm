@@ -16,7 +16,7 @@ class AuthController
     {
         // Si ya está logueado, redirigir al dashboard
         if (isset($_SESSION['user_id']) && isset($_SESSION['tenant_id'])) {
-            header('Location: /crm_einsurglobal/public/dashboard');
+            header('Location: /dashboard');
             exit();
         }
 
@@ -38,7 +38,7 @@ class AuthController
         $db = Database::getInstance();
 
         // 1. Buscar al usuario globalmente
-        $stmt = $db->prepare("SELECT id, email, password_hash, is_active, is_superadmin FROM users WHERE email = :email LIMIT 1");
+        $stmt = $db->prepare("SELECT id, email, password_hash, is_active, is_superadmin, first_name, last_name FROM users WHERE email = :email LIMIT 1");
         $stmt->execute([':email' => $email]);
         $user = $stmt->fetch(PDO::FETCH_OBJ);
 
@@ -116,12 +116,13 @@ class AuthController
         $_SESSION['tenant_name'] = $tenant->tenant_name;
         $_SESSION['tenant_logo'] = $tenant->tenant_logo;
         $_SESSION['user_email']  = $user->email;
+        $_SESSION['user_name']   = trim(($user->first_name ?? '') . ' ' . ($user->last_name ?? '')) ?: $user->email;
         $_SESSION['user_role']   = $tenant->role_slug ?? 'user';
         $_SESSION['is_owner']    = (bool)$tenant->is_owner;
         $_SESSION['is_superadmin'] = (bool)$user->is_superadmin;
         $_SESSION['permissions'] = $permissions;
 
-        header('Location: /crm_einsurglobal/public/dashboard');
+        header('Location: /dashboard');
         exit();
     }
 
@@ -132,14 +133,14 @@ class AuthController
     {
         session_unset();
         session_destroy();
-        header('Location: /crm_einsurglobal/public/login');
+        header('Location: /login');
         exit();
     }
 
     private function redirectBackWithError(string $message): void
     {
         $_SESSION['login_error'] = $message;
-        header('Location: /crm_einsurglobal/public/login');
+        header('Location: /login');
         exit();
     }
 
@@ -150,7 +151,7 @@ class AuthController
     {
         $tenantId = (int)($_GET['id'] ?? 0);
         if (!$tenantId || !isset($_SESSION['user_id'])) {
-            header('Location: /crm_einsurglobal/public/dashboard');
+            header('Location: /dashboard');
             exit();
         }
 
@@ -204,7 +205,7 @@ class AuthController
             $_SESSION['permissions'] = $permissions;
         }
 
-        header('Location: /crm_einsurglobal/public/dashboard');
+        header('Location: /dashboard');
         exit();
     }
 }

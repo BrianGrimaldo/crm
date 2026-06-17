@@ -7,11 +7,11 @@ require __DIR__ . '/../layouts/header.php';
     <div>
         <h1>Editar Producto: <?= htmlspecialchars($product->name) ?></h1>
     </div>
-    <a href="/crm_einsurglobal/public/productos" class="btn" style="background: var(--surface); border: 1px solid var(--border);">Volver</a>
+    <a href="/productos" class="btn" style="background: var(--surface); border: 1px solid var(--border);">Volver</a>
 </div>
 
 <div class="card" style="max-width: 800px; padding: 2rem; margin-bottom: 2rem;">
-    <form action="/crm_einsurglobal/public/productos/update" method="POST">
+    <form action="/productos/update" method="POST">
         <input type="hidden" name="id" value="<?= $product->id ?>">
         
         <h3 style="font-size: 1.2rem; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem;">Información Básica</h3>
@@ -67,7 +67,7 @@ require __DIR__ . '/../layouts/header.php';
 <div class="card" style="max-width: 800px; padding: 2rem; border-top: 4px solid #ef4444;">
     <h3 style="color: #ef4444; margin-top: 0;">Zona de Peligro</h3>
     <p style="color: var(--text-muted);">Al eliminar este producto, dejará de estar disponible para nuevas ventas o asignaciones de inventario.</p>
-    <form action="/crm_einsurglobal/public/productos/delete" method="POST" onsubmit="return confirm('¿Estás seguro de inactivar este producto?');">
+    <form action="/productos/delete" method="POST" onsubmit="return confirm('¿Estás seguro de inactivar este producto?');">
         <input type="hidden" name="id" value="<?= $product->id ?>">
         <button type="submit" class="btn" style="background: rgba(239,68,68,0.1); color: #ef4444; border: 1px solid #ef4444;">
             <i class="fas fa-trash"></i> Eliminar Producto

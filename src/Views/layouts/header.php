@@ -9,7 +9,7 @@ $currentPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= $pageTitle ?? 'Einsur Global CRM' ?></title>
-    <link rel="icon" type="image/png" href="/crm_einsurglobal/public/img/icon.png">
+    <link rel="icon" type="image/png" href="/img/icon.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -324,50 +324,62 @@ $currentPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
     <aside class="sidebar">
         <div class="sidebar-brand">
             <div class="logo-container">
-                <?php $logoUrl = $_SESSION['tenant_logo'] ?? '/crm_einsurglobal/public/img/logoeglobal.png'; ?>
+                <?php $logoUrl = $_SESSION['tenant_logo'] ?? '/img/logoeglobal.png'; ?>
                 <img src="<?= htmlspecialchars($logoUrl) ?>" alt="Logo Empresa" style="max-width: 100%; max-height: 80px; object-fit: contain;">
             </div>
         </div>
         
         <div class="sidebar-menu">
             <div class="menu-header">Principal</div>
-            <a href="/crm_einsurglobal/public/dashboard" class="<?= strpos($currentPath, 'dashboard') !== false ? 'active' : '' ?>">
+            <a href="/dashboard" class="<?= strpos($currentPath, 'dashboard') !== false ? 'active' : '' ?>">
                 <i class="fas fa-th-large"></i> Dashboard
             </a>
 
             <div class="menu-header">CRM & Ventas</div>
-            <a href="/crm_einsurglobal/public/contactos" class="<?= strpos($currentPath, 'contactos') !== false ? 'active' : '' ?>">
+            <?php if (\App\Core\Permission::has('contacts', 'view')): ?>
+            <a href="/contactos" class="<?= strpos($currentPath, 'contactos') !== false ? 'active' : '' ?>">
                 <i class="fas fa-address-book"></i> Contactos
             </a>
-            <a href="/crm_einsurglobal/public/organizaciones" class="<?= strpos($currentPath, 'organizaciones') !== false ? 'active' : '' ?>">
+            <?php endif; ?>
+            <?php if (\App\Core\Permission::has('contacts', 'create')): ?>
+            <a href="/importar" class="<?= strpos($currentPath, 'importar') !== false ? 'active' : '' ?>">
+                <i class="fas fa-file-import"></i> Importar Datos
+            </a>
+            <?php endif; ?>
+            <?php if (\App\Core\Permission::has('accounts', 'view')): ?>
+            <a href="/organizaciones" class="<?= strpos($currentPath, 'organizaciones') !== false ? 'active' : '' ?>">
                 <i class="fas fa-building"></i> Organizaciones
             </a>
-            <a href="/crm_einsurglobal/public/oportunidades/pipeline" class="<?= strpos($currentPath, 'oportunidades/pipeline') !== false ? 'active' : '' ?>">
+            <?php endif; ?>
+            <?php if (\App\Core\Permission::has('deals', 'view')): ?>
+            <a href="/oportunidades/pipeline" class="<?= strpos($currentPath, 'oportunidades') !== false ? 'active' : '' ?>">
                 <i class="fas fa-funnel-dollar"></i> Ventas
             </a>
+            <?php endif; ?>
+            <?php if (\App\Core\Permission::has('reports', 'view')): ?>
+            <a href="/analiticas" class="<?= strpos($currentPath, 'analiticas') !== false ? 'active' : '' ?>">
+                <i class="fas fa-chart-pie"></i> Analíticas y Gráficas
+            </a>
+            <?php endif; ?>
 
             <div class="menu-header">Administración</div>
             <?php 
             $role = isset($_SESSION['user_role']) ? strtolower(str_replace('-', '', $_SESSION['user_role'])) : '';
             if ($role === 'superadmin' || $role === 'admin'): 
             ?>
-            <a href="/crm_einsurglobal/public/vendedores" class="<?= strpos($currentPath, 'vendedores') !== false ? 'active' : '' ?>">
+            <a href="/vendedores" class="<?= strpos($currentPath, 'vendedores') !== false ? 'active' : '' ?>">
                 <i class="fas fa-user-tie"></i> Control Vendedores
             </a>
             <?php if (isset($_SESSION['is_superadmin']) && $_SESSION['is_superadmin']): ?>
-            <a href="/crm_einsurglobal/public/empresas" class="<?= strpos($currentPath, 'empresas') !== false ? 'active' : '' ?>">
+            <a href="/empresas" class="<?= strpos($currentPath, 'empresas') !== false ? 'active' : '' ?>">
                 <i class="fas fa-building-user"></i> Empresas
             </a>
             <?php endif; ?>
             <?php endif; ?>
-            <?php if (\App\Core\Permission::has('deals', 'view')): ?>
-            <a href="/crm_einsurglobal/public/oportunidades" class="<?= (strpos($currentPath, 'oportunidades') !== false && strpos($currentPath, 'oportunidades/pipeline') === false) ? 'active' : '' ?>">
-                <i class="fas fa-handshake"></i> Oportunidades
-            </a>
-            <?php endif; ?>
+
 
             <?php if (\App\Core\Permission::has('activities', 'view')): ?>
-            <a href="/crm_einsurglobal/public/tareas" class="<?= strpos($currentPath, 'tareas') !== false ? 'active' : '' ?>">
+            <a href="/tareas" class="<?= strpos($currentPath, 'tareas') !== false ? 'active' : '' ?>">
                 <i class="fas fa-check-square"></i> Bitácora de Tareas
             </a>
             <?php endif; ?>
@@ -377,33 +389,33 @@ $currentPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
             </a>
 
             <?php if (\App\Core\Permission::has('reports', 'view')): ?>
-            <a href="/crm_einsurglobal/public/reportes" class="<?= strpos($currentPath, 'reportes') !== false ? 'active' : '' ?>">
+            <a href="/reportes" class="<?= strpos($currentPath, 'reportes') !== false ? 'active' : '' ?>">
                 <i class="fas fa-chart-line"></i> Reportes y Excel
             </a>
             <?php endif; ?>
 
             <?php if (\App\Core\Permission::has('products', 'view')): ?>
-            <a href="/crm_einsurglobal/public/productos" class="<?= strpos($currentPath, 'productos') !== false ? 'active' : '' ?>">
+            <a href="/productos" class="<?= strpos($currentPath, 'productos') !== false ? 'active' : '' ?>">
                 <i class="fas fa-boxes"></i> Inventario / Equipos
             </a>
             <?php endif; ?>
             
             <?php if (\App\Core\Permission::has('users', 'view')): ?>
-            <a href="/crm_einsurglobal/public/usuarios" class="<?= strpos($currentPath, 'usuarios') !== false ? 'active' : '' ?>">
+            <a href="/usuarios" class="<?= strpos($currentPath, 'usuarios') !== false ? 'active' : '' ?>">
                 <i class="fas fa-users-cog"></i> Usuarios
             </a>
             <?php endif; ?>
-            <a href="/crm_einsurglobal/public/perfil" class="<?= strpos($currentPath, 'perfil') !== false ? 'active' : '' ?>">
+            <a href="/perfil" class="<?= strpos($currentPath, 'perfil') !== false ? 'active' : '' ?>">
                 <i class="fas fa-user-circle"></i> Mi Perfil
             </a>
             <?php if (\App\Core\Permission::has('settings', 'view')): ?>
             <div style="margin: 1rem 1.5rem 0.5rem; font-size: 0.75rem; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px;">
                 Configuración
             </div>
-            <a href="/crm_einsurglobal/public/roles" class="<?= strpos($currentPath, 'roles') !== false ? 'active' : '' ?>">
+            <a href="/roles" class="<?= strpos($currentPath, 'roles') !== false ? 'active' : '' ?>">
                 <i class="fas fa-shield-alt"></i> Roles y Permisos
             </a>
-            <a href="/crm_einsurglobal/public/configuracion/embudo" class="<?= strpos($currentPath, 'pipeline') !== false ? 'active' : '' ?>">
+            <a href="/configuracion/embudo" class="<?= strpos($currentPath, 'pipeline') !== false ? 'active' : '' ?>">
                 <i class="fas fa-stream"></i> Embudo de Ventas
             </a>
             <?php endif; ?>
@@ -420,7 +432,7 @@ $currentPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
                         </span>
                     </div>
                 </div>
-                <a href="/crm_einsurglobal/public/logout" class="btn-logout" title="Cerrar Sesión">
+                <a href="/logout" class="btn-logout" title="Cerrar Sesión">
                     <i class="fas fa-sign-out-alt"></i>
                 </a>
             </div>
@@ -438,7 +450,7 @@ $currentPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
             <?php if (isset($_SESSION['available_tenants']) && count($_SESSION['available_tenants']) > 1): ?>
                 <div style="display: flex; align-items: center; gap: 0.8rem; background: #f1f5f9; padding: 0.3rem 0.8rem; border-radius: 8px;">
                     <label style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;"><i class="fas fa-building"></i> Empresa:</label>
-                    <select class="form-control" style="width: auto; padding: 0.4rem 2rem 0.4rem 0.8rem; font-size: 0.95rem; font-weight: 600; color: #0f172a; border-color: transparent; background-color: transparent; cursor: pointer;" onchange="window.location.href='/crm_einsurglobal/public/switch-tenant?id='+this.value">
+                    <select class="form-control" style="width: auto; padding: 0.4rem 2rem 0.4rem 0.8rem; font-size: 0.95rem; font-weight: 600; color: #0f172a; border-color: transparent; background-color: transparent; cursor: pointer;" onchange="window.location.href='/switch-tenant?id='+this.value">
                         <?php foreach ($_SESSION['available_tenants'] as $t): ?>
                             <option value="<?= $t['id'] ?>" <?= $t['id'] == $_SESSION['tenant_id'] ? 'selected' : '' ?>>
                                 <?= htmlspecialchars($t['name']) ?>

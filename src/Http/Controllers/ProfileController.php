@@ -20,11 +20,11 @@ class ProfileController
         $userId = (int)($_SESSION['user_id'] ?? 0);
         
         if (!$userId) {
-            header('Location: /crm_einsurglobal/public/auth/login');
+            header('Location: /auth/login');
             exit;
         }
         
-        $user = $this->userModel->findTenantUser($userId);
+        $user = $this->userModel->find($userId);
 
         require __DIR__ . '/../../Views/profile/edit.php';
     }
@@ -34,7 +34,7 @@ class ProfileController
         $userId = (int)($_SESSION['user_id'] ?? 0);
         
         if (!$userId) {
-            header('Location: /crm_einsurglobal/public/auth/login');
+            header('Location: /auth/login');
             exit;
         }
 
@@ -84,7 +84,7 @@ class ProfileController
 
         if (empty($data['first_name']) || empty($data['last_name'])) {
             $_SESSION['flash_error'] = "Nombre y apellidos son requeridos.";
-            header('Location: /crm_einsurglobal/public/perfil');
+            header('Location: /perfil');
             exit;
         }
 
@@ -92,7 +92,7 @@ class ProfileController
         if (!empty($_POST['new_password'])) {
             if ($_POST['new_password'] !== $_POST['confirm_password']) {
                 $_SESSION['flash_error'] = "Las contraseñas no coinciden.";
-                header('Location: /crm_einsurglobal/public/perfil');
+                header('Location: /perfil');
                 exit;
             }
             $data['password_hash'] = password_hash($_POST['new_password'], PASSWORD_DEFAULT);
@@ -108,7 +108,7 @@ class ProfileController
             $_SESSION['flash_error'] = "Hubo un problema al actualizar el perfil.";
         }
 
-        header('Location: /crm_einsurglobal/public/perfil');
+        header('Location: /perfil');
         exit;
     }
 }

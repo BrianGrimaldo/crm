@@ -8,7 +8,7 @@ require __DIR__ . '/../layouts/header.php';
         <h1>Gestión de Roles</h1>
         <p>Administra los roles de acceso y sus permisos en el sistema.</p>
     </div>
-    <a href="/crm_einsurglobal/public/roles/create" class="btn btn-primary">
+    <a href="/roles/create" class="btn btn-primary">
         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
         Nuevo Rol
     </a>
@@ -58,9 +58,9 @@ require __DIR__ . '/../layouts/header.php';
                             </td>
                             <td>
                                 <div style="display: flex; gap: 0.5rem; align-items: center;">
-                                    <a href="/crm_einsurglobal/public/roles/edit?id=<?= $role->id ?>" style="color: var(--primary-hover); text-decoration: none; font-weight: 600;">Permisos</a>
+                                    <a href="/roles/edit?id=<?= $role->id ?>" style="color: var(--primary-hover); text-decoration: none; font-weight: 600;">Permisos</a>
                                     <?php if (!$role->is_system): ?>
-                                        <form action="/crm_einsurglobal/public/roles/delete" method="POST" onsubmit="return confirm('¿Eliminar este rol? Los usuarios asignados perderán sus permisos.');" style="display:inline; margin:0;">
+                                        <form action="/roles/delete" method="POST" onsubmit="return confirm('¿Eliminar este rol? Los usuarios asignados perderán sus permisos.');" style="display:inline; margin:0;">
                                             <input type="hidden" name="id" value="<?= $role->id ?>">
                                             <button type="submit" style="background: none; border: none; color: var(--error); cursor: pointer; font-weight: 600; font-family: inherit; font-size: inherit;">Eliminar</button>
                                         </form>

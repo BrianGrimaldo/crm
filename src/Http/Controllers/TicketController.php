@@ -78,7 +78,7 @@ class TicketController
 
         if (empty($subject)) {
             $_SESSION['flash_error'] = "El asunto del ticket es obligatorio.";
-            header('Location: /crm_einsurglobal/public/tickets/create');
+            header('Location: /tickets/create');
             exit;
         }
 
@@ -98,7 +98,7 @@ class TicketController
         $this->auditLog->log('create', 'ticket', $ticketId, null, $_POST);
 
         $_SESSION['flash_success'] = "Ticket creado exitosamente.";
-        header('Location: /crm_einsurglobal/public/tickets');
+        header('Location: /tickets');
         exit;
     }
 
@@ -114,7 +114,7 @@ class TicketController
 
         if (!$ticket) {
             $_SESSION['flash_error'] = "Ticket no encontrado.";
-            header('Location: /crm_einsurglobal/public/tickets');
+            header('Location: /tickets');
             exit;
         }
 
@@ -142,7 +142,7 @@ class TicketController
 
         if (empty($body)) {
             $_SESSION['flash_error'] = "El comentario no puede estar vacío.";
-            header("Location: /crm_einsurglobal/public/tickets/show?id={$ticketId}");
+            header("Location: /tickets/show?id={$ticketId}");
             exit;
         }
 
@@ -156,7 +156,7 @@ class TicketController
         $this->auditLog->log('add_comment', 'ticket', $ticketId, null, ['body' => $body, 'is_internal' => $isInternal]);
 
         $_SESSION['flash_success'] = "Comentario añadido exitosamente.";
-        header("Location: /crm_einsurglobal/public/tickets/show?id={$ticketId}");
+        header("Location: /tickets/show?id={$ticketId}");
         exit;
     }
 
@@ -172,7 +172,7 @@ class TicketController
 
         if (!$ticket) {
             $_SESSION['flash_error'] = "Ticket no encontrado.";
-            header('Location: /crm_einsurglobal/public/tickets');
+            header('Location: /tickets');
             exit;
         }
 
@@ -199,7 +199,7 @@ class TicketController
         $this->auditLog->log('update_status', 'ticket', $id, (array)$ticket, $data);
 
         $_SESSION['flash_success'] = "Ticket actualizado exitosamente.";
-        header("Location: /crm_einsurglobal/public/tickets/show?id={$id}");
+        header("Location: /tickets/show?id={$id}");
         exit;
     }
 }

@@ -8,13 +8,13 @@ require __DIR__ . '/../layouts/header.php';
         <h1>Registrar Nuevo Contacto</h1>
         <p>Agrega un nuevo cliente o prospecto a tu agenda.</p>
     </div>
-    <a href="/crm_einsurglobal/public/contactos" class="btn" style="background: var(--surface); color: var(--text-main); border: 1px solid var(--border);">
+    <a href="/contactos" class="btn" style="background: var(--surface); color: var(--text-main); border: 1px solid var(--border);">
         Volver a la Lista
     </a>
 </div>
 
 <div class="card" style="max-width: 800px; padding: 2rem;">
-    <form action="/crm_einsurglobal/public/contactos" method="POST">
+    <form action="/contactos" method="POST">
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
             <div class="form-group">
                 <label for="first_name">Nombre(s) *</label>

@@ -27,7 +27,7 @@ require __DIR__ . '/../layouts/header.php';
 
     <!-- Formulario de Edición -->
     <div class="card" style="padding: 2rem;">
-        <form action="/crm_einsurglobal/public/perfil/update" method="POST" enctype="multipart/form-data">
+        <form action="/perfil/update" method="POST" enctype="multipart/form-data">
             <h3 style="font-size: 1.2rem; color: var(--text-main); margin-bottom: 1.5rem; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem;">Datos Personales</h3>
             
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
@@ -95,13 +95,11 @@ require __DIR__ . '/../layouts/header.php';
                     <label for="smtp_host">Servidor SMTP</label>
                     <input type="text" id="smtp_host" name="smtp_host" class="form-control" 
                            value="<?= htmlspecialchars($user->smtp_host ?? '') ?>" 
-                           placeholder="Ej: smtp.gmail.com, smtp.office365.com">
                 </div>
                 <div class="form-group" style="margin-bottom: 0;">
                     <label for="smtp_port">Puerto</label>
                     <input type="number" id="smtp_port" name="smtp_port" class="form-control" 
                            value="<?= htmlspecialchars((string)($user->smtp_port ?? 587)) ?>" 
-                           placeholder="587">
                 </div>
             </div>
 
@@ -110,12 +108,10 @@ require __DIR__ . '/../layouts/header.php';
                     <label for="smtp_email">Correo para Envío</label>
                     <input type="email" id="smtp_email" name="smtp_email" class="form-control" 
                            value="<?= htmlspecialchars($user->smtp_email ?? '') ?>" 
-                           placeholder="tu.correo@empresa.com">
                 </div>
                 <div class="form-group" style="margin-bottom: 0;">
                     <label for="smtp_password">Contraseña / App Password</label>
                     <input type="password" id="smtp_password" name="smtp_password" class="form-control" 
-                           placeholder="<?= !empty($user->smtp_password) ? '••••••••  (ya configurada)' : 'Tu contraseña SMTP' ?>">
                     <?php if (!empty($user->smtp_password)): ?>
                         <small style="color: var(--text-muted); display: block; margin-top: 0.25rem;">Déjalo vacío para mantener la contraseña actual.</small>
                     <?php endif; ?>
@@ -135,7 +131,6 @@ require __DIR__ . '/../layouts/header.php';
                     <label for="smtp_from_name">Nombre del Remitente</label>
                     <input type="text" id="smtp_from_name" name="smtp_from_name" class="form-control" 
                            value="<?= htmlspecialchars($user->smtp_from_name ?? '') ?>" 
-                           placeholder="Ej: Juan Pérez - Einsur Global">
                 </div>
             </div>
 
@@ -149,7 +144,7 @@ require __DIR__ . '/../layouts/header.php';
                 <label for="email_signature">Texto de la Firma (Escribe tus datos, el sistema le agregará el logo automáticamente)</label>
                 <textarea id="email_signature" name="email_signature" class="form-control" rows="6" placeholder="Atentamente
 
-ING. MARTHA VAZQUEZ
+ING. BRIAN GRIMALDO
 SISTEMAS
 (921) 224 17 65
 www.einsursupply.com"><?= htmlspecialchars(strip_tags($user->email_signature ?? '')) ?></textarea>

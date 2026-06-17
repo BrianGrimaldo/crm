@@ -8,11 +8,11 @@ require __DIR__ . '/../../layouts/header.php';
         <h1>Añadir Etapa de Venta</h1>
         <p>Crea una nueva etapa para el embudo.</p>
     </div>
-    <a href="/crm_einsurglobal/public/configuracion/embudo" class="btn" style="background: var(--surface); border: 1px solid var(--border);">Volver</a>
+    <a href="/configuracion/embudo" class="btn" style="background: var(--surface); border: 1px solid var(--border);">Volver</a>
 </div>
 
 <div class="card" style="max-width: 600px; padding: 2rem;">
-    <form action="/crm_einsurglobal/public/configuracion/embudo" method="POST">
+    <form action="/configuracion/embudo" method="POST">
         <div class="form-group">
             <label for="name">Nombre de la Etapa *</label>
             <input type="text" id="name" name="name" class="form-control" required>

@@ -84,7 +84,6 @@ class DealController
             'contact_id'          => !empty($_POST['contact_id']) ? (int)$_POST['contact_id'] : null,
             'account_id'          => !empty($_POST['account_id']) ? (int)$_POST['account_id'] : null,
             'stage_id'            => (int)($_POST['stage_id'] ?? 0),
-            'status'              => $_POST['status'] ?? 'Abierto',
             'amount'              => !empty($_POST['amount']) ? (float)$_POST['amount'] : null,
             'currency_code'       => $_POST['currency_code'] ?? 'MXN',
             'probability'         => !empty($_POST['probability']) ? (int)$_POST['probability'] : null,
@@ -96,15 +95,22 @@ class DealController
 
         if (empty($data['name']) || empty($data['stage_id'])) {
             $_SESSION['flash_error'] = "El nombre y la etapa son obligatorios.";
-            header('Location: /crm_einsurglobal/public/oportunidades/create');
+            header('Location: /oportunidades/create');
             exit;
+        }
+
+        $stage = $this->stageModel->findById($data['stage_id']);
+        $data['status'] = 'Abierto';
+        if ($stage) {
+            if ($stage->is_won) $data['status'] = 'Ganado';
+            elseif ($stage->is_lost) $data['status'] = 'Perdido';
         }
 
         $dealId = $this->dealModel->create($data);
         $this->auditLog->log('create', 'deal', $dealId, null, $data);
 
         $_SESSION['flash_success'] = "Oportunidad creada exitosamente.";
-        header('Location: /crm_einsurglobal/public/oportunidades/pipeline');
+        header('Location: /oportunidades/pipeline');
         exit;
     }
 
@@ -119,7 +125,7 @@ class DealController
 
         if (!$deal) {
             $_SESSION['flash_error'] = "Oportunidad no encontrada.";
-            header('Location: /crm_einsurglobal/public/oportunidades');
+            header('Location: /oportunidades');
             exit;
         }
 
@@ -146,7 +152,6 @@ class DealController
             'contact_id'          => !empty($_POST['contact_id']) ? (int)$_POST['contact_id'] : null,
             'account_id'          => !empty($_POST['account_id']) ? (int)$_POST['account_id'] : null,
             'stage_id'            => (int)($_POST['stage_id'] ?? 0),
-            'status'              => $_POST['status'] ?? 'Abierto',
             'amount'              => !empty($_POST['amount']) ? (float)$_POST['amount'] : null,
             'currency_code'       => $_POST['currency_code'] ?? 'MXN',
             'probability'         => !empty($_POST['probability']) ? (int)$_POST['probability'] : null,
@@ -157,8 +162,15 @@ class DealController
 
         if (empty($data['name']) || empty($data['stage_id'])) {
             $_SESSION['flash_error'] = "El nombre y la etapa son obligatorios.";
-            header("Location: /crm_einsurglobal/public/oportunidades/edit?id={$id}");
+            header("Location: /oportunidades/edit?id={$id}");
             exit;
+        }
+
+        $stage = $this->stageModel->findById($data['stage_id']);
+        $data['status'] = 'Abierto';
+        if ($stage) {
+            if ($stage->is_won) $data['status'] = 'Ganado';
+            elseif ($stage->is_lost) $data['status'] = 'Perdido';
         }
 
         $oldDeal = $this->dealModel->findWithRelations($id);
@@ -167,7 +179,7 @@ class DealController
         $this->auditLog->log('update', 'deal', $id, (array)$oldDeal, $data);
 
         $_SESSION['flash_success'] = "Oportunidad actualizada exitosamente.";
-        header('Location: /crm_einsurglobal/public/oportunidades/pipeline');
+        header('Location: /oportunidades/pipeline');
         exit;
     }
 
@@ -188,7 +200,7 @@ class DealController
             $_SESSION['flash_error'] = "No se pudo eliminar la oportunidad.";
         }
 
-        header('Location: /crm_einsurglobal/public/oportunidades');
+        header('Location: /oportunidades');
         exit;
     }
 
@@ -209,7 +221,14 @@ class DealController
             return;
         }
 
-        $success = $this->dealModel->update($id, ['stage_id' => $newStageId]);
+        $stage = $this->stageModel->findById($newStageId);
+        $status = 'Abierto';
+        if ($stage) {
+            if ($stage->is_won) $status = 'Ganado';
+            elseif ($stage->is_lost) $status = 'Perdido';
+        }
+
+        $success = $this->dealModel->update($id, ['stage_id' => $newStageId, 'status' => $status]);
 
         if ($success) {
             $this->auditLog->log('update_stage', 'deal', $id, null, ['stage_id' => $newStageId]);

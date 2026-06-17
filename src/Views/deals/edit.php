@@ -8,13 +8,13 @@ require __DIR__ . '/../layouts/header.php';
         <h1>Editar Oportunidad</h1>
         <p>Actualiza la información y el estado de la venta.</p>
     </div>
-    <a href="/crm_einsurglobal/public/oportunidades/pipeline" class="btn" style="background: var(--surface); color: var(--text-main); border: 1px solid var(--border);">
+    <a href="/oportunidades/pipeline" class="btn" style="background: var(--surface); color: var(--text-main); border: 1px solid var(--border);">
         Volver al Pipeline
     </a>
 </div>
 
 <div class="card" style="max-width: 800px; padding: 2rem;">
-    <form action="/crm_einsurglobal/public/oportunidades/update" method="POST">
+    <form action="/oportunidades/update" method="POST">
         <input type="hidden" name="id" value="<?= htmlspecialchars((string)$deal->id) ?>">
         
         <div class="form-group">
@@ -48,7 +48,7 @@ require __DIR__ . '/../layouts/header.php';
         </div>
 
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
-            <div class="form-group">
+            <div class="form-group" style="grid-column: 1 / -1;">
                 <label for="stage_id">Etapa Actual *</label>
                 <select id="stage_id" name="stage_id" class="form-control" required>
                     <?php foreach ($stages as $stage): ?>
@@ -56,14 +56,6 @@ require __DIR__ . '/../layouts/header.php';
                             <?= htmlspecialchars($stage->name) ?>
                         </option>
                     <?php endforeach; ?>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="status">Estado</label>
-                <select id="status" name="status" class="form-control">
-                    <option value="Abierto" <?= ($deal->status ?? '') == 'Abierto' ? 'selected' : '' ?>>Abierto</option>
-                    <option value="Ganado" <?= ($deal->status ?? '') == 'Ganado' ? 'selected' : '' ?>>Ganado</option>
-                    <option value="Perdido" <?= ($deal->status ?? '') == 'Perdido' ? 'selected' : '' ?>>Perdido</option>
                 </select>
             </div>
         </div>

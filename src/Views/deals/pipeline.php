@@ -9,11 +9,11 @@ require __DIR__ . '/../layouts/header.php';
         <p>Gestiona tus oportunidades en cada etapa del embudo.</p>
     </div>
     <div style="display: flex; gap: 1rem;">
-        <a href="/crm_einsurglobal/public/oportunidades" class="btn btn-outline" style="background: var(--surface); color: var(--text-main); border: 1px solid var(--border);">
+        <a href="/oportunidades" class="btn btn-outline" style="background: var(--surface); color: var(--text-main); border: 1px solid var(--border);">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="margin-right: 0.5rem;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16" /></svg>
             Vista Lista
         </a>
-        <a href="/crm_einsurglobal/public/oportunidades/create" class="btn btn-primary">
+        <a href="/oportunidades/create" class="btn btn-primary">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
             Nueva Oportunidad
         </a>
@@ -216,14 +216,22 @@ require __DIR__ . '/../layouts/header.php';
                     </div>
                 </div>
                 <span class="count"><?= $count ?></span>
-            </div>
-            
-            <div class="kanban-cards" data-stage-id="<?= $stage->id ?>" ondragover="allowDrop(event)" ondrop="drop(event)" ondragenter="dragEnter(event)" ondragleave="dragLeave(event)">
+            </div>            <div class="kanban-cards" data-stage-id="<?= $stage->id ?>" ondragover="allowDrop(event)" ondrop="drop(event)" ondragenter="dragEnter(event)" ondragleave="dragLeave(event)">
                 <?php foreach ($stageDeals as $deal): ?>
-                    <div class="kanban-card" id="deal-<?= $deal->id ?>" draggable="true" ondragstart="drag(event)" data-deal-id="<?= $deal->id ?>" onclick="window.location.href='/crm_einsurglobal/public/oportunidades/edit?id=<?= $deal->id ?>'">
+                    <div class="kanban-card" id="deal-<?= $deal->id ?>" draggable="true" ondragstart="drag(event)" data-deal-id="<?= $deal->id ?>" onclick="window.location.href='/oportunidades/edit?id=<?= $deal->id ?>'">
                         <div class="card-title"><?= htmlspecialchars($deal->name) ?></div>
                         <div class="card-amount">$<?= number_format((float)$deal->amount, 2) ?> <?= htmlspecialchars($deal->currency_code) ?></div>
                         
+                        <!-- Quick Stage Selector -->
+                        <div style="margin-bottom: 0.75rem; display: flex; align-items: center; justify-content: space-between; gap: 0.5rem;" onclick="event.stopPropagation()">
+                            <span style="font-size: 0.8rem; color: var(--text-muted);">Etapa:</span>
+                            <select onchange="changeStageInline(event, <?= $deal->id ?>)" style="font-size: 0.8rem; padding: 0.2rem 0.4rem; border-radius: 6px; border: 1px solid var(--border); background: var(--bg-main); color: var(--text-main); cursor: pointer; outline: none; width: 70%;">
+                                <?php foreach ($stages as $stg): ?>
+                                    <option value="<?= $stg->id ?>" <?= $deal->stage_id == $stg->id ? 'selected' : '' ?>><?= htmlspecialchars($stg->name) ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+
                         <div class="card-footer">
                             <?php if ($deal->contact_name): ?>
                                 <div class="card-contact">
@@ -288,25 +296,32 @@ require __DIR__ . '/../layouts/header.php';
             let card = document.getElementById(elementId);
             dropzone.appendChild(card);
             
-            // Llama a la API para guardar el cambio
-            try {
-                let response = await fetch('/crm_einsurglobal/public/api/oportunidades/move-stage', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ deal_id: dealId, stage_id: stageId })
-                });
-                let result = await response.json();
-                if (result.status !== 'success') {
-                    alert('Error al mover: ' + result.message);
-                    window.location.reload();
-                } else {
-                    // Refrescar para recalcular montos (opcional)
-                    window.location.reload(); 
-                }
-            } catch (err) {
-                alert('Error de conexión');
+            await sendMoveRequest(dealId, stageId);
+        }
+    }
+
+    async function changeStageInline(event, dealId) {
+        let stageId = event.target.value;
+        await sendMoveRequest(dealId, stageId);
+    }
+
+    async function sendMoveRequest(dealId, stageId) {
+        try {
+            let response = await fetch('/api/oportunidades/move-stage', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ deal_id: dealId, stage_id: stageId })
+            });
+            let result = await response.json();
+            if (result.status !== 'success') {
+                alert('Error al mover: ' + result.message);
                 window.location.reload();
+            } else {
+                window.location.reload(); 
             }
+        } catch (err) {
+            alert('Error de conexión');
+            window.location.reload();
         }
     }
 </script>

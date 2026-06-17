@@ -8,7 +8,7 @@ require __DIR__ . '/../layouts/header.php';
         <h1>Ticket #<?= $ticket->id ?>: <?= htmlspecialchars($ticket->subject) ?></h1>
         <p>Gestiona el avance y resolución de este ticket de soporte.</p>
     </div>
-    <a href="/crm_einsurglobal/public/tickets" class="btn" style="background: var(--surface); color: var(--text-main); border: 1px solid var(--border);">
+    <a href="/tickets" class="btn" style="background: var(--surface); color: var(--text-main); border: 1px solid var(--border);">
         Volver a Tickets
     </a>
 </div>
@@ -53,7 +53,7 @@ require __DIR__ . '/../layouts/header.php';
             </div>
 
             <!-- Formulario para agregar respuesta / comentario -->
-            <form action="/crm_einsurglobal/public/tickets/comment" method="POST" style="margin-top: 1.5rem; border-top: 1px solid rgba(0,0,0,0.05); padding-top: 1.5rem;">
+            <form action="/tickets/comment" method="POST" style="margin-top: 1.5rem; border-top: 1px solid rgba(0,0,0,0.05); padding-top: 1.5rem;">
                 <input type="hidden" name="ticket_id" value="<?= $ticket->id ?>">
                 <div class="form-group">
                     <label for="body">Agregar Comentario / Respuesta</label>
@@ -78,7 +78,7 @@ require __DIR__ . '/../layouts/header.php';
         <div class="panel" style="padding: 1.5rem;">
             <h3 style="font-size: 1.1rem; font-weight: 800; color: var(--primary); margin-bottom: 1.25rem;"><i class="fas fa-cog" style="color: var(--accent); margin-right: 0.5rem;"></i> Acciones y Estado</h3>
             
-            <form action="/crm_einsurglobal/public/tickets/update-status" method="POST">
+            <form action="/tickets/update-status" method="POST">
                 <input type="hidden" name="id" value="<?= $ticket->id ?>">
                 
                 <div class="form-group">
@@ -129,7 +129,7 @@ require __DIR__ . '/../layouts/header.php';
                     <span style="color: var(--text-muted); font-weight: 600; display: block;">Cliente Asociado:</span>
                     <strong>
                         <?php if ($ticket->contact_id): ?>
-                            <a href="/crm_einsurglobal/public/contactos/edit?id=<?= $ticket->contact_id ?>" style="color: var(--primary); text-decoration: none;">
+                            <a href="/contactos/edit?id=<?= $ticket->contact_id ?>" style="color: var(--primary); text-decoration: none;">
                                 <?= htmlspecialchars($ticket->contact_first . ' ' . $ticket->contact_last) ?>
                             </a>
                         <?php else: ?>

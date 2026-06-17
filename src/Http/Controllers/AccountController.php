@@ -56,7 +56,7 @@ class AccountController
 
         if (empty($data['name'])) {
             $_SESSION['flash_error'] = "El nombre de la organización es obligatorio.";
-            header('Location: /crm_einsurglobal/public/organizaciones/create');
+            header('Location: /organizaciones/create');
             exit;
         }
 
@@ -64,7 +64,7 @@ class AccountController
         $this->auditLog->log('create', 'account', $accountId, null, $data);
 
         $_SESSION['flash_success'] = "Organización creada exitosamente.";
-        header('Location: /crm_einsurglobal/public/organizaciones');
+        header('Location: /organizaciones');
         exit;
     }
 
@@ -76,7 +76,7 @@ class AccountController
 
         if (!$account) {
             $_SESSION['flash_error'] = "Organización no encontrada.";
-            header('Location: /crm_einsurglobal/public/organizaciones');
+            header('Location: /organizaciones');
             exit;
         }
 
@@ -107,7 +107,7 @@ class AccountController
 
         if (empty($data['name'])) {
             $_SESSION['flash_error'] = "El nombre es obligatorio.";
-            header("Location: /crm_einsurglobal/public/organizaciones/edit?id={$id}");
+            header("Location: /organizaciones/edit?id={$id}");
             exit;
         }
 
@@ -121,7 +121,7 @@ class AccountController
             $_SESSION['flash_error'] = "No se pudo actualizar la organización.";
         }
 
-        header('Location: /crm_einsurglobal/public/organizaciones');
+        header('Location: /organizaciones');
         exit;
     }
 
@@ -139,7 +139,7 @@ class AccountController
             $_SESSION['flash_error'] = "No se pudo eliminar la organización.";
         }
 
-        header('Location: /crm_einsurglobal/public/organizaciones');
+        header('Location: /organizaciones');
         exit;
     }
 }

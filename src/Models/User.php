@@ -13,6 +13,17 @@ class User extends BaseModel
     protected string $table = 'users';
 
     /**
+     * Override find to bypass tenant_id since users table is global
+     */
+    public function find(int $id): ?object
+    {
+        $stmt = $this->db->prepare("SELECT * FROM {$this->table} WHERE id = :id LIMIT 1");
+        $stmt->execute([':id' => $id]);
+        $result = $stmt->fetch(PDO::FETCH_OBJ);
+        return $result ?: null;
+    }
+
+    /**
      * Obtiene los usuarios que pertenecen al tenant actual
      */
     public function getTenantUsers(): array
