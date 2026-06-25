@@ -8,7 +8,7 @@ require __DIR__ . '/../layouts/header.php';
         <h1>Inventario / Productos</h1>
         <p>Gestiona los equipos y productos disponibles en tu almacén.</p>
     </div>
-    <a href="/productos/create" class="btn btn-primary">
+    <a href="<?= url('/productos/create') ?>" class="btn btn-primary">
         <i class="fas fa-plus"></i> Nuevo Producto
     </a>
 </div>
@@ -27,7 +27,7 @@ require __DIR__ . '/../layouts/header.php';
         <tbody>
             <?php foreach ($products as $product): ?>
             <tr>
-                <td><strong style="color: #64748b;"><?= htmlspecialchars($product->sku) ?></strong></td>
+                <td><strong style="color: var(--text-muted);"><?= htmlspecialchars($product->sku) ?></strong></td>
                 <td>
                     <strong><?= htmlspecialchars($product->name) ?></strong>
                     <?php if ($product->category_name): ?>
@@ -43,7 +43,7 @@ require __DIR__ . '/../layouts/header.php';
                 </td>
                 <td>$<?= number_format((float)$product->unit_price, 2) ?></td>
                 <td>
-                    <a href="/productos/edit?id=<?= $product->id ?>" class="btn" style="padding: 0.4rem 0.8rem; background: #f1f5f9; color: #334155;">
+                    <a href="<?= url('/productos/edit?id=' . $product->id) ?>" class="btn" style="padding: 0.4rem 0.8rem; background: var(--border); color: var(--text-main);">
                         <i class="fas fa-edit"></i>
                     </a>
                 </td>

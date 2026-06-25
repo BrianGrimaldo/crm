@@ -8,7 +8,7 @@ unset($_SESSION['login_error']);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Iniciar Sesión - Einsur Global CRM</title>
-    <link rel="icon" type="image/png" href="/img/icon.png">
+    <link rel="icon" type="image/png" href="<?= url('/img/icon.png') ?>">
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -24,7 +24,7 @@ unset($_SESSION['login_error']);
             --surface: rgba(255, 255, 255, 0.05);
             --surface-border: rgba(255, 255, 255, 0.15);
             --text-main: #ffffff;
-            --text-muted: #cbd5e1;
+            --text-muted: var(--text-muted);
             --error: #ef4444;
             --error-bg: rgba(239, 68, 68, 0.1);
         }
@@ -41,7 +41,7 @@ unset($_SESSION['login_error']);
             display: flex;
             align-items: center;
             justify-content: center;
-            background: linear-gradient(135deg, rgba(26, 31, 90, 0.6), rgba(38, 43, 114, 0.8)), url('/img/login_background.png') no-repeat center center/cover;
+            background: linear-gradient(135deg, rgba(26, 31, 90, 0.6), rgba(38, 43, 114, 0.8)), url('<?= url("/img/login_background.png") ?>') no-repeat center center/cover;
             color: var(--text-main);
             position: relative;
             overflow: hidden;
@@ -155,7 +155,7 @@ unset($_SESSION['login_error']);
         }
 
         .form-control::placeholder {
-            color: #475569;
+            color: var(--text-main);
         }
 
         .btn-submit {
@@ -214,7 +214,7 @@ unset($_SESSION['login_error']);
     <div class="login-container">
         <div class="glass-panel">
             <div class="logo-area">
-                <img src="/img/logoeglobal.png" alt="Einsur Global CRM" style="max-width: 100%; max-height: 90px; object-fit: contain; margin-bottom: 0.5rem; filter: drop-shadow(0px 4px 6px rgba(0,0,0,0.3)); background-color: white; padding: 10px; border-radius: 12px;">
+                <img src="<?= url('/img/logoeglobal.png') ?>" alt="Einsur Global CRM" style="max-width: 100%; max-height: 90px; object-fit: contain; margin-bottom: 0.5rem; filter: drop-shadow(0px 4px 6px rgba(0,0,0,0.3)); background-color: white; padding: 10px; border-radius: 12px;">
                 <p>Ingresa tus credenciales para acceder</p>
             </div>
 
@@ -225,7 +225,7 @@ unset($_SESSION['login_error']);
                 </div>
             <?php endif; ?>
 
-            <form action="/login" method="POST">
+            <form action="<?= url('/login') ?>" method="POST">
                 <div class="form-group">
                     <label for="email">Correo Electrónico</label>
                     <input type="email" id="email" name="email" class="form-control" placeholder="admin@einsurglobal.com" required autocomplete="email" autofocus>
@@ -240,7 +240,7 @@ unset($_SESSION['login_error']);
             </form>
 
             <div style="margin-top: 1.5rem; text-align: center; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 1.2rem;">
-                <a href="/portal" style="color: var(--primary); text-decoration: none; font-size: 0.9rem; font-weight: 600; transition: color 0.3s; display: inline-flex; align-items: center; gap: 0.5rem;" onmouseover="this.style.color='#ffffff'" onmouseout="this.style.color='var(--primary)'">
+                <a href="<?= url('/portal') ?>" style="color: var(--primary); text-decoration: none; font-size: 0.9rem; font-weight: 600; transition: color 0.3s; display: inline-flex; align-items: center; gap: 0.5rem;" onmouseover="this.style.color='#ffffff'" onmouseout="this.style.color='var(--primary)'">
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
                     ¿Eres cliente? Accede al Portal de Soporte
                 </a>

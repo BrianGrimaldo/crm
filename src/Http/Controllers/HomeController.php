@@ -38,6 +38,14 @@ class HomeController
         $tenantId = \App\Core\TenantContext::getTenantId();
         $tenantName = $_SESSION['tenant_name'] ?? 'Empresa';
         
+        $roleStr = strtolower(str_replace('-', '', $_SESSION['user_role'] ?? ''));
+        $isCEO = in_array($roleStr, ['superadmin', 'superadministrador', 'ceo', 'dirección']) || (!empty($_SESSION['is_superadmin']) && (bool)$_SESSION['is_superadmin']);
+        
+        if (in_array($roleStr, ['cobranza', 'collections', 'cobrador']) || $isCEO) {
+            $this->cobranzaDashboard($tenantName, $isCEO);
+            return;
+        }
+        
         $dealStats = $this->dealModel->getDashboardStats();
         $dealsSummary = $this->dealModel->summaryByStage();
         $dealsByMonth = $this->dealModel->getDealsByMonth();
@@ -73,5 +81,34 @@ class HomeController
         $pendingTasks = $this->taskModel->getPendingForToday((int)$_SESSION['user_id']);
 
         require __DIR__ . '/../../Views/dashboard/index.php';
+    }
+
+    private function cobranzaDashboard(string $tenantName, bool $isCEO = false): void
+    {
+        $invoiceModel = new \App\Models\Invoice();
+        
+        $financeStats = $invoiceModel->getFinanceStats();
+        $invoicesByMonth = $invoiceModel->getInvoicesByMonth();
+        $statusDistribution = $invoiceModel->getStatusDistribution();
+        
+        // Datos para Chart.js
+        $chartMonthLabels = json_encode(array_map(fn($r) => $r->month_label, $invoicesByMonth));
+        $chartEmitido     = json_encode(array_map(fn($r) => (float)$r->total_emitido, $invoicesByMonth));
+        $chartCobrado     = json_encode(array_map(fn($r) => (float)$r->total_cobrado, $invoicesByMonth));
+
+        $donutLabels = json_encode(array_map(fn($r) => ucfirst($r->status), $statusDistribution));
+        $donutAmounts = json_encode(array_map(fn($r) => (float)$r->amount, $statusDistribution));
+        $donutColors = json_encode(array_map(function($r) {
+            $colors = [
+                'emitida' => '#3b82f6',
+                'parcial' => '#f59e0b',
+                'vencida' => '#ef4444',
+                'pagada' => '#10b981',
+                'cancelada' => '#9ca3af'
+            ];
+            return $colors[$r->status] ?? '#64748b';
+        }, $statusDistribution));
+
+        require __DIR__ . '/../../Views/dashboard/cobranza.php';
     }
 }

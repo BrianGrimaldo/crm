@@ -110,7 +110,7 @@ $endDate = $_GET['end_date'] ?? '';
             Exportar Oportunidades de Venta
         </h3>
         
-        <form action="/reportes/exportar-ventas" method="GET">
+        <form action="<?= url('/reportes/exportar-ventas') ?>" method="GET">
             <input type="hidden" name="tab" value="general">
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
                 <div class="form-group" style="margin-bottom: 0;">
@@ -161,7 +161,7 @@ $endDate = $_GET['end_date'] ?? '';
             Filtrar Tiempos por Etapa
         </h3>
         
-        <form action="/reportes" method="GET">
+        <form action="<?= url('/reportes') ?>" method="GET">
             <input type="hidden" name="tab" value="timeline">
             <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-bottom: 1.5rem;">
                 <div class="form-group" style="margin-bottom: 0;">
@@ -190,7 +190,7 @@ $endDate = $_GET['end_date'] ?? '';
                     <i class="fas fa-search"></i> Consultar en Pantalla
                 </button>
                 
-                <a href="/reportes/exportar-timeline?tab=timeline&start_date=<?= urlencode($startDate) ?>&end_date=<?= urlencode($endDate) ?>&seller_id=<?= $selectedSellerId ?>" class="btn btn-primary">
+                <a href="<?= url('/reportes/exportar-timeline?tab=timeline&start_date=' . urlencode($startDate) . '&end_date=<?= urlencode($endDate) ?>&seller_id=<?= $selectedSellerId ?>') ?>" class="btn btn-primary">
                     <i class="fas fa-file-excel"></i> Descargar Reporte (Excel)
                 </a>
             </div>
@@ -213,7 +213,7 @@ $endDate = $_GET['end_date'] ?? '';
         }
         .deal-header {
             padding: 1.5rem;
-            background: linear-gradient(to right, #f8fafc, #ffffff);
+            background: linear-gradient(to right, var(--bg-main), #ffffff);
             border-bottom: 1px solid var(--border);
             display: flex;
             justify-content: space-between;
@@ -284,7 +284,7 @@ $endDate = $_GET['end_date'] ?? '';
             width: 40px;
             height: 40px;
             border-radius: 50%;
-            background: #f1f5f9;
+            background: var(--border);
             border: 3px solid #ffffff;
             box-shadow: 0 0 0 2px var(--border);
             display: flex;
@@ -328,7 +328,7 @@ $endDate = $_GET['end_date'] ?? '';
             font-weight: 700;
             padding: 0.25rem 0.7rem;
             border-radius: 20px;
-            background: #f1f5f9;
+            background: var(--border);
             color: var(--primary);
             border: 1px solid rgba(0,0,0,0.05);
         }
@@ -350,7 +350,7 @@ $endDate = $_GET['end_date'] ?? '';
         
         <?php if (empty($timeline)): ?>
             <div style="background: var(--surface); border-radius: 16px; text-align: center; color: var(--text-muted); padding: 4rem 2rem; border: 1px solid var(--border);">
-                <i class="fas fa-project-diagram" style="font-size: 2.5rem; margin-bottom: 1rem; color: #cbd5e1;"></i><br>
+                <i class="fas fa-project-diagram" style="font-size: 2.5rem; margin-bottom: 1rem; color: var(--text-muted);"></i><br>
                 <span style="font-size: 1.1rem; font-weight: 500;">No se encontraron recorridos para los filtros seleccionados.</span>
             </div>
         <?php else: 

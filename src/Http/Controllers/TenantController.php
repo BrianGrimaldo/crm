@@ -62,16 +62,16 @@ class TenantController
 
         if (empty($data['name'])) {
             $_SESSION['flash_error'] = "El nombre de la empresa es requerido.";
-            header('Location: /empresas/create');
+            header('Location: ' . url('/empresas/create'));
             exit;
         }
 
         if ($this->tenantModel->create($data) > 0) {
             $_SESSION['flash_success'] = "Empresa creada exitosamente.";
-            header('Location: /empresas');
+            header('Location: ' . url('/empresas'));
         } else {
             $_SESSION['flash_error'] = "Error al crear la empresa.";
-            header('Location: /empresas/create');
+            header('Location: ' . url('/empresas/create'));
         }
         exit;
     }
@@ -82,7 +82,7 @@ class TenantController
         $empresa = $this->tenantModel->findById($id);
 
         if (!$empresa) {
-            header('Location: /empresas');
+            header('Location: ' . url('/empresas'));
             exit;
         }
 
@@ -119,7 +119,7 @@ class TenantController
 
         if (empty($data['name'])) {
             $_SESSION['flash_error'] = "El nombre de la empresa es requerido.";
-            header("Location: /empresas/edit?id=$id");
+            header('Location: ' . url('/empresas/edit?id=$id'));
             exit;
         }
 
@@ -134,10 +134,10 @@ class TenantController
                 }
             }
             
-            header('Location: /empresas');
+            header('Location: ' . url('/empresas'));
         } else {
             $_SESSION['flash_error'] = "Error al actualizar la empresa.";
-            header("Location: /empresas/edit?id=$id");
+            header('Location: ' . url('/empresas/edit?id=$id'));
         }
         exit;
     }

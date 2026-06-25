@@ -9,7 +9,7 @@ require __DIR__ . '/../layouts/header.php';
         <p>Monitorea y resuelve las solicitudes de soporte técnico de tus clientes.</p>
     </div>
     <?php if (\App\Core\Permission::has('tickets', 'create')): ?>
-    <a href="/tickets/create" class="btn btn-primary">
+    <a href="<?= url('/tickets/create') ?>" class="btn btn-primary">
         <i class="fas fa-plus"></i> Nuevo Ticket
     </a>
     <?php endif; ?>
@@ -87,7 +87,7 @@ require __DIR__ . '/../layouts/header.php';
                     <?php foreach ($tickets as $t): ?>
                         <tr>
                             <td>
-                                <a href="/tickets/show?id=<?= $t->id ?>" style="font-weight: 700; color: var(--primary); text-decoration: none;">
+                                <a href="<?= url('/tickets/show?id=' . $t->id) ?>" style="font-weight: 700; color: var(--primary); text-decoration: none;">
                                     <?= htmlspecialchars($t->subject) ?>
                                 </a>
                                 <br><small style="color: var(--text-muted);"><?= htmlspecialchars($t->category ?? 'General') ?></small>
@@ -98,8 +98,8 @@ require __DIR__ . '/../layouts/header.php';
                                     'urgent' => '#ef4444',
                                     'high'   => '#f97316',
                                     'medium' => '#3b82f6',
-                                    'low'    => '#64748b',
-                                    default  => '#64748b'
+                                    'low'    => 'var(--text-muted)',
+                                    default  => 'var(--text-muted)'
                                 };
                                 ?>
                                 <span style="font-weight:700; color: <?= $pColor ?>;">
@@ -113,8 +113,8 @@ require __DIR__ . '/../layouts/header.php';
                                     'in_progress' => 'background: rgba(245,158,11,.1); color: #f59e0b;',
                                     'waiting'     => 'background: rgba(99,102,241,.1); color: #6366f1;',
                                     'resolved'    => 'background: rgba(16,185,129,.1); color: #10b981;',
-                                    'closed'      => 'background: rgba(100,116,139,.1); color: #64748b;',
-                                    default       => 'background: rgba(100,116,139,.1); color: #64748b;'
+                                    'closed'      => 'background: rgba(100,116,139,.1); color: var(--text-muted);',
+                                    default       => 'background: rgba(100,116,139,.1); color: var(--text-muted);'
                                 };
                                 ?>
                                 <span style="padding: 0.25rem 0.6rem; border-radius: 8px; font-weight:700; font-size:0.75rem; text-transform: uppercase; <?= $sClass ?>">
@@ -133,13 +133,13 @@ require __DIR__ . '/../layouts/header.php';
                                         'phone'  => '<i class="fas fa-phone" style="color:#10b981;"></i>',
                                         'chat'   => '<i class="fab fa-whatsapp" style="color:#25d366;"></i>',
                                         'social' => '<i class="fab fa-facebook" style="color:#1877f2;"></i>',
-                                        default  => '<i class="fas fa-globe" style="color:#64748b;"></i>'
+                                        default  => '<i class="fas fa-globe" style="color:var(--text-muted);"></i>'
                                     } ?>
                                 </span>
                             </td>
                             <td><?= date('d/m/Y H:i', strtotime($t->created_at)) ?></td>
                             <td>
-                                <a href="/tickets/show?id=<?= $t->id ?>" style="color: var(--primary-hover); text-decoration: none; font-weight: 600;">Atender</a>
+                                <a href="<?= url('/tickets/show?id=' . $t->id) ?>" style="color: var(--primary-hover); text-decoration: none; font-weight: 600;">Atender</a>
                             </td>
                         </tr>
                     <?php endforeach; ?>

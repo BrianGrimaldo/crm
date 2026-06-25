@@ -8,13 +8,13 @@ require __DIR__ . '/../layouts/header.php';
         <h1>Editar Contacto</h1>
         <p>Actualiza la información de este contacto.</p>
     </div>
-    <a href="/contactos" class="btn" style="background: var(--surface); color: var(--text-main); border: 1px solid var(--border);">
+    <a href="<?= url('/contactos') ?>" class="btn" style="background: var(--surface); color: var(--text-main); border: 1px solid var(--border);">
         Volver a la Lista
     </a>
 </div>
 
 <div class="card" style="max-width: 800px; padding: 2rem;">
-    <form action="/contactos/update" method="POST">
+    <form action="<?= url('/contactos/update') ?>" method="POST">
         <input type="hidden" name="id" value="<?= htmlspecialchars((string)$contact->id) ?>">
         
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">

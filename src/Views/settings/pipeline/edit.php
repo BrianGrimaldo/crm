@@ -7,11 +7,11 @@ require __DIR__ . '/../../layouts/header.php';
     <div>
         <h1>Editar Etapa de Venta</h1>
     </div>
-    <a href="/configuracion/embudo" class="btn" style="background: var(--surface); border: 1px solid var(--border);">Volver</a>
+    <a href="<?= url('/configuracion/embudo') ?>" class="btn" style="background: var(--surface); border: 1px solid var(--border);">Volver</a>
 </div>
 
 <div class="card" style="max-width: 600px; padding: 2rem;">
-    <form action="/configuracion/embudo/update" method="POST" style="margin-bottom: 2rem;">
+    <form action="<?= url('/configuracion/embudo/update') ?>" method="POST" style="margin-bottom: 2rem;">
         <input type="hidden" name="id" value="<?= $stage->id ?>">
         
         <div class="form-group">
@@ -47,7 +47,7 @@ require __DIR__ . '/../../layouts/header.php';
         <button type="submit" class="btn btn-primary">Actualizar Etapa</button>
     </form>
     
-    <form action="/configuracion/embudo/delete" method="POST" onsubmit="return confirm('¿Estás seguro de eliminar esta etapa? Si hay tratos en ella, podrías tener problemas.');">
+    <form action="<?= url('/configuracion/embudo/delete') ?>" method="POST" onsubmit="return confirm('¿Estás seguro de eliminar esta etapa? Si hay tratos en ella, podrías tener problemas.');">
         <input type="hidden" name="id" value="<?= $stage->id ?>">
         <button type="submit" class="btn" style="background: rgba(239,68,68,0.1); color: #ef4444; border: 1px solid #ef4444; width: 100%;">
             <i class="fas fa-trash"></i> Eliminar Etapa

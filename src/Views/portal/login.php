@@ -14,7 +14,7 @@
             --primary: #6366f1;
             --primary-hover: #4f46e5;
             --accent: #06b6d4;
-            --text-main: #f8fafc;
+            --text-main: var(--bg-main);
             --text-muted: #94a3b8;
             --glass-bg: rgba(30, 41, 59, 0.7);
             --glass-border: rgba(255, 255, 255, 0.08);
@@ -248,7 +248,7 @@
             </div>
         <?php endif; ?>
 
-        <form action="/portal/login" method="POST">
+        <form action="<?= url('/portal/login') ?>" method="POST">
             <div class="form-group">
                 <label for="email" class="form-label">Correo Registrado</label>
                 <div class="input-wrapper">
@@ -263,7 +263,7 @@
             </button>
         </form>
 
-        <a href="/login" class="back-to-crm">
+        <a href="<?= url('/login') ?>" class="back-to-crm">
             <i class="fas fa-arrow-left"></i> Regresar al login del Personal
         </a>
     </div>

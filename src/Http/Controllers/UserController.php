@@ -69,7 +69,7 @@ class UserController
 
         if (empty($data['first_name']) || empty($data['email']) || empty($data['password']) || !$roleId) {
             $_SESSION['flash_error'] = "Todos los campos obligatorios deben estar llenos.";
-            header('Location: /usuarios/create');
+            header('Location: ' . url('/usuarios/create'));
             exit;
         }
 
@@ -78,26 +78,32 @@ class UserController
             $targetTenantId = (int)$_POST['tenant_id'];
         }
 
-        // En producción habría que validar si el email ya existe
-        $success = $this->userModel->createUserForTenant($data, $roleId, $targetTenantId);
+        try {
+            $success = $this->userModel->createUserForTenant($data, $roleId, $targetTenantId);
 
-        if ($success) {
-            try {
-                $tenantName = isset($_SESSION['is_superadmin']) && $_SESSION['is_superadmin'] && $targetTenantId
-                    ? "nuestra empresa" // O buscar el nombre del tenant
-                    : ($_SESSION['tenant_name'] ?? 'nuestra empresa');
-                
-                $emailService = new \App\Core\EmailService();
-                $emailService->sendWelcomeEmail($data['email'], $data['first_name'], $data['password'], $tenantName);
-            } catch (\Exception $e) {
-                // Ignore email errors to not break the flow
+            if ($success) {
+                try {
+                    $tenantName = isset($_SESSION['is_superadmin']) && $_SESSION['is_superadmin'] && $targetTenantId
+                        ? "nuestra empresa" 
+                        : ($_SESSION['tenant_name'] ?? 'nuestra empresa');
+                    
+                    $emailService = new \App\Core\EmailService();
+                    $emailService->sendWelcomeEmail($data['email'], $data['first_name'], $data['password'], $tenantName);
+                } catch (\Exception $e) {}
+
+                $_SESSION['flash_success'] = "Usuario {$data['first_name']} creado exitosamente.";
+                header('Location: ' . url('/usuarios'));
+            } else {
+                $_SESSION['flash_error'] = "Hubo un problema al crear el usuario. Es posible que el correo ya esté en uso.";
+                header('Location: ' . url('/usuarios/create'));
             }
-
-            $_SESSION['flash_success'] = "Usuario {$data['first_name']} creado exitosamente.";
-            header('Location: /usuarios');
-        } else {
-            $_SESSION['flash_error'] = "Hubo un problema al crear el usuario. Es posible que el correo ya esté en uso.";
-            header('Location: /usuarios/create');
+        } catch (\Exception $e) {
+            if (strpos($e->getMessage(), '1062 Duplicate entry') !== false) {
+                $_SESSION['flash_error'] = "El correo electrónico '{$data['email']}' ya se encuentra registrado en el sistema. Por favor, utiliza uno diferente.";
+            } else {
+                $_SESSION['flash_error'] = "Error del servidor: " . $e->getMessage();
+            }
+            header('Location: ' . url('/usuarios/create'));
         }
         exit;
     }

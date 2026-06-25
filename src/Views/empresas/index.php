@@ -8,7 +8,7 @@ require __DIR__ . '/../layouts/header.php';
         <h1>Empresas Registradas</h1>
         <p>Gestiona todas las empresas (tenants) del sistema.</p>
     </div>
-    <a href="/empresas/create" class="btn btn-primary">
+    <a href="<?= url('/empresas/create') ?>" class="btn btn-primary">
         <i class="fas fa-plus"></i> Nueva Empresa
     </a>
 </div>
@@ -33,7 +33,7 @@ require __DIR__ . '/../layouts/header.php';
                     <?php if ($empresa->logo_url): ?>
                         <img src="<?= htmlspecialchars($empresa->logo_url) ?>" alt="Logo" style="max-height: 40px; border-radius: 4px;">
                     <?php else: ?>
-                        <div style="width: 40px; height: 40px; background: #e2e8f0; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #64748b;">
+                        <div style="width: 40px; height: 40px; background: var(--border); border-radius: 4px; display: flex; align-items: center; justify-content: center; font-weight: bold; color: var(--text-muted);">
                             <?= strtoupper(substr($empresa->name, 0, 1)) ?>
                         </div>
                     <?php endif; ?>
@@ -54,7 +54,7 @@ require __DIR__ . '/../layouts/header.php';
                     <?php endif; ?>
                 </td>
                 <td>
-                    <a href="/empresas/edit?id=<?= $empresa->id ?>" class="btn" style="padding: 0.5rem 1rem; background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1;">
+                    <a href="<?= url('/empresas/edit?id=' . $empresa->id) ?>" class="btn" style="padding: 0.5rem 1rem; background: var(--border); color: var(--text-main); border: 1px solid var(--text-muted);">
                         <i class="fas fa-edit"></i> Editar
                     </a>
                 </td>

@@ -27,7 +27,7 @@ require __DIR__ . '/../layouts/header.php';
 
     <!-- Formulario de Edición -->
     <div class="card" style="padding: 2rem;">
-        <form action="/perfil/update" method="POST" enctype="multipart/form-data">
+        <form action="<?= url('/perfil/update') ?>" method="POST" enctype="multipart/form-data">
             <h3 style="font-size: 1.2rem; color: var(--text-main); margin-bottom: 1.5rem; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem;">Datos Personales</h3>
             
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
@@ -134,8 +134,8 @@ require __DIR__ . '/../layouts/header.php';
                 </div>
             </div>
 
-            <div class="form-group" style="margin-bottom: 1.5rem; background: #f8fafc; padding: 1rem; border-radius: 8px; border: 1px dashed #cbd5e1;">
-                <label for="signature_logo" style="color: #334155; font-weight: 600;">Logo para la Firma (Aplica para todos los vendedores)</label>
+            <div class="form-group" style="margin-bottom: 1.5rem; background: var(--bg-main); padding: 1rem; border-radius: 8px; border: 1px dashed var(--text-muted);">
+                <label for="signature_logo" style="color: var(--text-main); font-weight: 600;">Logo para la Firma (Aplica para todos los vendedores)</label>
                 <input type="file" id="signature_logo" name="signature_logo" class="form-control" accept="image/png, image/jpeg" style="background: white;">
                 <small style="color: var(--text-muted); display: block; margin-top: 0.5rem;">Sube aquí la imagen del logo de la empresa (PNG o JPG). Si la subes, reemplazará el logo actual y todos los vendedores comenzarán a usarla automáticamente en sus correos.</small>
             </div>
@@ -152,7 +152,7 @@ www.einsursupply.com"><?= htmlspecialchars(strip_tags($user->email_signature ?? 
             </div>
 
             <!-- Guía rápida -->
-            <div style="background: #f1f5f9; padding: 1rem 1.5rem; border-radius: 10px; margin-bottom: 2rem;">
+            <div style="background: var(--border); padding: 1rem 1.5rem; border-radius: 10px; margin-bottom: 2rem;">
                 <p style="font-weight: 700; font-size: 0.85rem; color: var(--text-main); margin-bottom: 0.5rem;"><i class="fas fa-info-circle" style="color: var(--accent);"></i> Guía Rápida por Proveedor</p>
                 <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; font-size: 0.8rem; color: var(--text-muted);">
                     <div>

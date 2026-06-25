@@ -8,13 +8,13 @@ require __DIR__ . '/../layouts/header.php';
         <h1>Crear Oportunidad de Venta</h1>
         <p>Añade un nuevo prospecto o trato a tu embudo.</p>
     </div>
-    <a href="/oportunidades/pipeline" class="btn" style="background: var(--surface); color: var(--text-main); border: 1px solid var(--border);">
+    <a href="<?= url('/oportunidades/pipeline') ?>" class="btn" style="background: var(--surface); color: var(--text-main); border: 1px solid var(--border);">
         Volver al Pipeline
     </a>
 </div>
 
 <div class="card" style="max-width: 800px; padding: 2rem;">
-    <form action="/oportunidades" method="POST">
+    <form action="<?= url('/oportunidades') ?>" method="POST">
         <div class="form-group">
             <label for="name">Nombre de la Oportunidad *</label>
             <input type="text" id="name" name="name" class="form-control" placeholder="Ej. Venta de licencias anuales" required>

@@ -8,7 +8,7 @@ require __DIR__ . '/../layouts/header.php';
         <h1>Bitácora de Tareas</h1>
         <p>Da seguimiento a tus llamadas, reuniones y compromisos.</p>
     </div>
-    <a href="/tareas/create" class="btn btn-primary">
+    <a href="<?= url('/tareas/create') ?>" class="btn btn-primary">
         <i class="fas fa-plus"></i> Nueva Tarea
     </a>
 </div>
@@ -65,14 +65,14 @@ require __DIR__ . '/../layouts/header.php';
                 <td><?= htmlspecialchars($task->first_name . ' ' . $task->last_name) ?></td>
                 <td>
                     <?php if ($task->status !== 'completed'): ?>
-                    <form action="/tareas/complete" method="POST" style="display:inline-block;">
+                    <form action="<?= url('/tareas/complete') ?>" method="POST" style="display:inline-block;">
                         <input type="hidden" name="id" value="<?= $task->id ?>">
                         <button type="submit" class="btn" style="padding: 0.4rem 0.8rem; background: #dcfce7; color: #166534;" title="Marcar como Completada">
                             <i class="fas fa-check"></i>
                         </button>
                     </form>
                     <?php endif; ?>
-                    <a href="/tareas/edit?id=<?= $task->id ?>" class="btn" style="padding: 0.4rem 0.8rem; background: #f1f5f9; color: #334155;">
+                    <a href="<?= url('/tareas/edit?id=' . $task->id) ?>" class="btn" style="padding: 0.4rem 0.8rem; background: var(--border); color: var(--text-main);">
                         <i class="fas fa-edit"></i>
                     </a>
                 </td>

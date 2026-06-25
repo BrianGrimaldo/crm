@@ -8,7 +8,7 @@ require __DIR__ . '/../layouts/header.php';
         <h1>Ticket #<?= $ticket->id ?>: <?= htmlspecialchars($ticket->subject) ?></h1>
         <p>Gestiona el avance y resolución de este ticket de soporte.</p>
     </div>
-    <a href="/tickets" class="btn" style="background: var(--surface); color: var(--text-main); border: 1px solid var(--border);">
+    <a href="<?= url('/tickets') ?>" class="btn" style="background: var(--surface); color: var(--text-main); border: 1px solid var(--border);">
         Volver a Tickets
     </a>
 </div>
@@ -20,7 +20,7 @@ require __DIR__ . '/../layouts/header.php';
         <!-- Descripción General -->
         <div class="panel" style="padding: 1.5rem;">
             <h3 style="font-size: 1.1rem; font-weight: 800; color: var(--primary); margin-bottom: 1rem; border-bottom: 1px solid rgba(0,0,0,0.03); padding-bottom: 0.5rem;"><i class="fas fa-info-circle" style="color: var(--accent); margin-right: 0.5rem;"></i> Descripción de Solicitud</h3>
-            <p style="font-size: 0.95rem; line-height: 1.6; color: var(--text-main); background: #f8fafc; padding: 1rem; border-radius: 8px; border-left: 4px solid var(--accent); white-space: pre-line;">
+            <p style="font-size: 0.95rem; line-height: 1.6; color: var(--text-main); background: var(--bg-main); padding: 1rem; border-radius: 8px; border-left: 4px solid var(--accent); white-space: pre-line;">
                 <?= htmlspecialchars($ticket->description ?: 'No se proporcionó descripción.') ?>
             </p>
         </div>
@@ -34,7 +34,7 @@ require __DIR__ . '/../layouts/header.php';
                     <p style="color: var(--text-muted); font-size: 0.9rem; text-align: center; padding: 2rem;">No hay comentarios registrados en este ticket aún.</p>
                 <?php else: ?>
                     <?php foreach ($comments as $c): ?>
-                        <div style="padding: 1rem; border-radius: 12px; background: <?= $c->is_internal ? '#fef3c7' : '#f1f5f9' ?>; border-left: 4px solid <?= $c->is_internal ? '#d97706' : 'var(--primary)' ?>;">
+                        <div style="padding: 1rem; border-radius: 12px; background: <?= $c->is_internal ? '#fef3c7' : 'var(--border)' ?>; border-left: 4px solid <?= $c->is_internal ? '#d97706' : 'var(--primary)' ?>;">
                             <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-size: 0.8rem;">
                                 <span style="font-weight: 700; color: var(--text-main);">
                                     <i class="fas fa-user-circle"></i> <?= htmlspecialchars($c->user_name ?? 'Cliente / Web') ?>
@@ -53,7 +53,7 @@ require __DIR__ . '/../layouts/header.php';
             </div>
 
             <!-- Formulario para agregar respuesta / comentario -->
-            <form action="/tickets/comment" method="POST" style="margin-top: 1.5rem; border-top: 1px solid rgba(0,0,0,0.05); padding-top: 1.5rem;">
+            <form action="<?= url('/tickets/comment') ?>" method="POST" style="margin-top: 1.5rem; border-top: 1px solid rgba(0,0,0,0.05); padding-top: 1.5rem;">
                 <input type="hidden" name="ticket_id" value="<?= $ticket->id ?>">
                 <div class="form-group">
                     <label for="body">Agregar Comentario / Respuesta</label>
@@ -78,7 +78,7 @@ require __DIR__ . '/../layouts/header.php';
         <div class="panel" style="padding: 1.5rem;">
             <h3 style="font-size: 1.1rem; font-weight: 800; color: var(--primary); margin-bottom: 1.25rem;"><i class="fas fa-cog" style="color: var(--accent); margin-right: 0.5rem;"></i> Acciones y Estado</h3>
             
-            <form action="/tickets/update-status" method="POST">
+            <form action="<?= url('/tickets/update-status') ?>" method="POST">
                 <input type="hidden" name="id" value="<?= $ticket->id ?>">
                 
                 <div class="form-group">
@@ -129,7 +129,7 @@ require __DIR__ . '/../layouts/header.php';
                     <span style="color: var(--text-muted); font-weight: 600; display: block;">Cliente Asociado:</span>
                     <strong>
                         <?php if ($ticket->contact_id): ?>
-                            <a href="/contactos/edit?id=<?= $ticket->contact_id ?>" style="color: var(--primary); text-decoration: none;">
+                            <a href="<?= url('/contactos/edit?id=' . $ticket->contact_id) ?>" style="color: var(--primary); text-decoration: none;">
                                 <?= htmlspecialchars($ticket->contact_first . ' ' . $ticket->contact_last) ?>
                             </a>
                         <?php else: ?>
@@ -153,7 +153,7 @@ require __DIR__ . '/../layouts/header.php';
                             'phone'  => '<i class="fas fa-phone" style="color:#10b981; margin-right:0.3rem;"></i> Llamada',
                             'chat'   => '<i class="fab fa-whatsapp" style="color:#25d366; margin-right:0.3rem;"></i> WhatsApp',
                             'social' => '<i class="fab fa-facebook" style="color:#1877f2; margin-right:0.3rem;"></i> Redes Sociales',
-                            default  => '<i class="fas fa-globe" style="color:#64748b; margin-right:0.3rem;"></i> Portal Web'
+                            default  => '<i class="fas fa-globe" style="color:var(--text-muted); margin-right:0.3rem;"></i> Portal Web'
                         } ?>
                     </span>
                 </li>

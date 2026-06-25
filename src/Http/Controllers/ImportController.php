@@ -42,22 +42,19 @@ class ImportController
                 exit;
             }
 
-            $type   = $_POST['import_type'] ?? 'contacts'; // contacts | accounts
+            $type = $_POST['import_type'] ?? 'contacts';
             $tmpPath = $_FILES['csv_file']['tmp_name'];
-            $rows    = $this->parseCsv($tmpPath);
+            $rows = $this->parseCsv($tmpPath);
 
             if (empty($rows)) {
                 echo json_encode(['success' => false, 'message' => 'El archivo está vacío o no tiene filas válidas.']);
                 exit;
             }
 
-            // Validate headers
             $headers = array_keys($rows[0]);
-            $required = $type === 'contacts'
-                ? ['first_name']
-                : ['name'];
-
+            $required = $type === 'contacts' ? ['first_name'] : ['name'];
             $missing = array_diff($required, $headers);
+
             if (!empty($missing)) {
                 echo json_encode([
                     'success' => false,
@@ -66,19 +63,19 @@ class ImportController
                 exit;
             }
 
-            // Return preview (max 100 rows shown, full count stored in session)
             $_SESSION['import_pending'] = [
                 'type' => $type,
                 'rows' => $rows,
             ];
 
             echo json_encode([
-                'success'   => true,
-                'type'      => $type,
-                'total'     => count($rows),
-                'headers'   => $headers,
-                'preview'   => array_slice($rows, 0, 10),
+                'success' => true,
+                'type' => $type,
+                'total' => count($rows),
+                'headers' => $headers,
+                'preview' => array_slice($rows, 0, 10),
             ]);
+
         } catch (\Exception $e) {
             echo json_encode(['success' => false, 'message' => $e->getMessage()]);
         }
@@ -98,16 +95,16 @@ class ImportController
             exit;
         }
 
-        $pending  = $_SESSION['import_pending'];
-        $type     = $pending['type'];
-        $rows     = $pending['rows'];
-        $tenantId = (int)($_SESSION['tenant_id'] ?? 0);
-        $ownerId  = (int)($_SESSION['user_id'] ?? 0);
-        $db       = Database::getInstance();
+        $pending = $_SESSION['import_pending'];
+        $type = $pending['type'];
+        $rows = $pending['rows'];
+        $tenantId = (int) ($_SESSION['tenant_id'] ?? 0);
+        $ownerId = (int) ($_SESSION['user_id'] ?? 0);
+        $db = Database::getInstance();
 
         $inserted = 0;
-        $skipped  = 0;
-        $errors   = [];
+        $skipped = 0;
+        $errors = [];
 
         try {
             $db->beginTransaction();
@@ -125,25 +122,28 @@ class ImportController
 
                 foreach ($rows as $i => $row) {
                     $fn = trim($row['first_name'] ?? '');
-                    if ($fn === '') { $skipped++; continue; }
+                    if ($fn === '') {
+                        $skipped++;
+                        continue;
+                    }
 
                     try {
                         $stmt->execute([
-                            ':tenant_id'  => $tenantId,
-                            ':owner_id'   => $ownerId,
-                            ':type'       => $this->sanitize($row['type'] ?? 'Prospecto'),
+                            ':tenant_id' => $tenantId,
+                            ':owner_id' => $ownerId,
+                            ':type' => $this->sanitize($row['type'] ?? 'Prospecto'),
                             ':first_name' => $this->sanitize($fn),
-                            ':last_name'  => $this->sanitize($row['last_name'] ?? ''),
-                            ':email'      => $this->sanitize($row['email'] ?? ''),
-                            ':phone'      => $this->sanitize($row['phone'] ?? ''),
-                            ':mobile'     => $this->sanitize($row['mobile'] ?? ''),
-                            ':job_title'  => $this->sanitize($row['job_title'] ?? ''),
+                            ':last_name' => $this->sanitize($row['last_name'] ?? ''),
+                            ':email' => $this->sanitize($row['email'] ?? ''),
+                            ':phone' => $this->sanitize($row['phone'] ?? ''),
+                            ':mobile' => $this->sanitize($row['mobile'] ?? ''),
+                            ':job_title' => $this->sanitize($row['job_title'] ?? ''),
                             ':department' => $this->sanitize($row['department'] ?? ''),
-                            ':linkedin'   => $this->sanitize($row['linkedin'] ?? ''),
-                            ':country'    => $this->sanitize($row['country'] ?? ''),
-                            ':city'       => $this->sanitize($row['city'] ?? ''),
-                            ':postal_code'=> $this->sanitize($row['postal_code'] ?? ''),
-                            ':address'    => $this->sanitize($row['address'] ?? ''),
+                            ':linkedin' => $this->sanitize($row['linkedin'] ?? ''),
+                            ':country' => $this->sanitize($row['country'] ?? ''),
+                            ':city' => $this->sanitize($row['city'] ?? ''),
+                            ':postal_code' => $this->sanitize($row['postal_code'] ?? ''),
+                            ':address' => $this->sanitize($row['address'] ?? ''),
                         ]);
                         $inserted++;
                     } catch (\Exception $e) {
@@ -165,25 +165,28 @@ class ImportController
 
                 foreach ($rows as $i => $row) {
                     $name = trim($row['name'] ?? '');
-                    if ($name === '') { $skipped++; continue; }
+                    if ($name === '') {
+                        $skipped++;
+                        continue;
+                    }
 
                     try {
                         $stmt->execute([
-                            ':tenant_id'       => $tenantId,
-                            ':owner_id'        => $ownerId,
-                            ':name'            => $this->sanitize($name),
-                            ':type'            => $this->sanitize($row['type'] ?? 'customer'),
-                            ':priority'        => $this->sanitize($row['priority'] ?? 'B'),
-                            ':industry'        => $this->sanitize($row['industry'] ?? ''),
-                            ':website'         => $this->sanitize($row['website'] ?? ''),
-                            ':linkedin'        => $this->sanitize($row['linkedin'] ?? ''),
-                            ':phone'           => $this->sanitize($row['phone'] ?? ''),
-                            ':email'           => $this->sanitize($row['email'] ?? ''),
-                            ':country'         => $this->sanitize($row['country'] ?? ''),
-                            ':city'            => $this->sanitize($row['city'] ?? ''),
-                            ':postal_code'     => $this->sanitize($row['postal_code'] ?? ''),
+                            ':tenant_id' => $tenantId,
+                            ':owner_id' => $ownerId,
+                            ':name' => $this->sanitize($name),
+                            ':type' => $this->sanitize($row['type'] ?? 'customer'),
+                            ':priority' => $this->sanitize($row['priority'] ?? 'B'),
+                            ':industry' => $this->sanitize($row['industry'] ?? ''),
+                            ':website' => $this->sanitize($row['website'] ?? ''),
+                            ':linkedin' => $this->sanitize($row['linkedin'] ?? ''),
+                            ':phone' => $this->sanitize($row['phone'] ?? ''),
+                            ':email' => $this->sanitize($row['email'] ?? ''),
+                            ':country' => $this->sanitize($row['country'] ?? ''),
+                            ':city' => $this->sanitize($row['city'] ?? ''),
+                            ':postal_code' => $this->sanitize($row['postal_code'] ?? ''),
                             ':billing_address' => $this->sanitize($row['billing_address'] ?? ''),
-                            ':notes'           => $this->sanitize($row['notes'] ?? ''),
+                            ':notes' => $this->sanitize($row['notes'] ?? ''),
                         ]);
                         $inserted++;
                     } catch (\Exception $e) {
@@ -206,10 +209,10 @@ class ImportController
             unset($_SESSION['import_pending']);
 
             echo json_encode([
-                'success'  => true,
+                'success' => true,
                 'inserted' => $inserted,
-                'skipped'  => $skipped,
-                'errors'   => array_slice($errors, 0, 20),
+                'skipped' => $skipped,
+                'errors' => array_slice($errors, 0, 20),
             ]);
 
         } catch (\Exception $e) {
@@ -229,52 +232,52 @@ class ImportController
         $type = $_GET['type'] ?? 'contacts';
 
         if ($type === 'contacts') {
-            $filename  = 'Plantilla_Contactos_' . date('Y-m-d') . '.xls';
-            $title     = 'Plantilla de Importación — Contactos';
-            $subtitle  = 'Completa los campos y guarda como CSV (UTF-8). El campo first_name es obligatorio.';
-            $headers   = [
-                'first_name'  => 'Nombre *',
-                'last_name'   => 'Apellido',
-                'type'        => 'Tipo (Prospecto / Cliente / Proveedor)',
-                'email'       => 'Correo Electrónico',
-                'phone'       => 'Teléfono',
-                'mobile'      => 'Celular',
-                'job_title'   => 'Puesto',
-                'department'  => 'Departamento',
-                'linkedin'    => 'LinkedIn URL',
-                'country'     => 'País',
-                'city'        => 'Ciudad',
+            $filename = 'Plantilla_Contactos_' . date('Y-m-d') . '.xls';
+            $title = 'Plantilla de Importación — Contactos';
+            $subtitle = 'Completa los campos y guarda como CSV (UTF-8). El campo first_name es obligatorio.';
+            $headers = [
+                'first_name' => 'Nombre *',
+                'last_name' => 'Apellido',
+                'type' => 'Tipo (Prospecto / Cliente / Proveedor)',
+                'email' => 'Correo Electrónico',
+                'phone' => 'Teléfono',
+                'mobile' => 'Celular',
+                'job_title' => 'Puesto',
+                'department' => 'Departamento',
+                'linkedin' => 'LinkedIn URL',
+                'country' => 'País',
+                'city' => 'Ciudad',
                 'postal_code' => 'Código Postal',
-                'address'     => 'Dirección',
+                'address' => 'Dirección',
             ];
             $samples = [
-                ['Juan',  'García',  'Cliente',   'juan@empresa.com',  '55-1234-5678', '55-8765-4321', 'Gerente',  'Ventas',    'https://linkedin.com/in/juan', 'México', 'CDMX',        '06600', 'Av. Principal 100'],
-                ['María', 'López',   'Prospecto', 'maria@corp.mx',     '55-0000-1111', '',             'Directora','Marketing', '',                            'México', 'Guadalajara', '44100', ''],
-                ['Carlos','Ramírez', 'Proveedor', 'carlos@proveedor.com','55-2222-3333','55-4444-5555','Director', 'Compras',   '',                            'México', 'Monterrey',   '64000', 'Blvd. Industria 200'],
+                ['Juan', 'García', 'Cliente', 'juan@empresa.com', '55-1234-5678', '55-8765-4321', 'Gerente', 'Ventas', 'https://linkedin.com/in/juan', 'México', 'CDMX', '06600', 'Av. Principal 100'],
+                ['María', 'López', 'Prospecto', 'maria@corp.mx', '55-0000-1111', '', 'Directora', 'Marketing', '', 'México', 'Guadalajara', '44100', ''],
+                ['Carlos', 'Ramírez', 'Proveedor', 'carlos@proveedor.com', '55-2222-3333', '55-4444-5555', 'Director', 'Compras', '', 'México', 'Monterrey', '64000', 'Blvd. Industria 200'],
             ];
         } else {
-            $filename  = 'Plantilla_Organizaciones_' . date('Y-m-d') . '.xls';
-            $title     = 'Plantilla de Importación — Organizaciones';
-            $subtitle  = 'Completa los campos y guarda como CSV (UTF-8). El campo name es obligatorio.';
-            $headers   = [
-                'name'            => 'Nombre de la Empresa *',
-                'type'            => 'Tipo (customer / partner / vendor / other)',
-                'priority'        => 'Prioridad (A / B / C)',
-                'industry'        => 'Industria / Giro',
-                'website'         => 'Sitio Web',
-                'linkedin'        => 'LinkedIn URL',
-                'phone'           => 'Teléfono',
-                'email'           => 'Correo',
-                'country'         => 'País',
-                'city'            => 'Ciudad',
-                'postal_code'     => 'Código Postal',
+            $filename = 'Plantilla_Organizaciones_' . date('Y-m-d') . '.xls';
+            $title = 'Plantilla de Importación — Organizaciones';
+            $subtitle = 'Completa los campos y guarda como CSV (UTF-8). El campo name es obligatorio.';
+            $headers = [
+                'name' => 'Nombre de la Empresa *',
+                'type' => 'Tipo (customer / partner / vendor / other)',
+                'priority' => 'Prioridad (A / B / C)',
+                'industry' => 'Industria / Giro',
+                'website' => 'Sitio Web',
+                'linkedin' => 'LinkedIn URL',
+                'phone' => 'Teléfono',
+                'email' => 'Correo',
+                'country' => 'País',
+                'city' => 'Ciudad',
+                'postal_code' => 'Código Postal',
                 'billing_address' => 'Dirección de Facturación',
-                'notes'           => 'Notas',
+                'notes' => 'Notas',
             ];
             $samples = [
-                ['Empresa Ejemplo S.A. de C.V.', 'customer', 'A', 'Tecnología',  'https://empresa.com',    'https://linkedin.com/company/ejemplo', '55-1234-0000', 'info@empresa.com', 'México', 'CDMX',       '06600', 'Av. Reforma 500, Piso 10', 'Cliente frecuente'],
-                ['Distribuciones XYZ',            'partner',  'B', 'Logística',   '',                        '',                                     '55-9876-0000', 'ventas@xyz.mx',    'México', 'Monterrey',  '64000', '',                        ''],
-                ['Manufactura ABC S.A.',           'vendor',   'C', 'Manufactura', 'https://abc-mx.com',     '',                                     '55-5555-0000', 'contacto@abc.mx',  'México', 'Guadalajara','44100', 'Parque Industrial Sur 300', 'Proveedor principal'],
+                ['Empresa Ejemplo S.A. de C.V.', 'customer', 'A', 'Tecnología', 'https://empresa.com', 'https://linkedin.com/company/ejemplo', '55-1234-0000', 'info@empresa.com', 'México', 'CDMX', '06600', 'Av. Reforma 500, Piso 10', 'Cliente frecuente'],
+                ['Distribuciones XYZ', 'partner', 'B', 'Logística', '', '', '55-9876-0000', 'ventas@xyz.mx', 'México', 'Monterrey', '64000', '', ''],
+                ['Manufactura ABC S.A.', 'vendor', 'C', 'Manufactura', 'https://abc-mx.com', '', '55-5555-0000', 'contacto@abc.mx', 'México', 'Guadalajara', '44100', 'Parque Industrial Sur 300', 'Proveedor principal'],
             ];
         }
 
@@ -351,7 +354,7 @@ class ImportController
             echo '<tr class="' . $cls . '">';
             foreach ($row as $j => $val) {
                 $colKey = $colKeys[$j] ?? '';
-                $isReq  = in_array($colKey, ['first_name', 'name']);
+                $isReq = in_array($colKey, ['first_name', 'name']);
                 echo '<td' . ($isReq ? ' class="req"' : '') . '>' . htmlspecialchars($val) . '</td>';
             }
             echo '</tr>';
@@ -380,23 +383,40 @@ class ImportController
      * until we find one that does (handles template title/subtitle rows).
      */
     private const KNOWN_COLUMNS = [
-        'first_name', 'last_name', 'email', 'phone', 'mobile',
-        'job_title', 'department', 'linkedin', 'country', 'city',
-        'postal_code', 'address', 'name', 'type', 'priority',
-        'industry', 'website', 'billing_address', 'notes',
+        'first_name',
+        'last_name',
+        'email',
+        'phone',
+        'mobile',
+        'job_title',
+        'department',
+        'linkedin',
+        'country',
+        'city',
+        'postal_code',
+        'address',
+        'name',
+        'type',
+        'priority',
+        'industry',
+        'website',
+        'billing_address',
+        'notes',
     ];
 
     private function parseCsv(string $path): array
     {
         $handle = fopen($path, 'r');
-        if (!$handle) throw new \RuntimeException('No se pudo abrir el archivo.');
+        if (!$handle)
+            throw new \RuntimeException('No se pudo abrir el archivo.');
 
         // Strip BOM
         $bom = fread($handle, 3);
-        if ($bom !== "\xEF\xBB\xBF") rewind($handle);
+        if ($bom !== "\xEF\xBB\xBF")
+            rewind($handle);
 
         $headers = null;
-        $rows    = [];
+        $rows = [];
 
         while (($line = fgetcsv($handle, 4096, ',')) !== false) {
             // Try semicolon if single column
@@ -425,12 +445,14 @@ class ImportController
             // Build associative row from headers
             $row = [];
             foreach ($headers as $i => $h) {
-                if ($h === '' || $h === '&nbsp;') continue; // skip empty header columns
+                if ($h === '' || $h === '&nbsp;')
+                    continue; // skip empty header columns
                 $row[$h] = trim($line[$i] ?? '');
             }
 
             // Skip fully empty rows
-            if (array_filter($row, fn($v) => $v !== '' && $v !== '&nbsp;') === []) continue;
+            if (array_filter($row, fn($v) => $v !== '' && $v !== '&nbsp;') === [])
+                continue;
 
             $rows[] = $row;
         }

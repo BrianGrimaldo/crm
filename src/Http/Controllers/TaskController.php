@@ -75,16 +75,16 @@ class TaskController
 
         if (empty($data['title'])) {
             $_SESSION['flash_error'] = "El título de la tarea es requerido.";
-            header('Location: /tareas/create');
+            header('Location: ' . url('/tareas/create'));
             exit;
         }
 
         if ($this->taskModel->create($data)) {
             $_SESSION['flash_success'] = "Tarea creada exitosamente.";
-            header('Location: /tareas');
+            header('Location: ' . url('/tareas'));
         } else {
             $_SESSION['flash_error'] = "Error al crear la tarea.";
-            header('Location: /tareas/create');
+            header('Location: ' . url('/tareas/create'));
         }
         exit;
     }
@@ -98,7 +98,7 @@ class TaskController
 
         if (!$task) {
             $_SESSION['flash_error'] = "Tarea no encontrada.";
-            header('Location: /tareas');
+            header('Location: ' . url('/tareas'));
             exit;
         }
 
@@ -138,16 +138,16 @@ class TaskController
 
         if (empty($data['title'])) {
             $_SESSION['flash_error'] = "El título de la tarea es requerido.";
-            header("Location: /tareas/edit?id=$id");
+            header('Location: ' . url('/tareas/edit?id=$id'));
             exit;
         }
 
         if ($this->taskModel->update($id, $data)) {
             $_SESSION['flash_success'] = "Tarea actualizada exitosamente.";
-            header('Location: /tareas');
+            header('Location: ' . url('/tareas'));
         } else {
             $_SESSION['flash_error'] = "Error al actualizar la tarea.";
-            header("Location: /tareas/edit?id=$id");
+            header('Location: ' . url('/tareas/edit?id=$id'));
         }
         exit;
     }
@@ -162,7 +162,7 @@ class TaskController
         } else {
             $_SESSION['flash_error'] = "Error al eliminar la tarea.";
         }
-        header('Location: /tareas');
+        header('Location: ' . url('/tareas'));
         exit;
     }
     

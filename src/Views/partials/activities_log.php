@@ -5,7 +5,7 @@
     <h3 style="margin-bottom: 1.5rem; font-size: 1.2rem; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem;">Bitácora de Intervenciones</h3>
     
     <!-- Formulario para agregar nueva actividad -->
-    <form action="/activities" method="POST" style="margin-bottom: 2rem; background: var(--bg-main); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--border);">
+    <form action="<?= url('/activities') ?>" method="POST" style="margin-bottom: 2rem; background: var(--bg-main); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--border);">
         <input type="hidden" name="entity_type" value="<?= htmlspecialchars($entityType) ?>">
         <input type="hidden" name="entity_id" value="<?= (int)$entityId ?>">
         

@@ -171,9 +171,10 @@ require __DIR__ . '/../layouts/header.php';
 <script>
 Chart.defaults.font.family = "'Outfit', sans-serif";
 Chart.defaults.font.weight = '500';
+Chart.defaults.font.size = 13.5;
 
-const textColor = '#64748b';
-const gridColor = 'rgba(0,0,0,0.04)';
+const textColor = getComputedStyle(document.documentElement).getPropertyValue('--text-main').trim() || '#f8fafc';
+const gridColor = getComputedStyle(document.documentElement).getPropertyValue('--border').trim() || 'rgba(255,255,255,0.08)';
 
 // ── 1. TENDENCIA DE INGRESOS ──────────────────────────
 const monthLabels = <?= $chartMonthLabels ?>;
@@ -200,12 +201,12 @@ new Chart(rtCtx, {
         maintainAspectRatio: false,
         interaction: { mode: 'index', intersect: false },
         plugins: {
-            legend: { labels: { color: textColor, font: { weight: '600' }, usePointStyle: true, pointStyle: 'circle' } },
+            legend: { labels: { color: textColor, font: { weight: '600', size: 13 }, usePointStyle: true, pointStyle: 'circle' } },
             tooltip: { callbacks: { label: ctx => ` $${ctx.parsed.y.toLocaleString('es-MX', {minimumFractionDigits: 2})}` } }
         },
         scales: {
-            x: { grid: { display: false }, ticks: { color: textColor, font: { size: 11 } } },
-            y: { grid: { color: gridColor }, ticks: { color: textColor, callback: v => '$' + (v >= 1000 ? (v/1000).toFixed(0) + 'K' : v) }, border: { dash: [4, 4] } }
+            x: { grid: { display: false }, ticks: { color: textColor, font: { size: 13 } } },
+            y: { grid: { color: gridColor }, ticks: { color: textColor, font: { size: 12 }, callback: v => '$' + (v >= 1000 ? (v/1000).toFixed(0) + 'K' : v) }, border: { dash: [4, 4] } }
         }
     }
 });
@@ -227,10 +228,13 @@ new Chart(successCtx, {
     },
     options: {
         responsive: true,
-        maintainAspectRatio: false,
+        maintainAspectRatio: true,
+        layout: {
+            padding: 10
+        },
         cutout: '65%',
         plugins: {
-            legend: { position: 'bottom', labels: { color: textColor, padding: 15, font: { size: 11, weight: '600' }, boxWidth: 10, usePointStyle: true, pointStyle: 'circle' } }
+            legend: { position: 'bottom', labels: { color: textColor, padding: 15, font: { size: 13, weight: '600' }, boxWidth: 10, usePointStyle: true, pointStyle: 'circle' } }
         }
     }
 });
@@ -254,12 +258,19 @@ new Chart(scCtx, {
     },
     options: {
         responsive: true,
-        maintainAspectRatio: false,
+        maintainAspectRatio: true,
+        layout: {
+            padding: 10
+        },
         plugins: {
-            legend: { position: 'bottom', labels: { color: textColor, font: { size: 10, weight: '600' }, boxWidth: 10, usePointStyle: true } }
+            legend: { position: 'bottom', labels: { color: textColor, font: { size: 12, weight: '600' }, boxWidth: 10, usePointStyle: true } }
         },
         scales: {
-            r: { ticks: { display: false } }
+            r: { 
+                grid: { color: gridColor },
+                angleLines: { color: gridColor },
+                ticks: { display: false } 
+            }
         }
     }
 });

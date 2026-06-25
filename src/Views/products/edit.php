@@ -7,11 +7,11 @@ require __DIR__ . '/../layouts/header.php';
     <div>
         <h1>Editar Producto: <?= htmlspecialchars($product->name) ?></h1>
     </div>
-    <a href="/productos" class="btn" style="background: var(--surface); border: 1px solid var(--border);">Volver</a>
+    <a href="<?= url('/productos') ?>" class="btn" style="background: var(--surface); border: 1px solid var(--border);">Volver</a>
 </div>
 
 <div class="card" style="max-width: 800px; padding: 2rem; margin-bottom: 2rem;">
-    <form action="/productos/update" method="POST">
+    <form action="<?= url('/productos/update') ?>" method="POST">
         <input type="hidden" name="id" value="<?= $product->id ?>">
         
         <h3 style="font-size: 1.2rem; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem;">Información Básica</h3>
@@ -45,10 +45,10 @@ require __DIR__ . '/../layouts/header.php';
             </div>
         </div>
         
-        <div style="background: #f8fafc; padding: 1.5rem; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 1.5rem;">
+        <div style="background: var(--bg-main); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 1.5rem;">
             <div style="display: flex; justify-content: space-between; align-items: center;">
                 <div>
-                    <h4 style="margin: 0; color: #334155;">Stock Actual Disponible</h4>
+                    <h4 style="margin: 0; color: var(--text-main);">Stock Actual Disponible</h4>
                     <span style="font-size: 2rem; font-weight: bold; color: #0f172a;"><?= number_format((float)$product->quantity, 2) ?></span>
                 </div>
                 <div class="form-group" style="margin-bottom: 0; width: 200px;">
@@ -67,7 +67,7 @@ require __DIR__ . '/../layouts/header.php';
 <div class="card" style="max-width: 800px; padding: 2rem; border-top: 4px solid #ef4444;">
     <h3 style="color: #ef4444; margin-top: 0;">Zona de Peligro</h3>
     <p style="color: var(--text-muted);">Al eliminar este producto, dejará de estar disponible para nuevas ventas o asignaciones de inventario.</p>
-    <form action="/productos/delete" method="POST" onsubmit="return confirm('¿Estás seguro de inactivar este producto?');">
+    <form action="<?= url('/productos/delete') ?>" method="POST" onsubmit="return confirm('¿Estás seguro de inactivar este producto?');">
         <input type="hidden" name="id" value="<?= $product->id ?>">
         <button type="submit" class="btn" style="background: rgba(239,68,68,0.1); color: #ef4444; border: 1px solid #ef4444;">
             <i class="fas fa-trash"></i> Eliminar Producto

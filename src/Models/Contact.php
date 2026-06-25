@@ -19,7 +19,7 @@ class Contact extends BaseModel
     public function search(string $keyword = '', string $type = ''): array
     {
         $tenantId = TenantContext::getTenantId();
-        
+
         $sql = "SELECT c.*, 
                        a.name as account_name,
                        CONCAT(u.first_name, ' ', IFNULL(u.last_name, '')) as owner_name
@@ -30,10 +30,10 @@ class Contact extends BaseModel
         $params = [':tenant_id' => $tenantId];
 
         if ($keyword !== '') {
-            $sql .= " AND (c.first_name LIKE :keyword OR c.last_name LIKE :keyword OR c.email LIKE :keyword)";
-            $params[':keyword'] = "%{$keyword}%";
+            $sql .= " AND (c.first_name LIKE :keyword1 OR c.last_name LIKE :keyword2)";
+            $params[':keyword1'] = "%{$keyword}%";
+            $params[':keyword2'] = "%{$keyword}%";
         }
-
         if ($type !== '') {
             $sql .= " AND c.type = :type";
             $params[':type'] = $type;
@@ -69,7 +69,7 @@ class Contact extends BaseModel
         $stmt = $this->db->prepare($sql);
         $stmt->execute($params);
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
-        return (int)($result['total'] ?? 0);
+        return (int) ($result['total'] ?? 0);
     }
 
     /**

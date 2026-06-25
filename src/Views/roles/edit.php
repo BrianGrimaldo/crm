@@ -24,13 +24,13 @@ $actionLabels = [
             <?php endif; ?>
         </p>
     </div>
-    <a href="/roles" class="btn" style="background: var(--surface); color: var(--text-main); border: 1px solid var(--border);">
+    <a href="<?= url('/roles') ?>" class="btn" style="background: var(--surface); color: var(--text-main); border: 1px solid var(--border);">
         Volver a Roles
     </a>
 </div>
 
 <div class="card" style="padding: 2rem;">
-    <form action="/roles/update" method="POST">
+    <form action="<?= url('/roles/update') ?>" method="POST">
         <input type="hidden" name="id" value="<?= $roleData->id ?>">
 
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem;">
@@ -90,7 +90,7 @@ $actionLabels = [
                                                    style="width: 18px; height: 18px; cursor: pointer; accent-color: var(--bg-sidebar);">
                                         </label>
                                     <?php else: ?>
-                                        <span style="color: #cbd5e1;">—</span>
+                                        <span style="color: var(--text-muted);">—</span>
                                     <?php endif; ?>
                                 </td>
                             <?php endforeach; ?>

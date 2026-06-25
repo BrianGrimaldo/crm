@@ -102,7 +102,7 @@ $avgDealSize    = $openDealsCount > 0 ? round($totalPipeline / $openDealsCount) 
 .timeline::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.1); border-radius: 5px; }
 .tl-item { display: flex; gap: .85rem; padding: .75rem 0; position: relative; }
 .tl-item + .tl-item { border-top: 1px dashed rgba(0,0,0,.06); }
-.tl-icon { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: .9rem; flex-shrink: 0; background: #f1f5f9; color: var(--primary); }
+.tl-icon { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: .9rem; flex-shrink: 0; background: var(--border); color: var(--primary); }
 .tl-body { flex: 1; min-width: 0; }
 .tl-text { font-size: .88rem; font-weight: 600; color: var(--text-main); line-height: 1.4; }
 .tl-text strong { color: var(--primary); }
@@ -160,11 +160,11 @@ $avgDealSize    = $openDealsCount > 0 ? round($totalPipeline / $openDealsCount) 
     </div>
     <div class="kpi">
         <div class="kpi-top">
-            <div class="kpi-dot" style="background:rgba(168,85,247,.1);color:#a855f7;"><i class="fas fa-ruler-combined"></i></div>
-            <span class="kpi-tag" style="background:rgba(168,85,247,.1);color:#a855f7;">Promedio</span>
+            <div class="kpi-dot" style="background:rgba(239,68,68,.1);color:#ef4444;"><i class="fas fa-times-circle"></i></div>
+            <span class="kpi-tag" style="background:rgba(239,68,68,.1);color:#ef4444;"><?= $dealStats['lost_deals_count'] ?? 0 ?> perdidas</span>
         </div>
-        <div class="kpi-val">$<?= number_format($avgDealSize, 0, '.', ',') ?></div>
-        <div class="kpi-lbl">Ticket promedio</div>
+        <div class="kpi-val">$<?= number_format($dealStats['total_lost'] ?? 0, 0, '.', ',') ?></div>
+        <div class="kpi-lbl">Ventas perdidas</div>
     </div>
 </div>
 
@@ -174,7 +174,7 @@ $avgDealSize    = $openDealsCount > 0 ? round($totalPipeline / $openDealsCount) 
     <div class="panel" style="cursor:pointer;" onclick="window.location.href='/analiticas'">
         <div class="panel-head">
             <div class="panel-title"><div class="panel-title-icon" style="background:rgba(16,185,129,.08);color:#10b981;"><i class="fas fa-chart-line"></i></div> Tendencia de Ingresos</div>
-            <a href="/analiticas" style="font-size:0.75rem;color:#6366f1;font-weight:700;text-decoration:none;display:flex;align-items:center;gap:0.3rem;">Ver completo <i class="fas fa-arrow-right" style="font-size:0.65rem;"></i></a>
+            <a href="<?= url('/analiticas') ?>" style="font-size:0.75rem;color:#6366f1;font-weight:700;text-decoration:none;display:flex;align-items:center;gap:0.3rem;">Ver completo <i class="fas fa-arrow-right" style="font-size:0.65rem;"></i></a>
         </div>
         <div style="position:relative;height:260px;"><canvas id="revenueChart"></canvas></div>
     </div>
@@ -182,7 +182,7 @@ $avgDealSize    = $openDealsCount > 0 ? round($totalPipeline / $openDealsCount) 
     <div class="panel" style="cursor:pointer;" onclick="window.location.href='/analiticas'">
         <div class="panel-head">
             <div class="panel-title"><div class="panel-title-icon" style="background:rgba(168,85,247,.08);color:#a855f7;"><i class="fas fa-chart-pie"></i></div> Negocios por Etapa</div>
-            <a href="/analiticas" style="font-size:0.75rem;color:#6366f1;font-weight:700;text-decoration:none;display:flex;align-items:center;gap:0.3rem;">Ver completo <i class="fas fa-arrow-right" style="font-size:0.65rem;"></i></a>
+            <a href="<?= url('/analiticas') ?>" style="font-size:0.75rem;color:#6366f1;font-weight:700;text-decoration:none;display:flex;align-items:center;gap:0.3rem;">Ver completo <i class="fas fa-arrow-right" style="font-size:0.65rem;"></i></a>
         </div>
         <div style="position:relative;height:260px;"><canvas id="stageChart"></canvas></div>
     </div>
@@ -190,7 +190,7 @@ $avgDealSize    = $openDealsCount > 0 ? round($totalPipeline / $openDealsCount) 
     <div class="panel" style="cursor:pointer;" onclick="window.location.href='/analiticas'">
         <div class="panel-head">
             <div class="panel-title"><div class="panel-title-icon" style="background:rgba(245,158,11,.08);color:#f59e0b;"><i class="fas fa-hourglass-half"></i></div> Embudo de Ventas</div>
-            <a href="/analiticas" style="font-size:0.75rem;color:#6366f1;font-weight:700;text-decoration:none;display:flex;align-items:center;gap:0.3rem;">Ver completo <i class="fas fa-arrow-right" style="font-size:0.65rem;"></i></a>
+            <a href="<?= url('/analiticas') ?>" style="font-size:0.75rem;color:#6366f1;font-weight:700;text-decoration:none;display:flex;align-items:center;gap:0.3rem;">Ver completo <i class="fas fa-arrow-right" style="font-size:0.65rem;"></i></a>
         </div>
         <?php if (!empty($dealsSummary)):
             $maxCount = max(array_map(fn($s) => (int)$s->deal_count, $dealsSummary)) ?: 1;
@@ -320,7 +320,7 @@ $avgDealSize    = $openDealsCount > 0 ? round($totalPipeline / $openDealsCount) 
 <?php endif; ?>
         <div class="panel-head">
             <div class="panel-title"><div class="panel-title-icon" style="background:rgba(59,130,246,.08);color:#3b82f6;"><i class="fas fa-check-square"></i></div> Mis Tareas de Hoy</div>
-            <a href="/tareas" style="font-size:0.8rem;color:#6366f1;font-weight:600;text-decoration:none;">Ver bitácora <i class="fas fa-arrow-right"></i></a>
+            <a href="<?= url('/tareas') ?>" style="font-size:0.8rem;color:#6366f1;font-weight:600;text-decoration:none;">Ver bitácora <i class="fas fa-arrow-right"></i></a>
         </div>
         <div class="activity-list">
             <?php if (!empty($pendingTasks)): ?>
@@ -336,7 +336,7 @@ $avgDealSize    = $openDealsCount > 0 ? round($totalPipeline / $openDealsCount) 
                         <div class="activity-details" style="display:flex; justify-content:space-between; align-items:center; width:100%;">
                             <div>
                                 <div class="activity-desc">
-                                    <strong style="color: #1e293b;"><?= htmlspecialchars($task->title) ?></strong>
+                                    <strong style="color: var(--text-main);"><?= htmlspecialchars($task->title) ?></strong>
                                 </div>
                                 <div class="activity-time" style="margin-top: 0.2rem;">
                                     <?php if ($task->related_type === 'deal'): ?>
@@ -347,10 +347,10 @@ $avgDealSize    = $openDealsCount > 0 ? round($totalPipeline / $openDealsCount) 
                                     &bull; <strong style="color:#ef4444;"><?= date('h:i A', strtotime($task->due_date)) ?></strong>
                                 </div>
                             </div>
-                            <form action="/tareas/complete" method="POST">
+                            <form action="<?= url('/tareas/complete') ?>" method="POST">
                                 <input type="hidden" name="id" value="<?= $task->id ?>">
                                 <input type="hidden" name="redirect" value="/dashboard">
-                                <button type="submit" class="btn" style="background: #f1f5f9; padding: 0.3rem 0.6rem; color: #166534;" title="Completar">
+                                <button type="submit" class="btn" style="background: var(--border); padding: 0.3rem 0.6rem; color: #166534;" title="Completar">
                                     <i class="fas fa-check"></i>
                                 </button>
                             </form>
@@ -359,7 +359,7 @@ $avgDealSize    = $openDealsCount > 0 ? round($totalPipeline / $openDealsCount) 
                 <?php endforeach; ?>
             <?php else: ?>
                 <div style="text-align:center;color:#94a3b8;padding:2rem;">
-                    <i class="fas fa-glass-cheers" style="font-size: 2rem; margin-bottom: 0.5rem; color: #cbd5e1;"></i><br>
+                    <i class="fas fa-glass-cheers" style="font-size: 2rem; margin-bottom: 0.5rem; color: var(--text-muted);"></i><br>
                     ¡Todo al día! No tienes tareas pendientes.
                 </div>
             <?php endif; ?>
@@ -376,6 +376,7 @@ $avgDealSize    = $openDealsCount > 0 ? round($totalPipeline / $openDealsCount) 
 <script>
 Chart.defaults.font.family = "'Outfit', sans-serif";
 Chart.defaults.font.weight = '500';
+Chart.defaults.font.size = 13.5;
 
 const monthLabels = <?= $chartMonthLabels ?? '[]' ?>;
 const wonAmounts  = <?= $chartWonAmounts ?? '[]' ?>;
@@ -384,8 +385,8 @@ const stageLabels = <?= $stageLabels ?? '[]' ?>;
 const stageCounts = <?= $stageCounts ?? '[]' ?>;
 const stageColors = <?= $stageColors ?? '[]' ?>;
 
-const textColor = '#64748b';
-const gridColor = 'rgba(0,0,0,0.04)';
+const textColor = getComputedStyle(document.documentElement).getPropertyValue('--text-main').trim() || '#f8fafc';
+const gridColor = getComputedStyle(document.documentElement).getPropertyValue('--border').trim() || 'rgba(255,255,255,0.08)';
 
 // ── Revenue Trend ──────────────────────────
 const rCtx = document.getElementById('revenueChart').getContext('2d');
@@ -407,12 +408,12 @@ new Chart(rCtx,{
         responsive:true, maintainAspectRatio:false,
         interaction:{ mode:'index', intersect:false },
         plugins:{
-            legend:{ labels:{ color:textColor, font:{weight:'600'}, usePointStyle:true, pointStyle:'circle', padding:16 } },
+            legend:{ labels:{ color:textColor, font:{weight:'600', size:13}, usePointStyle:true, pointStyle:'circle', padding:16 } },
             tooltip:{ callbacks:{ label: ctx => ` $${ctx.parsed.y.toLocaleString('es-MX')}` } }
         },
         scales:{
-            x:{ grid:{display:false}, ticks:{color:textColor,font:{size:11}} },
-            y:{ grid:{color:gridColor}, ticks:{ color:textColor, callback: v => '$'+(v>=1000?(v/1000).toFixed(0)+'K':v) }, border:{dash:[4,4]} }
+            x:{ grid:{display:false}, ticks:{color:textColor,font:{size:13}} },
+            y:{ grid:{color:gridColor}, ticks:{ color:textColor, font:{size:12}, callback: v => '$'+(v>=1000?(v/1000).toFixed(0)+'K':v) }, border:{dash:[4,4]} }
         }
     }
 });
@@ -430,9 +431,12 @@ new Chart(sCtx,{
         datasets:[{ data:fC.length?fC:[1], backgroundColor:fCo.length?fCo:['#94a3b8'], borderColor:'#fff', borderWidth:3, hoverOffset:6 }]
     },
     options:{
-        responsive:true, maintainAspectRatio:false, cutout:'70%',
+        responsive:true, maintainAspectRatio:true, cutout:'70%',
+        layout:{
+            padding:10
+        },
         plugins:{
-            legend:{ position:'bottom', labels:{color:textColor,padding:12,font:{size:11,weight:'600'},boxWidth:10,usePointStyle:true,pointStyle:'circle'} },
+            legend:{ position:'bottom', labels:{color:textColor,padding:12,font:{size:13,weight:'600'},boxWidth:10,usePointStyle:true,pointStyle:'circle'} },
             tooltip:{ callbacks:{ label: ctx=>` ${ctx.label}: ${ctx.parsed}` } }
         }
     }

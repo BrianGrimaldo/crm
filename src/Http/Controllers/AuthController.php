@@ -16,7 +16,7 @@ class AuthController
     {
         // Si ya está logueado, redirigir al dashboard
         if (isset($_SESSION['user_id']) && isset($_SESSION['tenant_id'])) {
-            header('Location: /dashboard');
+            header('Location: ' . url('/dashboard'));
             exit();
         }
 
@@ -28,7 +28,7 @@ class AuthController
      */
     public function authenticate(): void
     {
-        $email    = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
+        $email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
         $password = $_POST['password'] ?? '';
 
         if (!$email || !$password) {
@@ -93,7 +93,9 @@ class AuthController
         }
 
         // 4. Obtener todas las empresas disponibles para el selector
-        if ($user->is_superadmin) {
+        $isRoleSuperAdmin = strpos(strtolower($tenant->role_slug ?? ''), 'superadmin') !== false;
+        
+        if ($user->is_superadmin || $isRoleSuperAdmin) {
             $stmtAllTenants = $db->prepare("SELECT id, name FROM tenants WHERE is_active = 1");
             $stmtAllTenants->execute();
         } else {
@@ -111,18 +113,22 @@ class AuthController
         // Evitamos Session Fixation
         session_regenerate_id(true);
 
-        $_SESSION['user_id']     = $user->id;
-        $_SESSION['tenant_id']   = $tenant->tenant_id;
+        $_SESSION['user_id'] = $user->id;
+        $_SESSION['tenant_id'] = $tenant->tenant_id;
         $_SESSION['tenant_name'] = $tenant->tenant_name;
         $_SESSION['tenant_logo'] = $tenant->tenant_logo;
-        $_SESSION['user_email']  = $user->email;
-        $_SESSION['user_name']   = trim(($user->first_name ?? '') . ' ' . ($user->last_name ?? '')) ?: $user->email;
-        $_SESSION['user_role']   = $tenant->role_slug ?? 'user';
-        $_SESSION['is_owner']    = (bool)$tenant->is_owner;
-        $_SESSION['is_superadmin'] = (bool)$user->is_superadmin;
+        $_SESSION['user_email'] = $user->email;
+        $_SESSION['user_name'] = trim(($user->first_name ?? '') . ' ' . ($user->last_name ?? '')) ?: $user->email;
+        $_SESSION['user_role'] = $tenant->role_slug ?? 'user';
+        $_SESSION['is_owner'] = (bool) $tenant->is_owner;
+        $_SESSION['is_superadmin'] = (bool) $user->is_superadmin || $isRoleSuperAdmin;
         $_SESSION['permissions'] = $permissions;
 
-        header('Location: /dashboard');
+        if (\App\Core\Permission::isSuperadmin()) {
+            header('Location: ' . url('/grupo-einsur'));
+        } else {
+            header('Location: ' . url('/dashboard'));
+        }
         exit();
     }
 
@@ -133,14 +139,14 @@ class AuthController
     {
         session_unset();
         session_destroy();
-        header('Location: /login');
+        header('Location: ' . url('/login'));
         exit();
     }
 
     private function redirectBackWithError(string $message): void
     {
         $_SESSION['login_error'] = $message;
-        header('Location: /login');
+        header('Location: ' . url('/login'));
         exit();
     }
 
@@ -149,63 +155,75 @@ class AuthController
      */
     public function switchTenant(): void
     {
-        $tenantId = (int)($_GET['id'] ?? 0);
-        if (!$tenantId || !isset($_SESSION['user_id'])) {
-            header('Location: /dashboard');
-            exit();
-        }
-
-        $db = Database::getInstance();
-        $user_id = $_SESSION['user_id'];
-        $is_superadmin = $_SESSION['is_superadmin'] ?? false;
-        $tenant = null;
-        $permissions = [];
-
-        if ($is_superadmin) {
-            $stmt = $db->prepare("SELECT id as tenant_id, name as tenant_name, logo_url as tenant_logo FROM tenants WHERE id = :id AND is_active = 1");
-            $stmt->execute([':id' => $tenantId]);
-            $tenant = $stmt->fetch(PDO::FETCH_OBJ);
-            if ($tenant) {
-                $tenant->role_slug = 'superadmin';
-                $tenant->is_owner = 1;
-                $permissions = ['*'];
+        try {
+            $tenantId = (int) ($_GET['id'] ?? 0);
+            if (!$tenantId || !isset($_SESSION['user_id'])) {
+                header('Location: ' . url('/dashboard'));
+                exit();
             }
-        } else {
-            $stmt = $db->prepare("
-                SELECT t.id as tenant_id, t.name as tenant_name, t.logo_url as tenant_logo,
-                       tu.role_id, tu.is_owner, r.slug as role_slug 
-                FROM tenant_users tu
-                JOIN tenants t ON t.id = tu.tenant_id
-                LEFT JOIN roles r ON r.id = tu.role_id
-                WHERE tu.user_id = :user_id AND tu.tenant_id = :tenant_id AND tu.is_active = 1 AND t.is_active = 1
-            ");
-            $stmt->execute([':user_id' => $user_id, ':tenant_id' => $tenantId]);
-            $tenant = $stmt->fetch(PDO::FETCH_OBJ);
-            
-            if ($tenant) {
-                if ($tenant->is_owner) {
+
+            $db = Database::getInstance();
+            $user_id = $_SESSION['user_id'];
+            $is_superadmin = $_SESSION['is_superadmin'] ?? false;
+            $tenant = null;
+            $permissions = [];
+
+            if ($is_superadmin) {
+                $stmt = $db->prepare("SELECT id as tenant_id, name as tenant_name, logo_url as tenant_logo FROM tenants WHERE id = :id AND is_active = 1");
+                $stmt->execute([':id' => $tenantId]);
+                $tenant = $stmt->fetch(PDO::FETCH_OBJ);
+                if ($tenant) {
+                    $tenant->role_slug = 'superadmin';
+                    $tenant->is_owner = 1;
                     $permissions = ['*'];
-                } else if ($tenant->role_id) {
-                    $stmtPerms = $db->prepare("SELECT p.module, p.action FROM role_permissions rp JOIN permissions p ON p.id = rp.permission_id WHERE rp.role_id = :role_id");
-                    $stmtPerms->execute([':role_id' => $tenant->role_id]);
-                    $perms = $stmtPerms->fetchAll(PDO::FETCH_OBJ);
-                    foreach ($perms as $p) {
-                        $permissions[] = "{$p->module}.{$p->action}";
+                }
+            } else {
+                $stmt = $db->prepare("
+                    SELECT t.id as tenant_id, t.name as tenant_name, t.logo_url as tenant_logo,
+                           tu.role_id, tu.is_owner, r.slug as role_slug 
+                    FROM tenant_users tu
+                    JOIN tenants t ON t.id = tu.tenant_id
+                    LEFT JOIN roles r ON r.id = tu.role_id
+                    WHERE tu.user_id = :user_id AND tu.tenant_id = :tenant_id AND tu.is_active = 1 AND t.is_active = 1
+                ");
+                $stmt->execute([':user_id' => $user_id, ':tenant_id' => $tenantId]);
+                $tenant = $stmt->fetch(PDO::FETCH_OBJ);
+
+                if ($tenant) {
+                    if ($tenant->is_owner) {
+                        $permissions = ['*'];
+                    } else if ($tenant->role_id) {
+                        $stmtPerms = $db->prepare("SELECT p.module, p.action FROM role_permissions rp JOIN permissions p ON p.id = rp.permission_id WHERE rp.role_id = :role_id");
+                        $stmtPerms->execute([':role_id' => $tenant->role_id]);
+                        $perms = $stmtPerms->fetchAll(PDO::FETCH_OBJ);
+                        foreach ($perms as $p) {
+                            $permissions[] = "{$p->module}.{$p->action}";
+                        }
                     }
                 }
             }
-        }
 
-        if ($tenant) {
-            $_SESSION['tenant_id']   = $tenant->tenant_id;
-            $_SESSION['tenant_name'] = $tenant->tenant_name;
-            $_SESSION['tenant_logo'] = $tenant->tenant_logo;
-            $_SESSION['user_role']   = $tenant->role_slug ?? 'user';
-            $_SESSION['is_owner']    = (bool)$tenant->is_owner;
-            $_SESSION['permissions'] = $permissions;
-        }
+            if ($tenant) {
+                $_SESSION['tenant_id'] = $tenant->tenant_id;
+                $_SESSION['tenant_name'] = $tenant->tenant_name;
+                $_SESSION['tenant_logo'] = $tenant->tenant_logo;
+                $_SESSION['user_role'] = $tenant->role_slug ?? 'user';
+                $_SESSION['is_owner'] = (bool) $tenant->is_owner;
+                $_SESSION['permissions'] = $permissions;
+            } else {
+                $_SESSION['flash_error'] = "No tienes permiso para acceder a esta empresa.";
+            }
 
-        header('Location: /dashboard');
-        exit();
+            // Si es superadmin, mejor redirigirlo a Grupo Einsur al cambiar (opcional)
+            // header('Location: ' . url('/dashboard'));
+            if (\App\Core\Permission::isSuperadmin()) {
+                header('Location: ' . url('/grupo-einsur'));
+            } else {
+                header('Location: ' . url('/dashboard'));
+            }
+            exit();
+        } catch (\Exception $e) {
+            die("Error Crítico al cambiar de empresa: " . $e->getMessage());
+        }
     }
 }

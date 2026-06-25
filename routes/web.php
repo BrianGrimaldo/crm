@@ -1,5 +1,4 @@
 <?php
-
 declare(strict_types=1);
 
 /**
@@ -30,13 +29,13 @@ $router->get('/contactos/edit', ContactController::class, 'edit', [TenantMiddlew
 $router->post('/contactos/update', ContactController::class, 'update', [TenantMiddleware::class]);
 $router->post('/contactos/delete', ContactController::class, 'delete', [TenantMiddleware::class]);
 $router->post('/api/contactos/send-email', ContactController::class, 'sendEmail', [TenantMiddleware::class]);
-
+$router->get('/api/contactos/search', ContactController::class, 'searchAjax', [TenantMiddleware::class]);
 // Import routes
 use App\Http\Controllers\ImportController;
-$router->get('/importar',            ImportController::class, 'index',    [TenantMiddleware::class]);
-$router->post('/importar/preview',   ImportController::class, 'preview',  [TenantMiddleware::class]);
-$router->post('/importar/commit',    ImportController::class, 'commit',   [TenantMiddleware::class]);
-$router->get('/importar/plantilla',  ImportController::class, 'template', [TenantMiddleware::class]);
+$router->get('/importar', ImportController::class, 'index', [TenantMiddleware::class]);
+$router->post('/importar/preview', ImportController::class, 'preview', [TenantMiddleware::class]);
+$router->post('/importar/commit', ImportController::class, 'commit', [TenantMiddleware::class]);
+$router->get('/importar/plantilla', ImportController::class, 'template', [TenantMiddleware::class]);
 
 use App\Http\Controllers\DealController;
 use App\Http\Controllers\AccountController;
@@ -115,6 +114,21 @@ $router->post('/tareas/complete', TaskController::class, 'complete', [TenantMidd
 // Activities route
 $router->post('/activities', App\Http\Controllers\ActivityController::class, 'store', [TenantMiddleware::class]);
 
+// Finance / Invoices routes
+use App\Http\Controllers\FinanzasController;
+$router->get('/finanzas', FinanzasController::class, 'index', [TenantMiddleware::class]);
+$router->get('/finanzas/facturas', FinanzasController::class, 'list', [TenantMiddleware::class]);
+$router->get('/finanzas/crear', FinanzasController::class, 'create', [TenantMiddleware::class]);
+$router->post('/finanzas', FinanzasController::class, 'store', [TenantMiddleware::class]);
+$router->get('/finanzas/editar', FinanzasController::class, 'edit', [TenantMiddleware::class]);
+$router->post('/finanzas/actualizar', FinanzasController::class, 'update', [TenantMiddleware::class]);
+$router->post('/finanzas/eliminar', FinanzasController::class, 'delete', [TenantMiddleware::class]);
+$router->post('/finanzas/pago', FinanzasController::class, 'registerPayment', [TenantMiddleware::class]);
+$router->post('/api/finanzas/webhook', FinanzasController::class, 'webhook');
+$router->get('/finanzas/ceo/auditoria', FinanzasController::class, 'auditSellers', [TenantMiddleware::class]);
+$router->get('/finanzas/ceo/auditoria-detalle', FinanzasController::class, 'auditSellerDetail', [TenantMiddleware::class]);
+$router->get('/finanzas/cobranza', FinanzasController::class, 'collectionsPortal', [TenantMiddleware::class]);
+
 // Support / Tickets routes
 use App\Http\Controllers\TicketController;
 $router->get('/tickets', TicketController::class, 'index', [TenantMiddleware::class]);
@@ -127,6 +141,10 @@ $router->post('/tickets/update-status', TicketController::class, 'updateStatus',
 // Vendedores route (Superadmin only)
 use App\Http\Controllers\VendedoresController;
 $router->get('/vendedores', VendedoresController::class, 'index', [TenantMiddleware::class]);
+
+// Grupo Einsur route (Superadmin only)
+use App\Http\Controllers\GrupoEinsurController;
+$router->get('/grupo-einsur', GrupoEinsurController::class, 'index', [TenantMiddleware::class]);
 
 // Empresas route (Superadmin only)
 use App\Http\Controllers\TenantController;

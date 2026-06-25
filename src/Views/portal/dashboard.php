@@ -10,14 +10,14 @@
     
     <style>
         :root {
-            --bg-color: #f8fafc;
+            --bg-color: var(--bg-main);
             --surface: #ffffff;
             --primary: #1e1b4b;
             --accent: #6366f1;
             --accent-light: #818cf8;
-            --border: #e2e8f0;
+            --border: var(--border);
             --text-main: #0f172a;
-            --text-muted: #64748b;
+            --text-muted: var(--text-muted);
             --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
             --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
             --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
@@ -210,7 +210,7 @@
         .badge-open { background: rgba(99, 102, 241, 0.1); color: #6366f1; }
         .badge-in_progress { background: rgba(245, 158, 11, 0.1); color: #f59e0b; }
         .badge-resolved { background: rgba(16, 185, 129, 0.1); color: #10b981; }
-        .badge-closed { background: rgba(100, 116, 139, 0.1); color: #64748b; }
+        .badge-closed { background: rgba(100, 116, 139, 0.1); color: var(--text-muted); }
 
         /* Form Controls */
         .form-group {
@@ -276,7 +276,7 @@
             <span class="user-name"><?= htmlspecialchars($_SESSION['portal_contact_name']) ?></span>
             <span class="tenant-name"><?= htmlspecialchars($_SESSION['portal_tenant_name']) ?></span>
         </div>
-        <a href="/portal/logout" class="btn-logout">
+        <a href="<?= url('/portal/logout') ?>" class="btn-logout">
             <i class="fas fa-sign-out-alt"></i>
             <span>Cerrar Sesión</span>
         </a>
@@ -394,7 +394,7 @@
                 <h2 class="section-title"><i class="fas fa-plus-circle"></i> Reportar un Problema</h2>
                 <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1.25rem;">Abre una nueva solicitud de soporte y uno de nuestros agentes la atenderá de inmediato.</p>
                 
-                <form action="/portal/ticket" method="POST">
+                <form action="<?= url('/portal/ticket') ?>" method="POST">
                     <div class="form-group">
                         <label for="subject" class="form-label">Asunto / Resumen del problema *</label>
                         <input type="text" id="subject" name="subject" class="form-control" placeholder="Ej. Falla en cargador de laptop" required>

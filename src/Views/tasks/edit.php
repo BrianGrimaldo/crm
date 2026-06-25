@@ -7,11 +7,11 @@ require __DIR__ . '/../layouts/header.php';
     <div>
         <h1>Editar Tarea</h1>
     </div>
-    <a href="/tareas" class="btn" style="background: var(--surface); border: 1px solid var(--border);">Volver</a>
+    <a href="<?= url('/tareas') ?>" class="btn" style="background: var(--surface); border: 1px solid var(--border);">Volver</a>
 </div>
 
 <div class="card" style="max-width: 800px; padding: 2rem; margin-bottom: 2rem;">
-    <form action="/tareas/update" method="POST">
+    <form action="<?= url('/tareas/update') ?>" method="POST">
         <input type="hidden" name="id" value="<?= $task->id ?>">
         
         <div class="form-group">
@@ -91,7 +91,7 @@ require __DIR__ . '/../layouts/header.php';
 
 <div class="card" style="max-width: 800px; padding: 2rem; border-top: 4px solid #ef4444;">
     <h3 style="color: #ef4444; margin-top: 0;">Zona de Peligro</h3>
-    <form action="/tareas/delete" method="POST" onsubmit="return confirm('¿Estás seguro de eliminar esta tarea?');">
+    <form action="<?= url('/tareas/delete') ?>" method="POST" onsubmit="return confirm('¿Estás seguro de eliminar esta tarea?');">
         <input type="hidden" name="id" value="<?= $task->id ?>">
         <button type="submit" class="btn" style="background: rgba(239,68,68,0.1); color: #ef4444; border: 1px solid #ef4444;">
             <i class="fas fa-trash"></i> Eliminar Tarea

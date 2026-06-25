@@ -8,13 +8,13 @@ require __DIR__ . '/../layouts/header.php';
         <h1>Registrar Nuevo Ticket</h1>
         <p>Abre un ticket de soporte técnico para resolver el problema de un cliente.</p>
     </div>
-    <a href="/tickets" class="btn" style="background: var(--surface); color: var(--text-main); border: 1px solid var(--border);">
+    <a href="<?= url('/tickets') ?>" class="btn" style="background: var(--surface); color: var(--text-main); border: 1px solid var(--border);">
         Volver a Tickets
     </a>
 </div>
 
 <div class="card" style="padding: 2rem;">
-    <form action="/tickets" method="POST">
+    <form action="<?= url('/tickets') ?>" method="POST">
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
             
             <div class="form-group">
@@ -97,7 +97,7 @@ require __DIR__ . '/../layouts/header.php';
         </div>
 
         <div style="display: flex; justify-content: flex-end; gap: 1rem;">
-            <a href="/tickets" class="btn" style="background: var(--border); color: var(--text-main);">Cancelar</a>
+            <a href="<?= url('/tickets') ?>" class="btn" style="background: var(--border); color: var(--text-main);">Cancelar</a>
             <button type="submit" class="btn btn-primary">Registrar Ticket</button>
         </div>
     </form>

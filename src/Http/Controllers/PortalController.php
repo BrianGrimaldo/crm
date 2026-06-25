@@ -25,7 +25,7 @@ class PortalController
     public function showLogin(): void
     {
         if (isset($_SESSION['portal_contact_id'])) {
-            header('Location: /portal/dashboard');
+            header('Location: ' . url('/portal/dashboard'));
             exit;
         }
 
@@ -41,7 +41,7 @@ class PortalController
 
         if (empty($email)) {
             $_SESSION['portal_error'] = "Por favor ingrese su correo electrónico.";
-            header('Location: /portal');
+            header('Location: ' . url('/portal'));
             exit;
         }
 
@@ -58,7 +58,7 @@ class PortalController
 
         if (!$contact) {
             $_SESSION['portal_error'] = "El correo electrónico no se encuentra registrado en nuestro sistema de clientes.";
-            header('Location: /portal');
+            header('Location: ' . url('/portal'));
             exit;
         }
 
@@ -69,7 +69,7 @@ class PortalController
         $_SESSION['portal_tenant_id'] = (int)$contact->tenant_id;
         $_SESSION['portal_tenant_name'] = $contact->tenant_name;
 
-        header('Location: /portal/dashboard');
+        header('Location: ' . url('/portal/dashboard'));
         exit;
     }
 
@@ -79,7 +79,7 @@ class PortalController
     public function dashboard(): void
     {
         if (!isset($_SESSION['portal_contact_id'])) {
-            header('Location: /portal');
+            header('Location: ' . url('/portal'));
             exit;
         }
 
@@ -120,7 +120,7 @@ class PortalController
     public function createTicket(): void
     {
         if (!isset($_SESSION['portal_contact_id'])) {
-            header('Location: /portal');
+            header('Location: ' . url('/portal'));
             exit;
         }
 
@@ -134,7 +134,7 @@ class PortalController
 
         if (empty($subject)) {
             $_SESSION['portal_error'] = "El asunto es obligatorio.";
-            header('Location: /portal/dashboard');
+            header('Location: ' . url('/portal/dashboard'));
             exit;
         }
 
@@ -155,7 +155,7 @@ class PortalController
         ]);
 
         $_SESSION['portal_success'] = "¡Ticket creado exitosamente! Un agente se comunicará pronto.";
-        header('Location: /portal/dashboard');
+        header('Location: ' . url('/portal/dashboard'));
         exit;
     }
 
@@ -172,7 +172,7 @@ class PortalController
         unset($_SESSION['portal_error']);
         unset($_SESSION['portal_success']);
 
-        header('Location: /portal');
+        header('Location: ' . url('/portal'));
         exit;
     }
 }

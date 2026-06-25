@@ -127,7 +127,7 @@ class User extends BaseModel
             
         } catch (\Exception $e) {
             $this->db->rollBack();
-            return false;
+            throw $e;
         }
     }
 }

@@ -8,11 +8,11 @@ require __DIR__ . '/../layouts/header.php';
         <h1>Crear Tarea / Actividad</h1>
         <p>Programa una llamada, reunión o seguimiento.</p>
     </div>
-    <a href="/tareas" class="btn" style="background: var(--surface); border: 1px solid var(--border);">Volver</a>
+    <a href="<?= url('/tareas') ?>" class="btn" style="background: var(--surface); border: 1px solid var(--border);">Volver</a>
 </div>
 
 <div class="card" style="max-width: 800px; padding: 2rem;">
-    <form action="/tareas" method="POST">
+    <form action="<?= url('/tareas') ?>" method="POST">
         <div class="form-group">
             <label for="title">Título de la Actividad *</label>
             <input type="text" id="title" name="title" class="form-control" required placeholder="Ej: Llamar para confirmar presupuesto">

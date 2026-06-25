@@ -8,7 +8,7 @@ require __DIR__ . '/../../layouts/header.php';
         <h1>Embudo de Ventas (Pipeline)</h1>
         <p>Configura las etapas por las que pasan tus tratos.</p>
     </div>
-    <a href="/configuracion/embudo/create" class="btn btn-primary">
+    <a href="<?= url('/configuracion/embudo/create') ?>" class="btn btn-primary">
         <i class="fas fa-plus"></i> Añadir Etapa
     </a>
 </div>
@@ -45,7 +45,7 @@ require __DIR__ . '/../../layouts/header.php';
                     <?php endif; ?>
                 </td>
                 <td>
-                    <a href="/configuracion/embudo/edit?id=<?= $stage->id ?>" class="btn" style="padding: 0.4rem 0.8rem; background: #f1f5f9; color: #334155;">
+                    <a href="<?= url('/configuracion/embudo/edit?id=' . $stage->id) ?>" class="btn" style="padding: 0.4rem 0.8rem; background: var(--border); color: var(--text-main);">
                         <i class="fas fa-edit"></i>
                     </a>
                 </td>

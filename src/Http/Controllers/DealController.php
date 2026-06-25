@@ -80,37 +80,39 @@ class DealController
     {
         \App\Core\Permission::require('deals', 'create');
         $data = [
-            'name'                => $_POST['name'] ?? '',
-            'contact_id'          => !empty($_POST['contact_id']) ? (int)$_POST['contact_id'] : null,
-            'account_id'          => !empty($_POST['account_id']) ? (int)$_POST['account_id'] : null,
-            'stage_id'            => (int)($_POST['stage_id'] ?? 0),
-            'amount'              => !empty($_POST['amount']) ? (float)$_POST['amount'] : null,
-            'currency_code'       => $_POST['currency_code'] ?? 'MXN',
-            'probability'         => !empty($_POST['probability']) ? (int)$_POST['probability'] : null,
+            'name' => $_POST['name'] ?? '',
+            'contact_id' => !empty($_POST['contact_id']) ? (int) $_POST['contact_id'] : null,
+            'account_id' => !empty($_POST['account_id']) ? (int) $_POST['account_id'] : null,
+            'stage_id' => (int) ($_POST['stage_id'] ?? 0),
+            'amount' => !empty($_POST['amount']) ? (float) $_POST['amount'] : null,
+            'currency_code' => $_POST['currency_code'] ?? 'MXN',
+            'probability' => !empty($_POST['probability']) ? (int) $_POST['probability'] : null,
             'expected_close_date' => !empty($_POST['expected_close_date']) ? $_POST['expected_close_date'] : null,
-            'source'              => $_POST['source'] ?? null,
-            'description'         => $_POST['description'] ?? null,
-            'owner_id'            => $_SESSION['user_id'] ?? null,
+            'source' => $_POST['source'] ?? null,
+            'description' => $_POST['description'] ?? null,
+            'owner_id' => $_SESSION['user_id'] ?? null,
         ];
 
         if (empty($data['name']) || empty($data['stage_id'])) {
             $_SESSION['flash_error'] = "El nombre y la etapa son obligatorios.";
-            header('Location: /oportunidades/create');
+            header('Location: ' . url('/oportunidades/create'));
             exit;
         }
 
         $stage = $this->stageModel->findById($data['stage_id']);
         $data['status'] = 'Abierto';
         if ($stage) {
-            if ($stage->is_won) $data['status'] = 'Ganado';
-            elseif ($stage->is_lost) $data['status'] = 'Perdido';
+            if ($stage->is_won)
+                $data['status'] = 'Ganado';
+            elseif ($stage->is_lost)
+                $data['status'] = 'Perdido';
         }
 
         $dealId = $this->dealModel->create($data);
         $this->auditLog->log('create', 'deal', $dealId, null, $data);
 
         $_SESSION['flash_success'] = "Oportunidad creada exitosamente.";
-        header('Location: /oportunidades/pipeline');
+        header('Location: ' . url('/oportunidades/pipeline'));
         exit;
     }
 
@@ -120,12 +122,12 @@ class DealController
     public function edit(): void
     {
         \App\Core\Permission::require('deals', 'update');
-        $id = (int)($_GET['id'] ?? 0);
+        $id = (int) ($_GET['id'] ?? 0);
         $deal = $this->dealModel->findWithRelations($id);
 
         if (!$deal) {
             $_SESSION['flash_error'] = "Oportunidad no encontrada.";
-            header('Location: /oportunidades');
+            header('Location: ' . url('/oportunidades'));
             exit;
         }
 
@@ -146,40 +148,42 @@ class DealController
     public function update(): void
     {
         \App\Core\Permission::require('deals', 'update');
-        $id = (int)($_POST['id'] ?? 0);
+        $id = (int) ($_POST['id'] ?? 0);
         $data = [
-            'name'                => $_POST['name'] ?? '',
-            'contact_id'          => !empty($_POST['contact_id']) ? (int)$_POST['contact_id'] : null,
-            'account_id'          => !empty($_POST['account_id']) ? (int)$_POST['account_id'] : null,
-            'stage_id'            => (int)($_POST['stage_id'] ?? 0),
-            'amount'              => !empty($_POST['amount']) ? (float)$_POST['amount'] : null,
-            'currency_code'       => $_POST['currency_code'] ?? 'MXN',
-            'probability'         => !empty($_POST['probability']) ? (int)$_POST['probability'] : null,
+            'name' => $_POST['name'] ?? '',
+            'contact_id' => !empty($_POST['contact_id']) ? (int) $_POST['contact_id'] : null,
+            'account_id' => !empty($_POST['account_id']) ? (int) $_POST['account_id'] : null,
+            'stage_id' => (int) ($_POST['stage_id'] ?? 0),
+            'amount' => !empty($_POST['amount']) ? (float) $_POST['amount'] : null,
+            'currency_code' => $_POST['currency_code'] ?? 'MXN',
+            'probability' => !empty($_POST['probability']) ? (int) $_POST['probability'] : null,
             'expected_close_date' => !empty($_POST['expected_close_date']) ? $_POST['expected_close_date'] : null,
-            'source'              => $_POST['source'] ?? null,
-            'description'         => $_POST['description'] ?? null,
+            'source' => $_POST['source'] ?? null,
+            'description' => $_POST['description'] ?? null,
         ];
 
         if (empty($data['name']) || empty($data['stage_id'])) {
             $_SESSION['flash_error'] = "El nombre y la etapa son obligatorios.";
-            header("Location: /oportunidades/edit?id={$id}");
+            header('Location: ' . url('/oportunidades/edit?id={$id}'));
             exit;
         }
 
         $stage = $this->stageModel->findById($data['stage_id']);
         $data['status'] = 'Abierto';
         if ($stage) {
-            if ($stage->is_won) $data['status'] = 'Ganado';
-            elseif ($stage->is_lost) $data['status'] = 'Perdido';
+            if ($stage->is_won)
+                $data['status'] = 'Ganado';
+            elseif ($stage->is_lost)
+                $data['status'] = 'Perdido';
         }
 
         $oldDeal = $this->dealModel->findWithRelations($id);
         $this->dealModel->update($id, $data);
-        
-        $this->auditLog->log('update', 'deal', $id, (array)$oldDeal, $data);
+
+        $this->auditLog->log('update', 'deal', $id, (array) $oldDeal, $data);
 
         $_SESSION['flash_success'] = "Oportunidad actualizada exitosamente.";
-        header('Location: /oportunidades/pipeline');
+        header('Location: ' . url('/oportunidades/pipeline'));
         exit;
     }
 
@@ -189,52 +193,80 @@ class DealController
     public function delete(): void
     {
         \App\Core\Permission::require('deals', 'delete');
-        $id = (int)($_POST['id'] ?? 0);
+        $id = (int) ($_POST['id'] ?? 0);
         $oldDeal = $this->dealModel->findWithRelations($id);
         $success = $this->dealModel->delete($id);
 
         if ($success) {
-            $this->auditLog->log('delete', 'deal', $id, (array)$oldDeal, null);
+            $this->auditLog->log('delete', 'deal', $id, (array) $oldDeal, null);
             $_SESSION['flash_success'] = "Oportunidad eliminada.";
         } else {
             $_SESSION['flash_error'] = "No se pudo eliminar la oportunidad.";
         }
 
-        header('Location: /oportunidades');
+        header('Location: ' . url('/oportunidades'));
         exit;
     }
 
-    /**
-     * Mover deal a otra etapa (API para Kanban drag & drop).
-     */
     public function moveStage(): void
     {
-        \App\Core\Permission::require('deals', 'update');
         header('Content-Type: application/json');
 
-        $input = json_decode(file_get_contents('php://input'), true);
-        $id = (int)($input['deal_id'] ?? 0);
-        $newStageId = (int)($input['stage_id'] ?? 0);
+        if (!\App\Core\Permission::has('deals', 'update')) {
+            echo json_encode(['status' => 'error', 'message' => 'No tienes permisos para editar esta oportunidad.']);
+            return;
+        }
+
+        $rawInput = file_get_contents('php://input');
+        $input = json_decode($rawInput, true);
+
+        if (!is_array($input)) {
+            echo json_encode(['status' => 'error', 'message' => 'Cuerpo de la petición inválido.']);
+            return;
+        }
+
+        $id = (int) ($input['deal_id'] ?? 0);
+        $newStageId = (int) ($input['stage_id'] ?? 0);
 
         if (!$id || !$newStageId) {
-            echo json_encode(['status' => 'error', 'message' => 'Datos inválidos.']);
+            echo json_encode(['status' => 'error', 'message' => 'Faltan datos de la oportunidad o etapa.']);
             return;
         }
 
         $stage = $this->stageModel->findById($newStageId);
         $status = 'Abierto';
+        $updateData = ['stage_id' => $newStageId];
+
         if ($stage) {
-            if ($stage->is_won) $status = 'Ganado';
-            elseif ($stage->is_lost) $status = 'Perdido';
+            if ($stage->is_won) {
+                $status = 'Ganado';
+                $updateData['is_won'] = 1;
+                $updateData['actual_close_date'] = date('Y-m-d');
+            } elseif ($stage->is_lost) {
+                $status = 'Perdido';
+                $updateData['is_won'] = 0;
+            }
         }
+        $updateData['status'] = $status;
 
-        $success = $this->dealModel->update($id, ['stage_id' => $newStageId, 'status' => $status]);
+        try {
+            $success = $this->dealModel->update($id, $updateData);
 
-        if ($success) {
-            $this->auditLog->log('update_stage', 'deal', $id, null, ['stage_id' => $newStageId]);
-            echo json_encode(['status' => 'success']);
-        } else {
-            echo json_encode(['status' => 'error', 'message' => 'No se pudo mover.']);
+            if ($success) {
+                $this->auditLog->log('update_stage', 'deal', $id, null, ['stage_id' => $newStageId]);
+                $response = ['status' => 'success'];
+
+                // Si la venta fue ganada, redirigir a crear orden de compra/factura
+                if ($stage && $stage->is_won) {
+                    $response['redirect_url'] = url('/finanzas/crear?deal_id=' . $id);
+                }
+
+                echo json_encode($response);
+            } else {
+                echo json_encode(['status' => 'error', 'message' => 'No se pudo actualizar la base de datos.']);
+            }
+        } catch (\Throwable $e) {
+            echo json_encode(['status' => 'error', 'message' => 'Error interno: ' . $e->getMessage()]);
         }
     }
 }

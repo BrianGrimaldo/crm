@@ -46,7 +46,7 @@ class PipelineController
 
         if (empty($data['name'])) {
             $_SESSION['flash_error'] = "El nombre de la etapa es requerido.";
-            header('Location: /configuracion/embudo/create');
+            header('Location: ' . url('/configuracion/embudo/create'));
             exit;
         }
 
@@ -64,10 +64,10 @@ class PipelineController
 
         if ($this->pipelineModel->create($data)) {
             $_SESSION['flash_success'] = "Etapa creada exitosamente.";
-            header('Location: /configuracion/embudo');
+            header('Location: ' . url('/configuracion/embudo'));
         } else {
             $_SESSION['flash_error'] = "Error al crear la etapa.";
-            header('Location: /configuracion/embudo/create');
+            header('Location: ' . url('/configuracion/embudo/create'));
         }
         exit;
     }
@@ -81,7 +81,7 @@ class PipelineController
 
         if (!$stage) {
             $_SESSION['flash_error'] = "Etapa no encontrada.";
-            header('Location: /configuracion/embudo');
+            header('Location: ' . url('/configuracion/embudo'));
             exit;
         }
 
@@ -104,16 +104,16 @@ class PipelineController
 
         if (empty($data['name'])) {
             $_SESSION['flash_error'] = "El nombre de la etapa es requerido.";
-            header("Location: /configuracion/embudo/edit?id=$id");
+            header('Location: ' . url('/configuracion/embudo/edit?id=$id'));
             exit;
         }
 
         if ($this->pipelineModel->update($id, $data)) {
             $_SESSION['flash_success'] = "Etapa actualizada exitosamente.";
-            header('Location: /configuracion/embudo');
+            header('Location: ' . url('/configuracion/embudo'));
         } else {
             $_SESSION['flash_error'] = "Error al actualizar la etapa.";
-            header("Location: /configuracion/embudo/edit?id=$id");
+            header('Location: ' . url('/configuracion/embudo/edit?id=$id'));
         }
         exit;
     }
@@ -128,7 +128,7 @@ class PipelineController
         } else {
             $_SESSION['flash_error'] = "Error al eliminar la etapa. Es posible que tenga tratos asociados.";
         }
-        header('Location: /configuracion/embudo');
+        header('Location: ' . url('/configuracion/embudo'));
         exit;
     }
 }
