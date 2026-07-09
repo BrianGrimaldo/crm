@@ -252,6 +252,7 @@ class FinanzasController
         $accounts = $this->accountModel->all();
         $contacts = $this->contactModel->all();
         $payments = $this->invoiceModel->getPayments($id);
+        $revisions = $this->invoiceModel->getRevisions($id);
 
         require __DIR__ . '/../../Views/finanzas/edit.php';
     }
@@ -355,19 +356,45 @@ class FinanzasController
             'payment_date' => $_POST['payment_date'] ?? date('Y-m-d'),
             'reference' => $_POST['reference'] ?? null,
             'notes' => $_POST['notes'] ?? null,
+            'new_invoice_number' => !empty($_POST['new_invoice_number']) ? trim($_POST['new_invoice_number']) : null,
+            'new_pdf_path' => null,
         ];
+
+        // Manejar subida de archivo PDF (Reemplazo)
+        if (isset($_FILES['invoice_pdf']) && $_FILES['invoice_pdf']['error'] === UPLOAD_ERR_OK) {
+            $uploadDir = __DIR__ . '/../../../public/uploads/invoices/';
+            if (!is_dir($uploadDir))
+                mkdir($uploadDir, 0755, true);
+
+            $ext = pathinfo($_FILES['invoice_pdf']['name'], PATHINFO_EXTENSION);
+            if (strtolower($ext) === 'pdf') {
+                $fileName = 'inv_payment_' . time() . '_' . bin2hex(random_bytes(4)) . '.pdf';
+                $targetPath = $uploadDir . $fileName;
+                if (move_uploaded_file($_FILES['invoice_pdf']['tmp_name'], $targetPath)) {
+                    $paymentData['new_pdf_path'] = 'uploads/invoices/' . $fileName;
+                }
+            }
+        }
 
         if ($paymentData['amount'] <= 0) {
             $_SESSION['flash_error'] = "El monto del pago debe ser mayor a 0.";
-            header('Location: ' . url('/finanzas/editar?id=' . $invoiceId));
-
+            $redirectUrl = $_POST['redirect_to'] ?? '/finanzas/editar?id=' . $invoiceId;
+            header('Location: ' . url($redirectUrl));
             exit;
         }
 
-        $this->invoiceModel->registerPayment($invoiceId, $paymentData);
-        $this->auditLog->log('payment', 'invoice', $invoiceId, null, $paymentData);
-
-        $_SESSION['flash_success'] = "Pago registrado exitosamente.";
+        try {
+            $this->invoiceModel->registerPayment($invoiceId, $paymentData);
+            $this->auditLog->log('payment', 'invoice', $invoiceId, null, $paymentData);
+            $_SESSION['flash_success'] = "Pago registrado exitosamente.";
+        } catch (\PDOException $e) {
+            if ($e->getCode() === '23000' && strpos($e->getMessage(), 'Duplicate entry') !== false) {
+                $_SESSION['flash_error'] = "El nuevo folio ingresado ya está en uso por otra factura de la empresa. Intenta con otro.";
+            } else {
+                $_SESSION['flash_error'] = "Ocurrió un error al registrar el pago.";
+                error_log("Error in registerPayment: " . $e->getMessage());
+            }
+        }
 
         $redirectUrl = $_POST['redirect_to'] ?? '/finanzas/editar?id=' . $invoiceId;
         header('Location: ' . url($redirectUrl));

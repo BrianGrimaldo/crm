@@ -73,29 +73,68 @@ require __DIR__ . '/../../layouts/header.php';
                                 <i class="fas fa-user-tie"></i> <?= htmlspecialchars($inv->account_name ?? 'Sin Cliente') ?>
                             </div>
                         </div>
-                        <div style="text-align: right;">
-                            <div style="font-size: 0.8rem; color: var(--text-muted);">Saldo Pendiente</div>
-                            <div style="font-size: 1.4rem; font-weight: 800; color: <?= $saldo > 0 ? '#ef4444' : '#10b981' ?>;">
-                                $<?= number_format($saldo, 2) ?>
+                        <div style="text-align: right; display: flex; flex-direction: column; align-items: flex-end; gap: 0.5rem;">
+                            <a href="<?= url('/finanzas/editar?id=' . $inv->id) ?>" class="btn btn-sm" style="background: rgba(59,130,246,0.1); color: #3b82f6; padding: 0.2rem 0.5rem; font-size: 0.75rem;"><i class="fas fa-edit"></i> Detalles</a>
+                            <div>
+                                <div style="font-size: 0.8rem; color: var(--text-muted);">Saldo Pendiente</div>
+                                <div style="font-size: 1.4rem; font-weight: 800; color: <?= $saldo > 0 ? '#ef4444' : '#10b981' ?>;">
+                                    $<?= number_format($saldo, 2) ?>
+                                </div>
                             </div>
                         </div>
                     </div>
 
                     <?php if ($saldo > 0 && $inv->status !== 'cancelada'): ?>
                         <div style="margin-top: auto; padding-top: 1rem; border-top: 1px solid var(--border-color);">
-                            <form method="POST" action="<?= url('/finanzas/pago') ?>" style="display: flex; gap: 0.5rem; align-items: center;">
+                            <form method="POST" action="<?= url('/finanzas/pago') ?>" enctype="multipart/form-data" style="display: flex; flex-direction: column; gap: 0.5rem; width: 100%;">
                                 <input type="hidden" name="invoice_id" value="<?= $inv->id ?>">
                                 <input type="hidden" name="redirect_to" value="/finanzas/cobranza<?= !empty($_GET['invoice_number']) ? '?invoice_number='.urlencode($_GET['invoice_number']) : '' ?>">
                                 <input type="hidden" name="payment_date" value="<?= date('Y-m-d') ?>">
                                 <input type="hidden" name="payment_method" value="transferencia">
                                 
-                                <input type="number" step="0.01" name="amount" class="form-control" style="width: 120px;" placeholder="Monto" max="<?= $saldo ?>" value="<?= $saldo ?>" required>
-                                <button type="submit" class="btn btn-primary btn-sm" style="flex: 1;"><i class="fas fa-plus"></i> Abonar</button>
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <input type="number" step="0.01" name="amount" class="form-control" style="flex: 1; font-size: 0.85rem; padding: 0.3rem 0.5rem;" placeholder="Monto" max="<?= $saldo ?>" value="<?= $saldo ?>" required>
+                                    <input type="text" name="new_invoice_number" class="form-control" style="flex: 1; font-size: 0.85rem; padding: 0.3rem 0.5rem;" placeholder="Nuevo Folio (Opc.)">
+                                </div>
+                                <div style="display: flex; gap: 0.5rem; align-items: center;">
+                                    <input type="file" name="invoice_pdf" class="form-control" style="flex: 1; font-size: 0.8rem; padding: 0.2rem;" accept="application/pdf">
+                                    <button type="submit" class="btn btn-primary btn-sm" style="white-space: nowrap;"><i class="fas fa-save"></i> Registrar</button>
+                                </div>
                             </form>
                         </div>
                     <?php else: ?>
                         <div style="margin-top: auto; padding-top: 1rem; border-top: 1px solid var(--border-color); text-align: center; color: #10b981; font-weight: bold; font-size: 0.9rem;">
                             <i class="fas fa-check-circle"></i> Pagada
+                        </div>
+                    <?php endif; ?>
+
+                    <?php 
+                    $revisions = $this->invoiceModel->getRevisions($inv->id); 
+                    if (!empty($revisions)): 
+                        $accordionId = 'rev_' . $inv->id;
+                    ?>
+                        <div style="margin-top: 1rem; font-size: 0.85rem;">
+                            <button type="button" onclick="document.getElementById('<?= $accordionId ?>').style.display = document.getElementById('<?= $accordionId ?>').style.display === 'none' ? 'block' : 'none';" style="width: 100%; text-align: left; background: var(--bg-main); border: 1px solid var(--border); padding: 0.5rem; border-radius: 6px; color: var(--text-muted); cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
+                                <span><i class="fas fa-history"></i> Ver folios anteriores (<?= count($revisions) ?>)</span>
+                                <i class="fas fa-chevron-down"></i>
+                            </button>
+                            <div id="<?= $accordionId ?>" style="display: none; padding: 0.5rem; border: 1px solid var(--border); border-top: none; border-radius: 0 0 6px 6px; background: rgba(0,0,0,0.01);">
+                                <table style="width: 100%; border-collapse: collapse;">
+                                    <?php foreach ($revisions as $rev): ?>
+                                        <tr>
+                                            <td style="padding: 0.4rem 0; border-bottom: 1px solid var(--border-color); color: var(--text-main);">
+                                                <strong><?= htmlspecialchars($rev->invoice_number) ?></strong>
+                                                <div style="font-size: 0.75rem; color: var(--text-muted);"><?= date('d M Y', strtotime($rev->replaced_at)) ?></div>
+                                            </td>
+                                            <td style="padding: 0.4rem 0; border-bottom: 1px solid var(--border-color); text-align: right;">
+                                                <?php if (!empty($rev->pdf_path)): ?>
+                                                    <a href="<?= url('/' . $rev->pdf_path) ?>" target="_blank" style="color: #ef4444;"><i class="fas fa-file-pdf"></i></a>
+                                                <?php endif; ?>
+                                            </td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                </table>
+                            </div>
                         </div>
                     <?php endif; ?>
                 </div>

@@ -390,16 +390,57 @@ class Invoice extends BaseModel
                 ':user' => $_SESSION['user_id'] ?? null,
             ]);
 
-            // Update invoice amount_paid
-            $sql2 = "UPDATE {$this->table} 
-                     SET amount_paid = amount_paid + :amount
-                     WHERE id = :id AND tenant_id = :tenant_id";
-            $stmt2 = $this->db->prepare($sql2);
-            $stmt2->execute([
-                ':amount' => $paymentData['amount'],
-                ':id' => $invoiceId,
-                ':tenant_id' => $invoiceTenantId,
-            ]);
+            // Update invoice amount_paid, and potentially folio/PDF
+            $newFolio = $paymentData['new_invoice_number'] ?? null;
+            $newPdf = $paymentData['new_pdf_path'] ?? null;
+
+            if ($newFolio !== null || $newPdf !== null) {
+                // We need to archive the current folio/PDF to invoice_revisions
+                $sqlArch = "INSERT INTO invoice_revisions (tenant_id, invoice_id, invoice_number, pdf_path, replaced_by, notes)
+                            SELECT tenant_id, id, invoice_number, pdf_path, :user_id, :notes
+                            FROM {$this->table} WHERE id = :id AND tenant_id = :tenant_id";
+                $stmtArch = $this->db->prepare($sqlArch);
+                $stmtArch->execute([
+                    ':user_id' => $_SESSION['user_id'] ?? null,
+                    ':notes' => 'Reemplazo generado al registrar pago de $' . number_format($paymentData['amount'], 2),
+                    ':id' => $invoiceId,
+                    ':tenant_id' => $invoiceTenantId,
+                ]);
+
+                // Prepare to update the invoice with new folio/pdf
+                $updateFields = ["amount_paid = amount_paid + :amount"];
+                $updateParams = [
+                    ':amount' => $paymentData['amount'],
+                    ':id' => $invoiceId,
+                    ':tenant_id' => $invoiceTenantId,
+                ];
+
+                if ($newFolio !== null) {
+                    $updateFields[] = "invoice_number = :new_folio";
+                    $updateParams[':new_folio'] = $newFolio;
+                }
+                if ($newPdf !== null) {
+                    $updateFields[] = "pdf_path = :new_pdf";
+                    $updateParams[':new_pdf'] = $newPdf;
+                }
+
+                $sql2 = "UPDATE {$this->table} 
+                         SET " . implode(', ', $updateFields) . "
+                         WHERE id = :id AND tenant_id = :tenant_id";
+                $stmt2 = $this->db->prepare($sql2);
+                $stmt2->execute($updateParams);
+            } else {
+                // Normal update
+                $sql2 = "UPDATE {$this->table} 
+                         SET amount_paid = amount_paid + :amount
+                         WHERE id = :id AND tenant_id = :tenant_id";
+                $stmt2 = $this->db->prepare($sql2);
+                $stmt2->execute([
+                    ':amount' => $paymentData['amount'],
+                    ':id' => $invoiceId,
+                    ':tenant_id' => $invoiceTenantId,
+                ]);
+            }
 
             // Fetch the updated invoice within the same transaction context
             $sql3 = "SELECT * FROM {$this->table} WHERE id = :id AND tenant_id = :tenant_id FOR UPDATE";
@@ -452,6 +493,31 @@ class Invoice extends BaseModel
         }
 
         $sql .= " ORDER BY p.payment_date DESC";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($params);
+        return $stmt->fetchAll(PDO::FETCH_OBJ);
+    }
+
+    /**
+     * Obtiene el historial de revisiones (folios/PDFs archivados) de una factura.
+     */
+    public function getRevisions(int $invoiceId): array
+    {
+        $sql = "SELECT r.*, 
+                       CONCAT(u.first_name, ' ', IFNULL(u.last_name, '')) AS user_name
+                FROM invoice_revisions r
+                LEFT JOIN users u ON u.id = r.replaced_by
+                WHERE r.invoice_id = :id";
+        
+        $params = [':id' => $invoiceId];
+
+        if (!Permission::canViewAllInvoices()) {
+            $sql .= " AND r.tenant_id = :tenant_id";
+            $params[':tenant_id'] = TenantContext::getTenantId();
+        }
+
+        $sql .= " ORDER BY r.replaced_at DESC";
 
         $stmt = $this->db->prepare($sql);
         $stmt->execute($params);
