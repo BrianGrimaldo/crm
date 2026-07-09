@@ -25,6 +25,16 @@ require __DIR__ . '/../layouts/header.php';
             </svg>
             Nueva Oportunidad
         </a>
+
+        <a href="<?= url('/oportunidades/embudo') ?>" class="btn btn-outline"
+            style="background: var(--surface); color: var(--text-main); border: 1px solid var(--border);">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor" style="margin-right:.5rem">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M3 4h18M3 8l4 4v8l4-2 4 2V12l4-4" />
+            </svg>
+            Embudo
+        </a>
     </div>
 </div>
 
@@ -148,7 +158,7 @@ require __DIR__ . '/../layouts/header.php';
         position: relative;
         flex-shrink: 0;
 
-        
+
     }
 
     .kanban-card:hover {
@@ -171,20 +181,29 @@ require __DIR__ . '/../layouts/header.php';
     }
 
     /* Botón Agregar Factura (estilo inline) */
-        & .add-invoice-btn {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.4rem;
-            width: 100%;
-            padding: 0.4rem;
-            font-size: 0.8rem;
-            background: rgba(16, 185, 129, 0.08);
-            color: #10b981;
-            border: 1px dashed #10b981;
-            border-radius: 8px;
-            text-decoration: none;
-        }
+    /* Botón Agregar Factura */
+    .add-invoice-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        width: 100%;
+        padding: 0.7rem;
+        font-size: 0.9rem;
+        font-weight: 700;
+        background: rgba(16, 185, 129, 0.1);
+        color: #10b981;
+        border: 2px dashed #10b981;
+        border-radius: 10px;
+        text-decoration: none;
+        margin-top: 0.25rem;
+        transition: all 0.2s ease;
+    }
+
+    .add-invoice-btn:hover {
+        background: rgba(16, 185, 129, 0.18);
+        transform: scale(1.02);
+    }
 
     .card-amount {
         color: #10b981;
@@ -270,17 +289,19 @@ require __DIR__ . '/../layouts/header.php';
                                 <?php endforeach; ?>
                             </select>
                         </div>
-                            <!-- Botón Agregar Factura -->
-<div style="margin-bottom: 0.75rem;" onclick="event.stopPropagation()">
-    <a href="<?= url('/finanzas/crear?deal_id=' . $deal->id) ?>" 
-       class="btn"
-       style="display: flex; align-items: center; justify-content: center; gap: 0.4rem; width: 100%; padding: 0.4rem; font-size: 0.8rem; background: rgba(16,185,129,0.08); color: #10b981; border: 1px dashed #10b981; border-radius: 8px; text-decoration: none;">
-        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-        </svg>
-        Emitir Factura
-    </a>
-</div>
+                        <!-- Botón Agregar Factura (solo si la oportunidad está Ganada) -->
+                        <?php if (($deal->status ?? '') === 'Ganado'): ?>
+                            <div style="margin-bottom: 1rem;" onclick="event.stopPropagation()">
+                                <a href="<?= url('/finanzas/crear?deal_id=' . $deal->id) ?>" class="add-invoice-btn">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24"
+                                        stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                    </svg>
+                                    Emitir Factura
+                                </a>
+                            </div>
+                        <?php endif; ?>
                         <div class="card-footer">
                             <?php if ($deal->contact_name): ?>
                                 <div class="card-contact">

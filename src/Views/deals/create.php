@@ -44,9 +44,9 @@ require __DIR__ . '/../layouts/header.php';
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
             <div class="form-group" style="grid-column: 1 / -1;">
                 <label for="stage_id">Etapa Inicial *</label>
-                <select id="stage_id" name="stage_id" class="form-control" required>
+                <select id="stage_id" name="stage_id" class="form-control" required onchange="updateProbability(this)">
                     <?php foreach ($stages as $stage): ?>
-                        <option value="<?= $stage->id ?>"><?= htmlspecialchars($stage->name) ?></option>
+                        <option value="<?= $stage->id ?>" data-probability="<?= (int) $stage->probability ?>"><?= htmlspecialchars($stage->name) ?></option>
                     <?php endforeach; ?>
                 </select>
             </div>
@@ -58,10 +58,22 @@ require __DIR__ . '/../layouts/header.php';
                 <input type="number" step="0.01" id="amount" name="amount" class="form-control" placeholder="0.00">
             </div>
             <div class="form-group">
-                <label for="probability">Probabilidad (%)</label>
-                <input type="number" min="0" max="100" id="probability" name="probability" class="form-control" placeholder="Ej. 50">
+                <label for="probability">Probabilidad (%) <small style="color: var(--text-muted); font-weight: 400;">— Asignada por etapa</small></label>
+                <input type="number" min="0" max="100" id="probability" name="probability" class="form-control" readonly
+                    style="background: var(--bg-main); cursor: not-allowed; opacity: 0.8;">
             </div>
         </div>
+        <script>
+        function updateProbability(select) {
+            var opt = select.options[select.selectedIndex];
+            var prob = opt.getAttribute('data-probability');
+            document.getElementById('probability').value = prob !== null ? prob : '';
+        }
+        // Auto-fill on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            updateProbability(document.getElementById('stage_id'));
+        });
+        </script>
 
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
             <div class="form-group">

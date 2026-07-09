@@ -67,8 +67,8 @@ class DealController
     {
         \App\Core\Permission::require('deals', 'create');
         $stages = $this->stageModel->allOrdered();
-        $contacts = $this->contactModel->all();
-        $accounts = $this->accountModel->all();
+        $contacts = $this->contactModel->search();
+        $accounts = $this->accountModel->search();
 
         require __DIR__ . '/../../Views/deals/create.php';
     }
@@ -86,7 +86,7 @@ class DealController
             'stage_id' => (int) ($_POST['stage_id'] ?? 0),
             'amount' => !empty($_POST['amount']) ? (float) $_POST['amount'] : null,
             'currency_code' => $_POST['currency_code'] ?? 'MXN',
-            'probability' => !empty($_POST['probability']) ? (int) $_POST['probability'] : null,
+            'probability' => null, // se asignará automáticamente desde la etapa
             'expected_close_date' => !empty($_POST['expected_close_date']) ? $_POST['expected_close_date'] : null,
             'source' => $_POST['source'] ?? null,
             'description' => $_POST['description'] ?? null,
@@ -106,6 +106,8 @@ class DealController
                 $data['status'] = 'Ganado';
             elseif ($stage->is_lost)
                 $data['status'] = 'Perdido';
+            // Auto-asignar probabilidad desde la etapa del pipeline
+            $data['probability'] = (int) $stage->probability;
         }
 
         $dealId = $this->dealModel->create($data);
@@ -132,8 +134,8 @@ class DealController
         }
 
         $stages = $this->stageModel->allOrdered();
-        $contacts = $this->contactModel->all();
-        $accounts = $this->accountModel->all();
+        $contacts = $this->contactModel->search();
+        $accounts = $this->accountModel->search();
 
         // Fetch activities
         $activityModel = new Activity();
@@ -156,7 +158,7 @@ class DealController
             'stage_id' => (int) ($_POST['stage_id'] ?? 0),
             'amount' => !empty($_POST['amount']) ? (float) $_POST['amount'] : null,
             'currency_code' => $_POST['currency_code'] ?? 'MXN',
-            'probability' => !empty($_POST['probability']) ? (int) $_POST['probability'] : null,
+            'probability' => null, // se asignará automáticamente desde la etapa
             'expected_close_date' => !empty($_POST['expected_close_date']) ? $_POST['expected_close_date'] : null,
             'source' => $_POST['source'] ?? null,
             'description' => $_POST['description'] ?? null,
@@ -175,6 +177,8 @@ class DealController
                 $data['status'] = 'Ganado';
             elseif ($stage->is_lost)
                 $data['status'] = 'Perdido';
+            // Auto-asignar probabilidad desde la etapa del pipeline
+            $data['probability'] = (int) $stage->probability;
         }
 
         $oldDeal = $this->dealModel->findWithRelations($id);
@@ -246,6 +250,8 @@ class DealController
                 $status = 'Perdido';
                 $updateData['is_won'] = 0;
             }
+            // Auto-asignar probabilidad desde la etapa del pipeline
+            $updateData['probability'] = (int) $stage->probability;
         }
         $updateData['status'] = $status;
 
@@ -268,5 +274,13 @@ class DealController
         } catch (\Throwable $e) {
             echo json_encode(['status' => 'error', 'message' => 'Error interno: ' . $e->getMessage()]);
         }
+    }
+
+    public function funnel(): void
+    {
+        \App\Core\Permission::require('deals', 'view');
+        $stages = $this->stageModel->allOrdered();
+        $funnel = $this->dealModel->funnelData();
+        require __DIR__ . '/../../Views/deals/funnel.php';
     }
 }

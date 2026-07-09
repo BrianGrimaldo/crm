@@ -25,10 +25,10 @@ namespace App\Core;
 class Permission
 {
     // ─── Constantes de roles ───────────────────────────────────
-    public const ROLE_SUPERADMIN = 'superadministrador';
-    public const ROLE_ADMIN = 'gerentedeventas';
-    public const ROLE_VENDEDOR = 'vendedor';
-    public const ROLE_COBRANZA = 'cobranza';
+    public const ROLE_SUPERADMIN = 'superadmin'; // antes decía 'superadministrador'
+    public const ROLE_ADMIN = 'gerente';          // antes decía 'gerentedeventas'
+    public const ROLE_VENDEDOR = 'vendedor';      // este ya está bien
+    public const ROLE_COBRANZA = 'cobranza';      // este ya está bien
 
     // ─── Helpers de identidad ─────────────────────────────────
 
@@ -96,8 +96,24 @@ class Permission
         }
 
         // Por defecto, permitir que el vendedor vea, cree y actualice SUS propios registros operativos
-        $operationalModules = ['deals', 'contacts', 'accounts', 'tasks', 'activities', 'finance'];
+        $operationalModules = ['deals', 'contacts', 'accounts', 'tasks', 'activities'];
+
+        // Roles de cobranza tienen acceso total al módulo de finanzas
+        $roleStr = self::currentRole();
+        $isCobranza = strpos($roleStr, 'cobranza') !== false 
+                   || strpos($roleStr, 'collection') !== false 
+                   || strpos($roleStr, 'cobrador') !== false;
+        
+        if ($isCobranza && $module === 'finance') {
+            return true;
+        }
+
         if (in_array($module, $operationalModules, true) && in_array($action, ['view', 'create', 'update'])) {
+            return true;
+        }
+
+        // Permitir crear facturas (emitir factura) desde Ventas, sin darles acceso a ver el módulo entero
+        if ($module === 'finance' && $action === 'create') {
             return true;
         }
 
@@ -151,9 +167,12 @@ class Permission
     public static function canViewAllInvoices(): bool
     {
         $role = self::currentRole();
-        return self::isAdmin()
-            || self::isSuperadmin()
-            || in_array($role, ['cobranza', 'collections', 'cobrador'], true);
+        
+        $isCobranza = strpos($role, 'cobranza') !== false 
+                   || strpos($role, 'collection') !== false 
+                   || strpos($role, 'cobrador') !== false;
+
+        return self::isAdmin() || self::isSuperadmin() || $isCobranza;
     }
 
     // ─── Guardia de Ruta ──────────────────────────────────────

@@ -32,6 +32,15 @@ if (($_ENV['APP_DEBUG'] ?? 'false') === 'true') {
 }
 
 // ── Iniciar sesión ──────────────────────────────────────────
+// Configurar la duración de la sesión a 24 horas (86400 segundos) para evitar cierres inesperados
+$sessionLifetime = 86400;
+ini_set('session.gc_maxlifetime', (string) $sessionLifetime);
+session_set_cookie_params([
+    'lifetime' => $sessionLifetime,
+    'path' => '/',
+    'samesite' => 'Lax'
+]);
+
 session_start();
 
 // ── Router ──────────────────────────────────────────────────

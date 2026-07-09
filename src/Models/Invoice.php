@@ -82,11 +82,19 @@ class Invoice extends BaseModel
                 LEFT JOIN accounts a ON a.id = i.account_id
                 LEFT JOIN contacts c ON c.id = i.contact_id
                 LEFT JOIN users u ON u.id = i.owner_id
-                WHERE i.id = :id AND i.tenant_id = :tenant_id
-                LIMIT 1";
+                WHERE i.id = :id";
+
+        $params = [':id' => $id];
+
+        if (!Permission::canViewAllInvoices()) {
+            $sql .= " AND i.tenant_id = :tenant_id";
+            $params[':tenant_id'] = TenantContext::getTenantId();
+        }
+
+        $sql .= " LIMIT 1";
 
         $stmt = $this->db->prepare($sql);
-        $stmt->execute([':id' => $id, ':tenant_id' => $tenantId]);
+        $stmt->execute($params);
         $result = $stmt->fetch(PDO::FETCH_OBJ);
         return $result ?: null;
     }
@@ -96,7 +104,7 @@ class Invoice extends BaseModel
     /**
      * Obtiene las métricas principales de facturación para el dashboard.
      */
-    public function getFinanceStats(): array
+    public function getFinanceStats(?int $ownerId = null): array
     {
         $tenantId = TenantContext::getTenantId();
 
@@ -129,24 +137,29 @@ class Invoice extends BaseModel
 
         $params = [':tenant_id' => $tenantId];
 
+        if ($ownerId !== null) {
+            $sql .= " AND owner_id = :owner_id";
+            $params[':owner_id'] = $ownerId;
+        }
+
         $stmt = $this->db->prepare($sql);
         $stmt->execute($params);
         $r = $stmt->fetch(PDO::FETCH_ASSOC);
 
         return [
-            'total_invoices'          => (int)($r['total_invoices'] ?? 0),
-            'total_facturado'         => (float)($r['total_facturado'] ?? 0),
-            'pending_count'           => (int)($r['pending_count'] ?? 0),
-            'pending_amount'          => (float)($r['pending_amount'] ?? 0),
-            'overdue_count'           => (int)($r['overdue_count'] ?? 0),
-            'overdue_amount'          => (float)($r['overdue_amount'] ?? 0),
-            'paid_count'              => (int)($r['paid_count'] ?? 0),
-            'paid_amount'             => (float)($r['paid_amount'] ?? 0),
-            'partial_count'           => (int)($r['partial_count'] ?? 0),
-            'partial_pending_amount'  => (float)($r['partial_pending_amount'] ?? 0),
-            'cancelled_count'         => (int)($r['cancelled_count'] ?? 0),
-            'total_cobrado'           => (float)($r['total_cobrado'] ?? 0),
-            'total_por_cobrar'        => (float)($r['total_por_cobrar'] ?? 0),
+            'total_invoices' => (int) ($r['total_invoices'] ?? 0),
+            'total_facturado' => (float) ($r['total_facturado'] ?? 0),
+            'pending_count' => (int) ($r['pending_count'] ?? 0),
+            'pending_amount' => (float) ($r['pending_amount'] ?? 0),
+            'overdue_count' => (int) ($r['overdue_count'] ?? 0),
+            'overdue_amount' => (float) ($r['overdue_amount'] ?? 0),
+            'paid_count' => (int) ($r['paid_count'] ?? 0),
+            'paid_amount' => (float) ($r['paid_amount'] ?? 0),
+            'partial_count' => (int) ($r['partial_count'] ?? 0),
+            'partial_pending_amount' => (float) ($r['partial_pending_amount'] ?? 0),
+            'cancelled_count' => (int) ($r['cancelled_count'] ?? 0),
+            'total_cobrado' => (float) ($r['total_cobrado'] ?? 0),
+            'total_por_cobrar' => (float) ($r['total_por_cobrar'] ?? 0),
         ];
     }
 
@@ -337,7 +350,27 @@ class Invoice extends BaseModel
      */
     public function registerPayment(int $invoiceId, array $paymentData): bool
     {
-        $tenantId = TenantContext::getTenantId();
+        // Obtener el tenant_id REAL de la factura en lugar de asumir el actual
+        $sqlCheck = "SELECT tenant_id FROM {$this->table} WHERE id = :id";
+        $stmtCheck = $this->db->prepare($sqlCheck);
+        $stmtCheck->execute([':id' => $invoiceId]);
+        $invoiceTenantId = $stmtCheck->fetchColumn();
+
+        if (!$invoiceTenantId) {
+            return false;
+        }
+
+        // Verificar permiso global de cobranza (Superadmin o Rol de Cobranza)
+        $roleStr = strtolower(str_replace('-', '', $_SESSION['user_role'] ?? ''));
+        $isGlobalCollector = $roleStr === 'superadmin' 
+                          || strpos($roleStr, 'cobranza') !== false 
+                          || strpos($roleStr, 'collection') !== false 
+                          || strpos($roleStr, 'cobrador') !== false;
+
+        // Si no tiene permiso global, validar que la factura sea de su empresa actual
+        if (!$isGlobalCollector && $invoiceTenantId != TenantContext::getTenantId()) {
+            return false;
+        }
 
         try {
             $this->db->beginTransaction();
@@ -347,14 +380,14 @@ class Invoice extends BaseModel
                     VALUES (:tenant_id, :invoice_id, :amount, :method, :date, :ref, :notes, :user)";
             $stmt = $this->db->prepare($sql);
             $stmt->execute([
-                ':tenant_id'  => $tenantId,
+                ':tenant_id' => $invoiceTenantId,
                 ':invoice_id' => $invoiceId,
-                ':amount'     => $paymentData['amount'],
-                ':method'     => $paymentData['payment_method'] ?? 'transferencia',
-                ':date'       => $paymentData['payment_date'],
-                ':ref'        => $paymentData['reference'] ?? null,
-                ':notes'      => $paymentData['notes'] ?? null,
-                ':user'       => $_SESSION['user_id'] ?? null,
+                ':amount' => $paymentData['amount'],
+                ':method' => $paymentData['payment_method'] ?? 'transferencia',
+                ':date' => $paymentData['payment_date'],
+                ':ref' => $paymentData['reference'] ?? null,
+                ':notes' => $paymentData['notes'] ?? null,
+                ':user' => $_SESSION['user_id'] ?? null,
             ]);
 
             // Update invoice amount_paid
@@ -363,15 +396,15 @@ class Invoice extends BaseModel
                      WHERE id = :id AND tenant_id = :tenant_id";
             $stmt2 = $this->db->prepare($sql2);
             $stmt2->execute([
-                ':amount'    => $paymentData['amount'],
-                ':id'        => $invoiceId,
-                ':tenant_id' => $tenantId,
+                ':amount' => $paymentData['amount'],
+                ':id' => $invoiceId,
+                ':tenant_id' => $invoiceTenantId,
             ]);
 
             // Fetch the updated invoice within the same transaction context
             $sql3 = "SELECT * FROM {$this->table} WHERE id = :id AND tenant_id = :tenant_id FOR UPDATE";
             $stmt3 = $this->db->prepare($sql3);
-            $stmt3->execute([':id' => $invoiceId, ':tenant_id' => $tenantId]);
+            $stmt3->execute([':id' => $invoiceId, ':tenant_id' => $invoiceTenantId]);
             $invoice = $stmt3->fetch(\PDO::FETCH_OBJ);
 
             if ($invoice) {
@@ -391,7 +424,7 @@ class Invoice extends BaseModel
             $this->db->commit();
             return true;
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->db->rollBack();
             error_log("Error en transacción de pago: " . $e->getMessage());
             return false;
@@ -409,11 +442,19 @@ class Invoice extends BaseModel
                     CONCAT(u.first_name, ' ', IFNULL(u.last_name,'')) AS created_by_name
                 FROM invoice_payments p
                 LEFT JOIN users u ON u.id = p.created_by
-                WHERE p.invoice_id = :invoice_id AND p.tenant_id = :tenant_id
-                ORDER BY p.payment_date DESC";
+                WHERE p.invoice_id = :invoice_id";
+
+        $params = [':invoice_id' => $invoiceId];
+
+        if (!Permission::canViewAllInvoices()) {
+            $sql .= " AND p.tenant_id = :tenant_id";
+            $params[':tenant_id'] = TenantContext::getTenantId();
+        }
+
+        $sql .= " ORDER BY p.payment_date DESC";
 
         $stmt = $this->db->prepare($sql);
-        $stmt->execute([':invoice_id' => $invoiceId, ':tenant_id' => $tenantId]);
+        $stmt->execute($params);
         return $stmt->fetchAll(PDO::FETCH_OBJ);
     }
 
@@ -489,8 +530,8 @@ class Invoice extends BaseModel
 
         $stmt = $this->db->prepare($sql);
         $stmt->execute([
-            ':t1' => $tenantId, 
-            ':t2' => $tenantId, 
+            ':t1' => $tenantId,
+            ':t2' => $tenantId,
             ':t3' => $tenantId,
             ':t4' => $tenantId,
         ]);
@@ -579,8 +620,8 @@ class Invoice extends BaseModel
 
             if ($existing) {
                 $data['source'] = 'webhook';
-                $this->update((int)$existing->id, $data);
-                return (int)$existing->id;
+                $this->update((int) $existing->id, $data);
+                return (int) $existing->id;
             }
         }
 

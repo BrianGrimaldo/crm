@@ -1,5 +1,4 @@
-<?php
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 /**
  * Define las rutas de la aplicación web.
@@ -41,6 +40,7 @@ use App\Http\Controllers\DealController;
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
+$router->get('/oportunidades/embudo', DealController::class, 'funnel', [TenantMiddleware::class]);
 
 // Profile routes
 $router->get('/perfil', ProfileController::class, 'edit', [TenantMiddleware::class]);
@@ -162,3 +162,17 @@ $router->get('/portal/dashboard', PortalController::class, 'dashboard');
 $router->post('/portal/ticket', PortalController::class, 'createTicket');
 $router->get('/portal/logout', PortalController::class, 'logout');
 
+
+// Rutas de IA (Asistente de Ventas)
+use App\Http\Controllers\IAController;
+$router->get('/ia', IAController::class, 'index', [TenantMiddleware::class]);
+$router->post('/ia/chat', IAController::class, 'chat', [TenantMiddleware::class]);
+$router->post('/ia/new-conversation', IAController::class, 'newConversation', [TenantMiddleware::class]);
+$router->get('/ia/insights', IAController::class, 'listInsights', [TenantMiddleware::class]);
+$router->get('/ia/history', IAController::class, 'history', [TenantMiddleware::class]);
+
+// Metas / Goals routes
+use App\Http\Controllers\GoalsController;
+$router->get('/metas', GoalsController::class, 'index', [TenantMiddleware::class]);
+$router->post('/metas', GoalsController::class, 'store', [TenantMiddleware::class]);
+$router->post('/metas/delete', GoalsController::class, 'destroy', [TenantMiddleware::class]);

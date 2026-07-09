@@ -101,9 +101,9 @@ class Deal extends BaseModel
                     IFNULL(SUM(d.amount), 0) AS total_amount
                 FROM pipeline_stages ps
                 LEFT JOIN deals d ON d.stage_id = ps.id AND d.tenant_id = ps.tenant_id";
-                
+
         $params = [':tenant_id' => $tenantId];
-        
+
         if (Permission::isRestrictedToOwnRecords()) {
             $sql .= " AND d.owner_id = :owner_id";
             $params[':owner_id'] = $_SESSION['user_id'];
@@ -115,6 +115,33 @@ class Deal extends BaseModel
 
         $stmt = $this->db->prepare($sql);
         $stmt->execute($params);
+        return $stmt->fetchAll(PDO::FETCH_OBJ);
+    }
+
+    public function funnelData(): array
+    {
+        $tenantId = TenantContext::getTenantId();
+        $sql = "
+        SELECT
+            ps.id          AS stage_id,
+            ps.name        AS stage_name,
+            ps.color       AS stage_color,
+            ps.position    AS position,
+            ps.is_won      AS is_won,
+            ps.is_lost     AS is_lost,
+            COUNT(d.id)    AS total_deals,
+            COALESCE(SUM(d.amount), 0) AS total_amount,
+            SUM(CASE WHEN d.status = 'Ganado' THEN 1 ELSE 0 END)  AS won_deals,
+            SUM(CASE WHEN d.status = 'Perdido' THEN 1 ELSE 0 END) AS lost_deals,
+            SUM(CASE WHEN d.status = 'Abierto' THEN 1 ELSE 0 END) AS open_deals
+        FROM pipeline_stages ps
+        LEFT JOIN deals d ON d.stage_id = ps.id AND d.tenant_id = :tenant_id
+        WHERE ps.tenant_id = :tenant_id2
+        GROUP BY ps.id, ps.name, ps.color, ps.position, ps.is_won, ps.is_lost
+        ORDER BY ps.position ASC
+    ";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([':tenant_id' => $tenantId, ':tenant_id2' => $tenantId]);
         return $stmt->fetchAll(PDO::FETCH_OBJ);
     }
 
@@ -173,13 +200,13 @@ class Deal extends BaseModel
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
 
         return [
-            'total_deals' => (int)($result['total_deals'] ?? 0),
-            'total_won' => (float)($result['total_won'] ?? 0),
-            'total_lost' => (float)($result['total_lost'] ?? 0),
-            'open_deals_count' => (int)($result['open_deals_count'] ?? 0),
-            'won_deals_count' => (int)($result['won_deals_count'] ?? 0),
-            'lost_deals_count' => (int)($result['lost_deals_count'] ?? 0),
-            'open_deals_amount' => (float)($result['open_deals_amount'] ?? 0),
+            'total_deals' => (int) ($result['total_deals'] ?? 0),
+            'total_won' => (float) ($result['total_won'] ?? 0),
+            'total_lost' => (float) ($result['total_lost'] ?? 0),
+            'open_deals_count' => (int) ($result['open_deals_count'] ?? 0),
+            'won_deals_count' => (int) ($result['won_deals_count'] ?? 0),
+            'lost_deals_count' => (int) ($result['lost_deals_count'] ?? 0),
+            'open_deals_amount' => (float) ($result['open_deals_amount'] ?? 0),
         ];
     }
 

@@ -12,7 +12,7 @@ class GrupoEinsurController
     public function index(): void
     {
         $role = isset($_SESSION['user_role']) ? strtolower(str_replace('-', '', $_SESSION['user_role'])) : '';
-        if ($role !== 'superadmin' && $role !== 'admin') {
+        if (!\App\Core\Permission::isSuperadmin() && !\App\Core\Permission::isAdmin()) {
             header("HTTP/1.0 403 Forbidden");
             echo "Acceso denegado. Se requiere nivel de Superadmin o Admin.";
             exit;

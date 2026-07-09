@@ -74,14 +74,17 @@ class Tenant
 
             // Seed Pipeline Stages
             $sqlPipeline = "INSERT INTO `pipeline_stages` (`tenant_id`, `name`, `position`, `probability`, `is_won`, `is_lost`, `color`) VALUES
-                (:p1, 'Prospección',    1,  10, 0, 0, '#94A3B8'),
-                (:p2, 'Calificación',   2,  25, 0, 0, '#38BDF8'),
-                (:p3, 'Propuesta',      3,  50, 0, 0, '#818CF8'),
-                (:p4, 'Negociación',    4,  75, 0, 0, '#FB923C'),
-                (:p5, 'Ganada',         5, 100, 1, 0, '#22C55E'),
-                (:p6, 'Perdida',        6,   0, 0, 1, '#EF4444')";
+                (:p1, 'Prospección',              1,   5, 0, 0, '#94A3B8'),
+                (:p2, 'Contacto y calificación',  2,  15, 0, 0, '#38BDF8'),
+                (:p3, 'Levantamiento',            3,  30, 0, 0, '#818CF8'),
+                (:p4, 'Propuesta / cotización',   4,  45, 0, 0, '#a855f7'),
+                (:p5, 'Negociación',              5,  65, 0, 0, '#FB923C'),
+                (:p6, 'Ganada',                   6, 100, 1, 0, '#22C55E'),
+                (:p7, 'Onboarding / entrega',     7,   0, 0, 0, '#14b8a6'),
+                (:p8, 'Recompra / expansión',     8,   0, 0, 0, '#f59e0b'),
+                (:p9, 'Perdida',                  9,   0, 0, 1, '#EF4444')";
             $stmtPipe = $this->db->prepare($sqlPipeline);
-            $stmtPipe->execute([':p1'=>$tenantId, ':p2'=>$tenantId, ':p3'=>$tenantId, ':p4'=>$tenantId, ':p5'=>$tenantId, ':p6'=>$tenantId]);
+            $stmtPipe->execute([':p1'=>$tenantId, ':p2'=>$tenantId, ':p3'=>$tenantId, ':p4'=>$tenantId, ':p5'=>$tenantId, ':p6'=>$tenantId, ':p7'=>$tenantId, ':p8'=>$tenantId, ':p9'=>$tenantId]);
             
             // Asignar al creador como owner de esta nueva empresa
             if (isset($_SESSION['user_id'])) {

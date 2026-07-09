@@ -36,10 +36,8 @@ class ActivityController
 
         $this->activityModel->log($entityType, $entityId, $type, $description);
 
-        // Si es una Oportunidad (Deal), aumentar probabilidad como pidió el cliente
-        if ($entityType === 'deal') {
-            $this->increaseDealProbability($entityId, $type);
-        }
+        // Nota: La probabilidad ahora se asigna automáticamente desde la etapa del pipeline.
+        // Ya no se incrementa por actividades individuales.
 
         $_SESSION['flash_success'] = "Intervención guardada exitosamente.";
         $this->redirectBack($entityType, $entityId);

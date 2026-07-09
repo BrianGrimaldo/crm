@@ -30,14 +30,17 @@ foreach ($tenants as $tenantId) {
     if ($stmtCheckPipe->fetchColumn() == 0) {
         echo "Generando pipeline para tenant $tenantId\n";
         $sqlPipeline = "INSERT INTO `pipeline_stages` (`tenant_id`, `name`, `position`, `probability`, `is_won`, `is_lost`, `color`) VALUES
-            (?, 'Prospección',    1,  10, 0, 0, '#94A3B8'),
-            (?, 'Calificación',   2,  25, 0, 0, '#38BDF8'),
-            (?, 'Propuesta',      3,  50, 0, 0, '#818CF8'),
-            (?, 'Negociación',    4,  75, 0, 0, '#FB923C'),
-            (?, 'Ganada',         5, 100, 1, 0, '#22C55E'),
-            (?, 'Perdida',        6,   0, 0, 1, '#EF4444')";
+            (?, 'Prospección',              1,   5, 0, 0, '#94A3B8'),
+            (?, 'Contacto y calificación',  2,  15, 0, 0, '#38BDF8'),
+            (?, 'Levantamiento',            3,  30, 0, 0, '#818CF8'),
+            (?, 'Propuesta / cotización',   4,  45, 0, 0, '#a855f7'),
+            (?, 'Negociación',              5,  65, 0, 0, '#FB923C'),
+            (?, 'Ganada',                   6, 100, 1, 0, '#22C55E'),
+            (?, 'Onboarding / entrega',     7,   0, 0, 0, '#14b8a6'),
+            (?, 'Recompra / expansión',     8,   0, 0, 0, '#f59e0b'),
+            (?, 'Perdida',                  9,   0, 0, 1, '#EF4444')";
         $stmtPipe = $db->prepare($sqlPipeline);
-        $stmtPipe->execute([$tenantId, $tenantId, $tenantId, $tenantId, $tenantId, $tenantId]);
+        $stmtPipe->execute([$tenantId, $tenantId, $tenantId, $tenantId, $tenantId, $tenantId, $tenantId, $tenantId, $tenantId]);
     }
 }
 echo "Terminado\n";

@@ -214,13 +214,12 @@ class AuthController
                 $_SESSION['flash_error'] = "No tienes permiso para acceder a esta empresa.";
             }
 
-            // Si es superadmin, mejor redirigirlo a Grupo Einsur al cambiar (opcional)
-            // header('Location: ' . url('/dashboard'));
-            if (\App\Core\Permission::isSuperadmin()) {
-                header('Location: ' . url('/grupo-einsur'));
-            } else {
-                header('Location: ' . url('/dashboard'));
+            // Mantener al usuario en la vista actual tras cambiar de empresa
+            $redirectUrl = url('/dashboard');
+            if (!empty($_SERVER['HTTP_REFERER'])) {
+                $redirectUrl = $_SERVER['HTTP_REFERER'];
             }
+            header('Location: ' . $redirectUrl);
             exit();
         } catch (\Exception $e) {
             die("Error Crítico al cambiar de empresa: " . $e->getMessage());
