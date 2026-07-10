@@ -34,13 +34,25 @@ class ActivityController
             exit;
         }
 
+        if ($entityType === 'deal') {
+            $dealModel = new Deal();
+            $deal = $dealModel->findWithRelations($entityId);
+            if ($deal && !empty($deal->stage_name)) {
+                $description = "[Etapa: " . $deal->stage_name . "] " . $description;
+            }
+        }
+
         $this->activityModel->log($entityType, $entityId, $type, $description);
 
         // Nota: La probabilidad ahora se asigna automáticamente desde la etapa del pipeline.
         // Ya no se incrementa por actividades individuales.
 
         $_SESSION['flash_success'] = "Intervención guardada exitosamente.";
-        $this->redirectBack($entityType, $entityId);
+        if (!empty($_POST['redirect_to'])) {
+            header('Location: ' . $_POST['redirect_to']);
+        } else {
+            $this->redirectBack($entityType, $entityId);
+        }
         exit;
     }
 
@@ -57,6 +69,7 @@ class ActivityController
         $increase = match ($activityType) {
             'Llamada' => 5,
             'Correo' => 5,
+            'WhatsApp' => 5,
             'Visita' => 15,
             'Nota' => 2,
             default => 0
@@ -79,10 +92,10 @@ class ActivityController
     private function redirectBack(string $entityType, int $entityId): void
     {
         $url = match ($entityType) {
-            'deal' => "/deals/edit?id={$entityId}",
-            'contact' => "/contacts/edit?id={$entityId}",
-            'account' => "/accounts/edit?id={$entityId}",
-            default => '/dashboard'
+            'deal' => url("/oportunidades/edit?id={$entityId}"),
+            'contact' => url("/contactos/edit?id={$entityId}"),
+            'account' => url("/organizaciones/edit?id={$entityId}"),
+            default => url('/dashboard')
         };
 
         header("Location: {$url}");

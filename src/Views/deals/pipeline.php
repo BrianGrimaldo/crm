@@ -239,6 +239,49 @@ require __DIR__ . '/../layouts/header.php';
         border: 2px dashed var(--stage-color, var(--primary));
         border-radius: 12px;
     }
+
+    .action-icons {
+        display: flex;
+        gap: 0.4rem;
+        margin-top: 0.5rem;
+    }
+
+    .action-icons .action-btn {
+        width: 28px;
+        height: 28px;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--text-muted);
+        background: rgba(0,0,0,0.03);
+        transition: all 0.2s;
+        cursor: pointer;
+        text-decoration: none;
+        font-size: 0.85rem;
+        border: 1px solid rgba(0,0,0,0.05);
+    }
+
+    .action-icons .action-btn:hover {
+        background: var(--surface);
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        transform: translateY(-2px);
+    }
+    
+    .action-btn.call:hover { color: #3b82f6; border-color: #3b82f6; }
+    .action-btn.email:hover { color: #f59e0b; border-color: #f59e0b; }
+    .action-btn.whatsapp:hover { color: #10b981; border-color: #10b981; }
+    .action-btn.visit:hover { color: #8b5cf6; border-color: #8b5cf6; }
+
+    /* Modal Styles */
+    .modal-overlay {
+        position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; z-index: 1000;
+    }
+    .modal-content {
+        background: var(--surface); padding: 2rem; border-radius: 12px; width: 100%; max-width: 400px;
+        box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
+    }
 </style>
 
 <div class="kanban-board">
@@ -275,6 +318,15 @@ require __DIR__ . '/../layouts/header.php';
                         <div class="card-amount">$<?= number_format((float) $deal->amount, 2) ?>
                             <?= htmlspecialchars($deal->currency_code) ?>
                         </div>
+
+                        <!-- Action Icons -->
+                        <div class="action-icons" onclick="event.stopPropagation()">
+                            <button class="action-btn call" title="Llamada" onclick="openActivityModal(<?= $deal->id ?>, 'Llamada', 'fas fa-phone-alt', '#3b82f6')"><i class="fas fa-phone-alt"></i></button>
+                            <button class="action-btn email" title="Correo" onclick="openActivityModal(<?= $deal->id ?>, 'Correo', 'fas fa-envelope', '#f59e0b')"><i class="fas fa-envelope"></i></button>
+                            <button class="action-btn whatsapp" title="WhatsApp" onclick="openActivityModal(<?= $deal->id ?>, 'WhatsApp', 'fab fa-whatsapp', '#10b981')"><i class="fab fa-whatsapp"></i></button>
+                            <button class="action-btn visit" title="Visita" onclick="openActivityModal(<?= $deal->id ?>, 'Visita', 'fas fa-map-marker-alt', '#8b5cf6')"><i class="fas fa-map-marker-alt"></i></button>
+                        </div>
+
 
                         <!-- Quick Stage Selector -->
                         <div style="margin-bottom: 0.75rem; display: flex; align-items: center; justify-content: space-between; gap: 0.5rem;"
@@ -335,6 +387,33 @@ require __DIR__ . '/../layouts/header.php';
             </div>
         </div>
     <?php endforeach; ?>
+</div>
+
+<!-- Activity Modal -->
+<div id="activityModal" class="modal-overlay" onclick="closeActivityModal(event)">
+    <div class="modal-content" onclick="event.stopPropagation()">
+        <h3 style="margin-top: 0; display: flex; align-items: center; gap: 0.5rem; color: var(--text-main);">
+            <i id="modalActivityIcon" class="fas fa-tasks"></i> Registrar <span id="modalActivityTitle">Actividad</span>
+        </h3>
+        <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1.5rem;">Registra la interacción para mantener la estadística y seguimiento al día.</p>
+        
+        <form action="<?= url('/activities') ?>" method="POST">
+            <input type="hidden" name="entity_type" value="deal">
+            <input type="hidden" name="entity_id" id="modalDealId" value="">
+            <input type="hidden" name="type" id="modalActivityType" value="">
+            <input type="hidden" name="redirect_to" value="<?= url('/oportunidades/embudo') ?>">
+            
+            <div class="form-group">
+                <label>Descripción / Notas de la acción</label>
+                <textarea name="description" class="form-control" rows="4" placeholder="Ej: Se le envió la cotización y quedó en confirmar mañana..." required></textarea>
+            </div>
+            
+            <div style="display: flex; justify-content: flex-end; gap: 1rem; margin-top: 1.5rem;">
+                <button type="button" class="btn" style="background: var(--bg-main);" onclick="closeActivityModal(true)">Cancelar</button>
+                <button type="submit" class="btn btn-primary" id="modalSubmitBtn">Guardar Registro</button>
+            </div>
+        </form>
+    </div>
 </div>
 
 <script>
@@ -406,6 +485,28 @@ require __DIR__ . '/../layouts/header.php';
             alert('Error de conexión: ' + err.message);
             window.location.reload();
         }
-    }</script>
+    }
+
+    function openActivityModal(dealId, type, iconClass, color) {
+        document.getElementById('modalDealId').value = dealId;
+        document.getElementById('modalActivityType').value = type;
+        document.getElementById('modalActivityTitle').innerText = type;
+        
+        const iconEl = document.getElementById('modalActivityIcon');
+        iconEl.className = iconClass;
+        iconEl.style.color = color;
+        
+        document.getElementById('modalSubmitBtn').style.backgroundColor = color;
+        document.getElementById('modalSubmitBtn').style.borderColor = color;
+
+        document.getElementById('activityModal').style.display = 'flex';
+    }
+
+    function closeActivityModal(force = false) {
+        if (force === true || event.target.id === 'activityModal') {
+            document.getElementById('activityModal').style.display = 'none';
+        }
+    }
+</script>
 
 <?php require __DIR__ . '/../layouts/footer.php'; ?>

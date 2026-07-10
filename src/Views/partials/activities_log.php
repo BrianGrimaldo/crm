@@ -15,6 +15,7 @@
                 <select name="type" id="type" class="form-control" required style="width: 100%;">
                     <option value="Llamada"><i class="fas fa-phone"></i> Llamada Telefónica</option>
                     <option value="Correo"><i class="fas fa-envelope"></i> Correo Electrónico</option>
+                    <option value="WhatsApp"><i class="fab fa-whatsapp"></i> Mensaje de WhatsApp</option>
                     <option value="Visita"><i class="fas fa-handshake"></i> Visita Presencial</option>
                     <option value="Nota"><i class="fas fa-sticky-note"></i> Nota Interna</option>
                 </select>
@@ -50,10 +51,11 @@
                 <div style="display: flex; flex-direction: column; gap: 1.5rem;">
                     <?php foreach ($activities as $act): 
                         $icon = match ($act->type) {
-                            'Llamada' => '<i class="fas fa-phone"></i>',
-                            'Correo' => '<i class="fas fa-envelope"></i>',
-                            'Visita' => '<i class="fas fa-handshake"></i>',
-                            'Nota' => '<i class="fas fa-sticky-note"></i>',
+                            'Llamada' => '<i class="fas fa-phone" style="color:#3b82f6;"></i>',
+                            'Correo' => '<i class="fas fa-envelope" style="color:#f59e0b;"></i>',
+                            'WhatsApp' => '<i class="fab fa-whatsapp" style="color:#10b981;"></i>',
+                            'Visita' => '<i class="fas fa-map-marker-alt" style="color:#8b5cf6;"></i>',
+                            'Nota' => '<i class="fas fa-sticky-note" style="color:#64748b;"></i>',
                             default => '<i class="fas fa-thumbtack"></i>'
                         };
                         $date = new DateTime($act->created_at);
