@@ -60,7 +60,7 @@ class Deal extends BaseModel
     /**
      * Obtiene los deals agrupados por etapa (para la vista Kanban).
      */
-    public function allGroupedByStage(): array
+    public function allGroupedByStage(?int $overrideOwnerId = null): array
     {
         $tenantId = TenantContext::getTenantId();
 
@@ -77,7 +77,10 @@ class Deal extends BaseModel
                 WHERE d.tenant_id = :tenant_id";
         $params = [':tenant_id' => $tenantId];
 
-        if (Permission::isRestrictedToOwnRecords()) {
+        if ($overrideOwnerId !== null && !Permission::isRestrictedToOwnRecords()) {
+            $sql .= " AND d.owner_id = :owner_id";
+            $params[':owner_id'] = $overrideOwnerId;
+        } elseif (Permission::isRestrictedToOwnRecords()) {
             $sql .= " AND d.owner_id = :owner_id";
             $params[':owner_id'] = $_SESSION['user_id'];
         }
@@ -92,7 +95,7 @@ class Deal extends BaseModel
     /**
      * Obtiene el resumen de totales por etapa.
      */
-    public function summaryByStage(): array
+    public function summaryByStage(?int $overrideOwnerId = null): array
     {
         $tenantId = TenantContext::getTenantId();
 
@@ -104,7 +107,10 @@ class Deal extends BaseModel
 
         $params = [':tenant_id' => $tenantId];
 
-        if (Permission::isRestrictedToOwnRecords()) {
+        if ($overrideOwnerId !== null && !Permission::isRestrictedToOwnRecords()) {
+            $sql .= " AND d.owner_id = :owner_id";
+            $params[':owner_id'] = $overrideOwnerId;
+        } elseif (Permission::isRestrictedToOwnRecords()) {
             $sql .= " AND d.owner_id = :owner_id";
             $params[':owner_id'] = $_SESSION['user_id'];
         }
@@ -118,9 +124,20 @@ class Deal extends BaseModel
         return $stmt->fetchAll(PDO::FETCH_OBJ);
     }
 
-    public function funnelData(): array
+    public function funnelData(?int $overrideOwnerId = null): array
     {
         $tenantId = TenantContext::getTenantId();
+        $params = [':tenant_id' => $tenantId, ':tenant_id2' => $tenantId];
+        $ownerFilter = "";
+
+        if ($overrideOwnerId !== null && !Permission::isRestrictedToOwnRecords()) {
+            $ownerFilter = " AND d.owner_id = :owner_id ";
+            $params[':owner_id'] = $overrideOwnerId;
+        } elseif (Permission::isRestrictedToOwnRecords()) {
+            $ownerFilter = " AND d.owner_id = :owner_id ";
+            $params[':owner_id'] = $_SESSION['user_id'];
+        }
+
         $sql = "
         SELECT
             ps.id          AS stage_id,
@@ -135,13 +152,13 @@ class Deal extends BaseModel
             SUM(CASE WHEN d.status = 'Perdido' THEN 1 ELSE 0 END) AS lost_deals,
             SUM(CASE WHEN d.status = 'Abierto' THEN 1 ELSE 0 END) AS open_deals
         FROM pipeline_stages ps
-        LEFT JOIN deals d ON d.stage_id = ps.id AND d.tenant_id = :tenant_id
+        LEFT JOIN deals d ON d.stage_id = ps.id AND d.tenant_id = :tenant_id {$ownerFilter}
         WHERE ps.tenant_id = :tenant_id2
         GROUP BY ps.id, ps.name, ps.color, ps.position, ps.is_won, ps.is_lost
         ORDER BY ps.position ASC
     ";
         $stmt = $this->db->prepare($sql);
-        $stmt->execute([':tenant_id' => $tenantId, ':tenant_id2' => $tenantId]);
+        $stmt->execute($params);
         return $stmt->fetchAll(PDO::FETCH_OBJ);
     }
 

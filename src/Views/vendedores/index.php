@@ -77,6 +77,7 @@ require __DIR__ . '/../layouts/header.php';
                     <th>Perdidos</th>
                     <th>Tasa de Cierre</th>
                     <th style="text-align: right;">Ingresos Generados</th>
+                    <th style="text-align: right;">Acciones</th>
                 </tr>
             </thead>
             <tbody>
@@ -119,6 +120,14 @@ require __DIR__ . '/../layouts/header.php';
                         </td>
                         <td style="text-align: right;">
                             <div class="badge-amount">$<?= number_format((float)$v->won_amount, 2, '.', ',') ?></div>
+                        </td>
+                        <td style="text-align: right; white-space: nowrap;">
+                            <a href="<?= url('/oportunidades/pipeline?seller_id=' . $v->id) ?>" title="Ver Pipeline Kanban" class="btn" style="padding: 0.4rem 0.8rem; font-size: 0.8rem; background: var(--bg-main); border: 1px solid var(--border); color: var(--text-main); border-radius: 6px;">
+                                <i class="fas fa-columns"></i>
+                            </a>
+                            <a href="<?= url('/oportunidades/embudo?seller_id=' . $v->id) ?>" title="Ver Embudo (Funnel)" class="btn" style="padding: 0.4rem 0.8rem; font-size: 0.8rem; background: var(--bg-main); border: 1px solid var(--border); color: var(--text-main); border-radius: 6px; margin-left: 0.25rem;">
+                                <i class="fas fa-filter"></i>
+                            </a>
                         </td>
                     </tr>
                     <?php endforeach; ?>

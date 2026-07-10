@@ -33,9 +33,18 @@ class DealController
     public function pipeline(): void
     {
         \App\Core\Permission::require('deals', 'view');
+        
+        $sellerId = null;
+        if (isset($_GET['seller_id'])) {
+            $role = isset($_SESSION['user_role']) ? strtolower(str_replace('-', '', $_SESSION['user_role'])) : '';
+            if ($role === 'superadmin' || $role === 'admin') {
+                $sellerId = (int) $_GET['seller_id'];
+            }
+        }
+
         $stages = $this->stageModel->allOrdered();
-        $deals = $this->dealModel->allGroupedByStage();
-        $summary = $this->dealModel->summaryByStage();
+        $deals = $this->dealModel->allGroupedByStage($sellerId);
+        $summary = $this->dealModel->summaryByStage($sellerId);
 
         // Agrupar deals por stage_id
         $dealsByStage = [];
@@ -279,8 +288,17 @@ class DealController
     public function funnel(): void
     {
         \App\Core\Permission::require('deals', 'view');
+        
+        $sellerId = null;
+        if (isset($_GET['seller_id'])) {
+            $role = isset($_SESSION['user_role']) ? strtolower(str_replace('-', '', $_SESSION['user_role'])) : '';
+            if ($role === 'superadmin' || $role === 'admin') {
+                $sellerId = (int) $_GET['seller_id'];
+            }
+        }
+
         $stages = $this->stageModel->allOrdered();
-        $funnel = $this->dealModel->funnelData();
+        $funnel = $this->dealModel->funnelData($sellerId);
         require __DIR__ . '/../../Views/deals/funnel.php';
     }
 }
