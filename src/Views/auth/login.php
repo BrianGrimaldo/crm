@@ -84,15 +84,36 @@ unset($_SESSION['login_error']);
             display: flex;
             align-items: center;
             justify-content: center;
+            gap: 0;
             padding: 24px 0 0;
         }
 
-        .brand-lockup img {
-            width: 100%;
-            max-width: 270px;
+        .brand-lockup .eje-wrap {
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .brand-lockup .eje-wrap img {
+            width: 260px;
             height: auto;
             display: block;
-            margin: -35px 0 -45px 0; /* Trim transparent padding */
+            margin: -35px -30px -45px 0; /* Trim transparent padding + pull right */
+        }
+
+        .brand-lockup .brand-divider {
+            width: 1px;
+            height: 44px;
+            background: #d1d5db;
+            margin: 0 16px;
+            flex-shrink: 0;
+        }
+
+        .brand-lockup .einsur-wrap img {
+            height: 44px;
+            width: auto;
+            object-fit: contain;
+            display: block;
         }
 
         .brand-text {
@@ -313,7 +334,16 @@ unset($_SESSION['login_error']);
         <div class="card-body">
 
         <div class="brand-lockup">
-            <img src="<?= url('/img/EJE_Comercial.png') ?>" alt="EJE Comercial">
+            <!-- Logo EJE -->
+            <div class="eje-wrap">
+                <img src="<?= url('/img/EJE_Comercial.png') ?>" alt="EJE Comercial">
+            </div>
+            <!-- Divisor -->
+            <div class="brand-divider"></div>
+            <!-- Logo Grupo EINSUR -->
+            <div class="einsur-wrap">
+                <img src="<?= url('/img/grupo_einsur.png') ?>" alt="Grupo EINSUR">
+            </div>
         </div>
 
         <div class="brand-text">
