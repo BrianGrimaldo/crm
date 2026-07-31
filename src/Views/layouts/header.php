@@ -300,6 +300,7 @@ $currentPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
             display: flex;
             align-items: center;
             justify-content: flex-end;
+            gap: 1.2rem;
             padding: 0 2.5rem;
             border-bottom: 1px solid rgba(0, 0, 0, 0.04);
             z-index: 900;
@@ -843,6 +844,11 @@ $currentPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                 </svg>
             </button>
+
+            <!-- Logo Grupo EINSUR -->
+            <div class="topbar-brand" style="display: flex; align-items: center;">
+                <img src="<?= url('/img/grupo_einsur.png') ?>" alt="Grupo EINSUR" style="height: 40px; width: auto; object-fit: contain;">
+            </div>
 
             <!-- Botón Modo Oscuro -->
             <button id="theme-toggle" class="btn-theme" title="Modo Oscuro / Claro">
