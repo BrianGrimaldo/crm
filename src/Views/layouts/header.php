@@ -845,9 +845,15 @@ $currentPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
                 </svg>
             </button>
 
-            <!-- Logo EJE Comercial (Lado Izquierdo) -->
-            <div class="topbar-left-brand" style="display: flex; align-items: center; justify-content: flex-start; height: 76px; margin-right: auto;">
-                <img src="<?= url('/img/EJE_Comercial.png') ?>" alt="EJE Comercial" style="height: 220px; width: auto; object-fit: contain; margin: -72px 0 -72px -20px;">
+            <!-- Logo EJE + Texto Comercial & Eslogan (Lado Izquierdo) -->
+            <div class="topbar-left-brand" style="display: flex; align-items: center; gap: 12px; height: 76px; margin-right: auto;">
+                <div style="height: 76px; overflow: hidden; display: flex; align-items: center;">
+                    <img src="<?= url('/img/EJE_Comercial.png') ?>" alt="EJE" style="height: 210px; width: auto; object-fit: contain; margin: -68px 0 -68px -20px;">
+                </div>
+                <div style="display: flex; flex-direction: column; justify-content: center; line-height: 1.15;">
+                    <span style="font-size: 1.4rem; font-weight: 700; color: #1A1F5A; letter-spacing: -0.02em;">Comercial</span>
+                    <span style="font-size: 0.73rem; font-weight: 500; color: var(--text-muted); font-style: italic;">El inicio hacia la transformación</span>
+                </div>
             </div>
 
             <!-- Logo Grupo EINSUR (Lado Derecho) -->
