@@ -9,6 +9,7 @@ use App\Models\Contact;
 use App\Models\Account;
 use App\Models\User;
 use App\Models\AuditLog;
+use App\Models\Tipification;
 use App\Core\Permission;
 
 class TicketController
@@ -123,6 +124,9 @@ class TicketController
         $userModel = new User();
         $users = $userModel->all(); // for reassigning
 
+        $tipModel = new Tipification();
+        $tipifications = $tipModel->all(); // for dropdown
+
         $tenantName = $_SESSION['tenant_name'] ?? 'Empresa';
         $userEmail = $_SESSION['user_email'] ?? 'Usuario';
 
@@ -193,6 +197,9 @@ class TicketController
         }
         if (isset($_POST['resolution'])) {
             $data['resolution'] = trim($_POST['resolution']);
+        }
+        if (isset($_POST['tipification_id'])) {
+            $data['tipification_id'] = !empty($_POST['tipification_id']) ? (int)$_POST['tipification_id'] : null;
         }
 
         $this->ticketModel->update($id, $data);

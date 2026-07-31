@@ -44,8 +44,8 @@ class HomeController
                    || strpos($roleStr, 'cobrador') !== false;
 
         if ($isCobranza) {
-            header('Location: ' . url('/finanzas/cobranza'));
-            exit;
+            $this->cobranzaDashboard($tenantName);
+            return;
         }
 
         $ownerId = \App\Core\Permission::isRestrictedToOwnRecords() ? (int) ($_SESSION['user_id'] ?? 0) : null;

@@ -119,4 +119,41 @@ class Tenant
         $stmt = $this->db->prepare($sql);
         return $stmt->execute($params);
     }
+
+    public function delete(int $id): bool
+    {
+        try {
+            $this->db->beginTransaction();
+
+            // Eliminar datos relacionados en cascada
+            $tables = [
+                'tenant_users',
+                'pipeline_stages',
+                'roles',
+                'contacts',
+                'accounts',
+                'deals',
+                'products',
+                'tasks',
+                'tickets',
+                'invoices',
+                'goals',
+            ];
+
+            foreach ($tables as $tbl) {
+                $stmt = $this->db->prepare("DELETE FROM `{$tbl}` WHERE tenant_id = :id");
+                $stmt->execute([':id' => $id]);
+            }
+
+            // Finalmente eliminar el tenant
+            $stmt = $this->db->prepare("DELETE FROM {$this->table} WHERE id = :id");
+            $result = $stmt->execute([':id' => $id]);
+
+            $this->db->commit();
+            return $result && $stmt->rowCount() > 0;
+        } catch (\Exception $e) {
+            $this->db->rollBack();
+            return false;
+        }
+    }
 }

@@ -96,7 +96,7 @@ class Permission
         }
 
         // Por defecto, permitir que el vendedor vea, cree y actualice SUS propios registros operativos
-        $operationalModules = ['deals', 'contacts', 'accounts', 'tasks', 'activities'];
+        $operationalModules = ['deals', 'contacts', 'accounts', 'tasks', 'activities', 'tickets'];
 
         // Roles de cobranza tienen acceso total al módulo de finanzas
         $roleStr = self::currentRole();
