@@ -846,9 +846,9 @@ $currentPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
             </button>
 
             <!-- Logo EJE + Texto Comercial & Eslogan (Lado Izquierdo) -->
-            <div class="topbar-left-brand" style="display: flex; align-items: center; gap: 12px; height: 76px; margin-right: auto;">
+            <div class="topbar-left-brand" style="display: flex; align-items: center; gap: 0; height: 76px; margin-right: auto;">
                 <div style="height: 76px; overflow: hidden; display: flex; align-items: center;">
-                    <img src="<?= url('/img/EJE_Comercial.png') ?>" alt="EJE" style="height: 210px; width: auto; object-fit: contain; margin: -68px 0 -68px -20px;">
+                    <img src="<?= url('/img/EJE_Comercial.png') ?>" alt="EJE" style="height: 210px; width: auto; object-fit: contain; margin: -68px -38px -68px -20px;">
                 </div>
                 <div style="display: flex; flex-direction: column; justify-content: center; line-height: 1.15;">
                     <span style="font-size: 1.4rem; font-weight: 700; color: #1A1F5A; letter-spacing: -0.02em;">Comercial</span>
