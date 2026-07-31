@@ -837,7 +837,7 @@ $currentPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
     <main class="main-content">
         <div class="topbar">
             <!-- Botón de menú móvil flotante -->
-            <button class="btn-menu" style="margin-right: auto;"
+            <button class="btn-menu"
                 onclick="document.querySelector('.sidebar').classList.toggle('active')">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"
                     stroke="currentColor">
@@ -845,7 +845,12 @@ $currentPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
                 </svg>
             </button>
 
-            <!-- Logo Grupo EINSUR -->
+            <!-- Logo EJE Comercial (Lado Izquierdo) -->
+            <div class="topbar-left-brand" style="display: flex; align-items: center; margin-right: auto;">
+                <img src="<?= url('/img/EJE_Comercial.png') ?>" alt="EJE Comercial" style="height: 52px; width: auto; object-fit: contain;">
+            </div>
+
+            <!-- Logo Grupo EINSUR (Lado Derecho) -->
             <div class="topbar-brand" style="display: flex; align-items: center;">
                 <img src="<?= url('/img/grupo_einsur.png') ?>" alt="Grupo EINSUR" style="height: 40px; width: auto; object-fit: contain;">
             </div>

@@ -519,16 +519,9 @@ $avgDealSize = $openDealsCount > 0 ? round($totalPipeline / $openDealsCount) : 0
     }
 </style>
 
-<!-- ═══════════════ HEADER LOGO ═══════════════ -->
-<div class="dash-hero">
-    <div class="dash-main-header">
-        <img src="<?= url('/img/EJE_Comercial.png') ?>" alt="EJE Comercial">
-        <div class="dash-main-text">
-            <h1>EJE Comercial</h1>
-            <span>El inicio hacia la transformación</span>
-        </div>
-    </div>
-    <div class="dash-summary-info">
+<!-- ═══════════════ HEADER ═══════════════ -->
+<div class="dash-hero" style="margin-bottom: 24px;">
+    <div class="dash-summary-info" style="font-size: 1.05rem; font-weight: 600; color: var(--text-title);">
         Resumen de <?= htmlspecialchars($tenantName) ?> &middot; <?= date('d \d\e F, Y') ?>
     </div>
 </div>
