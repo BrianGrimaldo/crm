@@ -846,8 +846,8 @@ $currentPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
             </button>
 
             <!-- Logo EJE Comercial (Lado Izquierdo) -->
-            <div class="topbar-left-brand" style="display: flex; align-items: center; margin-right: auto;">
-                <img src="<?= url('/img/EJE_Comercial.png') ?>" alt="EJE Comercial" style="height: 52px; width: auto; object-fit: contain;">
+            <div class="topbar-left-brand" style="display: flex; align-items: center; justify-content: flex-start; height: 76px; overflow: hidden; margin-right: auto;">
+                <img src="<?= url('/img/EJE_Comercial.png') ?>" alt="EJE Comercial" style="height: 185px; width: auto; object-fit: contain; margin: -65px 0 -65px -30px;">
             </div>
 
             <!-- Logo Grupo EINSUR (Lado Derecho) -->
