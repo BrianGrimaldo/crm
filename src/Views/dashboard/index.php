@@ -14,35 +14,93 @@ $avgDealSize = $openDealsCount > 0 ? round($totalPipeline / $openDealsCount) : 0
         background: var(--bg-main) !important;
     }
 
-    /* ========== GREETING ========== */
-    .dash-greeting {
-        margin-bottom: 2rem;
+    /* ========== SOFT ICON UTILITIES ========== */
+    .icon-soft-primary {
+        background: #e0e7ff;
+        color: #4338ca;
     }
 
-    .dash-greeting h1 {
-        font-size: 1.8rem;
-        font-weight: 800;
-        margin: 0 0 .25rem;
+    .icon-soft-success {
+        background: #dcfce7;
+        color: #15803d;
+    }
+
+    .icon-soft-warning {
+        background: #fef9c3;
+        color: #a16207;
+    }
+
+    .icon-soft-danger {
+        background: #fee2e2;
+        color: #b91c1c;
+    }
+
+    .icon-soft-info {
+        background: #dbeafe;
+        color: #1d4ed8;
+    }
+
+    .icon-soft-purple {
+        background: #f3e8ff;
+        color: #7e22ce;
+    }
+
+    /* ========== DASHBOARD LOGO HEADER ========== */
+    .dash-hero {
+        margin-bottom: 32px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .dash-main-header {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+    }
+
+    .dash-main-header img {
+        height: 300px;
+        width: auto;
+        object-fit: contain;
+        margin: -80px -40px -80px -60px; /* Arriba, Derecha, Abajo, Izquierda (para compensar el espacio transparente de la imagen original) */
+    }
+
+    .dash-main-text {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .dash-main-text h1 {
+        font-size: 1.6rem;
+        font-weight: 700;
+        margin: 0 0 4px 0;
         letter-spacing: -0.03em;
-        background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        display: inline-block;
+        color: var(--text-title);
+        line-height: 1.1;
     }
 
-    .dash-greeting p {
+    .dash-main-text span {
+        font-size: 1.05rem;
+        color: var(--text-muted);
+        font-style: italic;
+        font-weight: 500;
+    }
+
+    .dash-summary-info {
         font-size: 0.95rem;
         color: var(--text-muted);
-        font-weight: 500;
-        margin: 0;
+        font-weight: 400;
+        margin-top: 4px;
     }
 
     /* ========== KPI STRIP ========== */
     .kpi-strip {
         display: grid;
         grid-template-columns: repeat(4, 1fr);
-        gap: 1.25rem;
-        margin-bottom: 2rem;
+        gap: 24px;
+        margin-bottom: 32px;
     }
 
     @media(max-width:1400px) {
@@ -66,79 +124,58 @@ $avgDealSize = $openDealsCount > 0 ? round($totalPipeline / $openDealsCount) : 0
     .kpi {
         background: var(--surface);
         border-radius: var(--radius-lg);
-        padding: 1.4rem;
-        border: 1px solid rgba(0, 0, 0, 0.03);
+        padding: 24px;
+        border: 1px solid var(--border);
         position: relative;
         overflow: hidden;
         box-shadow: var(--shadow-sm);
-        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        transition: all 0.2s ease;
     }
 
     .kpi:hover {
-        transform: translateY(-5px) scale(1.02);
-        box-shadow: 0 15px 30px -8px rgba(0, 0, 0, .12);
-        border-color: rgba(0, 0, 0, 0.06);
-    }
-
-    .kpi::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 4px;
-        background: linear-gradient(90deg, var(--accent), var(--primary));
-        opacity: 0;
-        transition: opacity 0.3s ease;
-    }
-
-    .kpi:hover::before {
-        opacity: 1;
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-md);
     }
 
     .kpi-top {
         display: flex;
         justify-content: space-between;
-        align-items: center;
-        margin-bottom: 1rem;
+        align-items: flex-start;
+        margin-bottom: 16px;
     }
 
     .kpi-dot {
-        width: 42px;
-        height: 42px;
-        border-radius: 12px;
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 1.2rem;
-        transition: transform 0.3s;
-    }
-
-    .kpi:hover .kpi-dot {
-        transform: rotate(-5deg) scale(1.1);
+        font-size: 1rem;
     }
 
     .kpi-tag {
-        font-size: .68rem;
-        font-weight: 800;
-        padding: .25rem .6rem;
-        border-radius: 8px;
-        letter-spacing: .04em;
-        text-transform: uppercase;
+        font-size: 0.75rem;
+        font-weight: 600;
+        padding: 4px 8px;
+        border-radius: 4px;
+        color: var(--text-muted);
+        background: var(--bg-main);
     }
 
     .kpi-val {
         font-size: 1.8rem;
-        font-weight: 800;
+        font-weight: 600;
         line-height: 1;
-        color: var(--text-main);
-        letter-spacing: -.04em;
-        margin-bottom: .3rem;
+        color: var(--text-title);
+        letter-spacing: -.02em;
+        margin-bottom: 8px;
+        font-variant-numeric: tabular-nums;
     }
 
     .kpi-lbl {
-        font-size: .85rem;
-        font-weight: 600;
+        font-size: 0.9rem;
+        font-weight: 500;
         color: var(--text-muted);
     }
 
@@ -191,86 +228,79 @@ $avgDealSize = $openDealsCount > 0 ? round($totalPipeline / $openDealsCount) : 0
     /* ========== PANEL CARD ========== */
     .panel {
         background: var(--surface);
-        border: 1px solid rgba(0, 0, 0, 0.04);
-        border-radius: 20px;
-        padding: 1.5rem;
-        box-shadow: var(--shadow-md);
-        transition: all .3s;
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        padding: 24px;
+        box-shadow: var(--shadow-sm);
+        transition: box-shadow 0.2s ease;
     }
 
     .panel:hover {
-        box-shadow: var(--shadow-lg);
+        box-shadow: var(--shadow-md);
     }
 
     .panel-head {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 1.4rem;
-        padding-bottom: 0.8rem;
-        border-bottom: 1px solid rgba(0, 0, 0, 0.03);
+        margin-bottom: 24px;
     }
 
     .panel-title {
-        font-size: 1.05rem;
-        font-weight: 800;
-        color: var(--primary);
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--text-title);
         display: flex;
         align-items: center;
-        gap: .5rem;
+        gap: 8px;
     }
 
     .panel-title-icon {
         width: 32px;
         height: 32px;
-        border-radius: 10px;
+        border-radius: 6px;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: .9rem;
-        background: var(--primary-light);
-        color: var(--primary);
+        font-size: 1rem;
     }
 
     .panel-badge {
-        font-size: .7rem;
-        font-weight: 800;
-        padding: .25rem .6rem;
-        border-radius: 8px;
+        font-size: 0.75rem;
+        font-weight: 500;
+        padding: 4px 8px;
+        border-radius: 4px;
+        background: var(--bg-main);
+        color: var(--text-muted);
     }
 
     /* ========== DEAL ROWS ========== */
     .deal-row {
         display: flex;
         align-items: center;
-        gap: 1rem;
-        padding: .8rem;
-        border-radius: 14px;
+        gap: 16px;
+        padding: 12px 0;
         transition: all .2s ease;
-        border: 1px solid transparent;
+        border-bottom: 1px solid var(--border);
     }
 
-    .deal-row:hover {
-        background: #fdfdfd;
-        border-color: rgba(0, 0, 0, 0.03);
-        transform: scale(1.01);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+    .deal-row:last-child {
+        border-bottom: none;
     }
 
     .deal-pos {
-        font-size: .95rem;
-        font-weight: 800;
-        color: var(--border);
+        font-size: 0.95rem;
+        font-weight: 500;
+        color: var(--text-muted);
         min-width: 24px;
         text-align: center;
     }
 
     .deal-stage-pip {
-        width: 10px;
-        height: 10px;
+        width: 8px;
+        height: 8px;
         border-radius: 50%;
         flex-shrink: 0;
-        box-shadow: 0 0 8px currentColor;
     }
 
     .deal-body {
@@ -279,8 +309,8 @@ $avgDealSize = $openDealsCount > 0 ? round($totalPipeline / $openDealsCount) : 0
     }
 
     .deal-nm {
-        font-weight: 700;
-        font-size: .92rem;
+        font-weight: 500;
+        font-size: 0.95rem;
         color: var(--text-main);
         white-space: nowrap;
         overflow: hidden;
@@ -288,10 +318,9 @@ $avgDealSize = $openDealsCount > 0 ? round($totalPipeline / $openDealsCount) : 0
     }
 
     .deal-sub {
-        font-size: .75rem;
+        font-size: 0.85rem;
         color: var(--text-muted);
-        font-weight: 500;
-        margin-top: .15rem;
+        margin-top: 4px;
     }
 
     .deal-val {
@@ -299,63 +328,54 @@ $avgDealSize = $openDealsCount > 0 ? round($totalPipeline / $openDealsCount) : 0
     }
 
     .deal-amt {
-        font-weight: 800;
-        font-size: 1rem;
-        color: #059669;
+        font-weight: 600;
+        font-size: 0.95rem;
+        color: var(--text-main);
+        font-variant-numeric: tabular-nums;
     }
 
     .deal-pct {
-        font-size: .7rem;
+        font-size: 0.8rem;
         color: var(--text-muted);
-        font-weight: 700;
-        margin-top: .15rem;
+        margin-top: 4px;
     }
 
     .prob-track {
-        height: 5px;
-        background: rgba(0, 0, 0, 0.04);
-        border-radius: 5px;
-        margin-top: .4rem;
+        height: 4px;
+        background: var(--border);
+        border-radius: 4px;
+        margin-top: 6px;
         overflow: hidden;
     }
 
     .prob-fill {
         height: 100%;
-        border-radius: 5px;
+        border-radius: 4px;
         transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1);
-        box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.3);
     }
 
     /* ========== SELLER ROWS ========== */
     .seller-row {
         display: flex;
         align-items: center;
-        gap: .9rem;
-        padding: .75rem;
-        border-radius: 14px;
-        transition: all .2s;
-        border: 1px solid transparent;
+        gap: 16px;
+        padding: 12px 0;
+        border-bottom: 1px solid var(--border);
     }
 
-    .seller-row:hover {
-        background: #fdfdfd;
-        border-color: rgba(0, 0, 0, 0.03);
-        transform: scale(1.01);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+    .seller-row:last-child {
+        border-bottom: none;
     }
 
     .seller-av {
-        width: 40px;
-        height: 40px;
-        border-radius: 12px;
-        background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
-        color: #fff;
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-weight: 800;
-        font-size: .9rem;
-        box-shadow: 0 4px 10px rgba(0, 45, 98, 0.2);
+        font-weight: 500;
+        font-size: 0.9rem;
     }
 
     .seller-body {
@@ -364,23 +384,23 @@ $avgDealSize = $openDealsCount > 0 ? round($totalPipeline / $openDealsCount) : 0
     }
 
     .seller-nm {
-        font-weight: 700;
-        font-size: .92rem;
+        font-weight: 500;
+        font-size: 0.95rem;
         color: var(--text-main);
     }
 
     .seller-sub {
-        font-size: .75rem;
+        font-size: 0.85rem;
         color: var(--text-muted);
+        margin-top: 4px;
     }
 
     .seller-num {
-        font-weight: 800;
-        font-size: .95rem;
-        color: #059669;
-        background: #d1fae5;
-        padding: .25rem .6rem;
-        border-radius: 8px;
+        font-weight: 600;
+        font-size: 0.95rem;
+        color: var(--text-main);
+        font-variant-numeric: tabular-nums;
+        text-align: right;
     }
 
     /* ========== ACTIVITY TIMELINE ========== */
@@ -419,8 +439,6 @@ $avgDealSize = $openDealsCount > 0 ? round($totalPipeline / $openDealsCount) : 0
         justify-content: center;
         font-size: .9rem;
         flex-shrink: 0;
-        background: var(--border);
-        color: var(--primary);
     }
 
     .tl-body {
@@ -501,78 +519,74 @@ $avgDealSize = $openDealsCount > 0 ? round($totalPipeline / $openDealsCount) : 0
     }
 </style>
 
-<!-- ═══════════════ GREETING ═══════════════ -->
-<div class="dash-greeting">
-    <h1>Hola, <?= htmlspecialchars($_SESSION['user_name'] ?? 'Usuario') ?></h1>
-    <p>Resumen de <?= htmlspecialchars($tenantName) ?> · <?= date('d \d\e F, Y') ?></p>
+<!-- ═══════════════ HEADER LOGO ═══════════════ -->
+<div class="dash-hero">
+    <div class="dash-main-header">
+        <img src="<?= url('/img/EJE_Comercial.png') ?>" alt="EJE Comercial">
+        <div class="dash-main-text">
+            <h1>EJE Comercial</h1>
+            <span>El inicio hacia la transformación</span>
+        </div>
+    </div>
+    <div class="dash-summary-info">
+        Resumen de <?= htmlspecialchars($tenantName) ?> &middot; <?= date('d \d\e F, Y') ?>
+    </div>
 </div>
 
 <!-- ═══════════════ KPI STRIP ═══════════════ -->
 <div class="kpi-strip">
     <div class="kpi">
         <div class="kpi-top">
-            <div class="kpi-dot" style="background:rgba(16,185,129,.1);color:#10b981;"><i
-                    class="fas fa-money-bill-wave"></i></div>
-            <span class="kpi-tag" style="background:rgba(16,185,129,.1);color:#10b981;">Cerradas</span>
+            <div class="kpi-dot icon-soft-success"><i class="fa-solid fa-money-bill-wave"></i></div>
+            <span class="kpi-tag badge-success">Cerradas</span>
         </div>
         <div class="kpi-val">$<?= number_format($totalWon, 0, '.', ',') ?></div>
         <div class="kpi-lbl">Total Ganado</div>
     </div>
     <div class="kpi" style="cursor:pointer;" onclick="window.location.href='<?= url('/finanzas/facturas') ?>'">
         <div class="kpi-top">
-            <div class="kpi-dot" style="background:rgba(59,130,246,.1);color:#3b82f6;"><i
-                    class="fas fa-file-invoice-dollar"></i></div>
-            <span class="kpi-tag" style="background:rgba(59,130,246,.1);color:#3b82f6;">Facturas</span>
+            <div class="kpi-dot icon-soft-info"><i class="fa-solid fa-file-invoice-dollar"></i></div>
+            <span class="kpi-tag badge-info">Facturas</span>
         </div>
         <div class="kpi-val">$<?= number_format($totalFacturado, 0, '.', ',') ?></div>
         <div class="kpi-lbl">Total Facturado</div>
     </div>
     <div class="kpi" style="cursor:pointer;" onclick="window.location.href='<?= url('/finanzas/facturas') ?>'">
         <div class="kpi-top">
-            <div class="kpi-dot" style="background:rgba(16,185,129,.1);color:#059669;"><i
-                    class="fas fa-hand-holding-dollar"></i></div>
-            <span class="kpi-tag" style="background:rgba(16,185,129,.1);color:#059669;">Cobranza</span>
+            <div class="kpi-dot icon-soft-success"><i class="fa-solid fa-hand-holding-dollar"></i></div>
+            <span class="kpi-tag badge-success">Cobranza</span>
         </div>
         <div class="kpi-val">$<?= number_format($totalCobrado, 0, '.', ',') ?></div>
         <div class="kpi-lbl">Total Cobrado</div>
     </div>
     <div class="kpi">
         <div class="kpi-top">
-            <div class="kpi-dot" style="background:rgba(99,102,241,.1);color:#6366f1;"><i class="fas fa-chart-bar"></i>
-            </div>
-            <span class="kpi-tag" style="background:rgba(99,102,241,.1);color:#6366f1;"><?= $openDealsCount ?>
-                abiertas</span>
+            <div class="kpi-dot icon-soft-primary"><i class="fa-solid fa-chart-bar"></i></div>
+            <span class="kpi-tag badge-primary"><?= $openDealsCount ?> abiertas</span>
         </div>
         <div class="kpi-val">$<?= number_format($totalPipeline, 0, '.', ',') ?></div>
         <div class="kpi-lbl">Pipeline activo</div>
     </div>
     <div class="kpi">
         <div class="kpi-top">
-            <div class="kpi-dot" style="background:rgba(245,158,11,.1);color:#f59e0b;"><i class="fas fa-bullseye"></i>
-            </div>
-            <span class="kpi-tag" style="background:rgba(245,158,11,.1);color:#f59e0b;"><?= $closedDeals ?>
-                cerrados</span>
+            <div class="kpi-dot icon-soft-warning"><i class="fa-solid fa-bullseye"></i></div>
+            <span class="kpi-tag badge-warning"><?= $closedDeals ?> cerrados</span>
         </div>
         <div class="kpi-val"><?= $conversionRate ?>%</div>
         <div class="kpi-lbl">Tasa de cierre</div>
     </div>
     <div class="kpi">
         <div class="kpi-top">
-            <div class="kpi-dot" style="background:rgba(59,130,246,.1);color:#3b82f6;"><i class="fas fa-users"></i>
-            </div>
-            <span class="kpi-tag" style="background:rgba(59,130,246,.1);color:#3b82f6;"><?= $totalAccounts ?>
-                empresas</span>
+            <div class="kpi-dot icon-soft-purple"><i class="fa-solid fa-users"></i></div>
+            <span class="kpi-tag badge-info"><?= $totalAccounts ?> empresas</span>
         </div>
         <div class="kpi-val"><?= $totalContacts ?></div>
         <div class="kpi-lbl">Contactos</div>
     </div>
     <div class="kpi">
         <div class="kpi-top">
-            <div class="kpi-dot" style="background:rgba(239,68,68,.1);color:#ef4444;"><i
-                    class="fas fa-times-circle"></i></div>
-            <span class="kpi-tag"
-                style="background:rgba(239,68,68,.1);color:#ef4444;"><?= $dealStats['lost_deals_count'] ?? 0 ?>
-                perdidas</span>
+            <div class="kpi-dot icon-soft-danger"><i class="fa-solid fa-times-circle"></i></div>
+            <span class="kpi-tag badge-error"><?= $dealStats['lost_deals_count'] ?? 0 ?> perdidas</span>
         </div>
         <div class="kpi-val">$<?= number_format($dealStats['total_lost'] ?? 0, 0, '.', ',') ?></div>
         <div class="kpi-lbl">Ventas perdidas</div>
@@ -585,12 +599,12 @@ $avgDealSize = $openDealsCount > 0 ? round($totalPipeline / $openDealsCount) : 0
     <div class="panel" style="cursor:pointer;" onclick="window.location.href='/analiticas'">
         <div class="panel-head">
             <div class="panel-title">
-                <div class="panel-title-icon" style="background:rgba(16,185,129,.08);color:#10b981;"><i
-                        class="fas fa-chart-line"></i></div> Tendencia de Ingresos
+                <div class="panel-title-icon icon-soft-success"><i class="fa-solid fa-chart-line"></i></div> Tendencia
+                de Ingresos
             </div>
             <a href="<?= url('/analiticas') ?>"
-                style="font-size:0.75rem;color:#6366f1;font-weight:700;text-decoration:none;display:flex;align-items:center;gap:0.3rem;">Ver
-                completo <i class="fas fa-arrow-right" style="font-size:0.65rem;"></i></a>
+                style="font-size:0.85rem;color:var(--text-muted);font-weight:500;text-decoration:none;display:flex;align-items:center;gap:0.3rem;">Ver
+                completo <i class="fa-solid fa-arrow-right" style="font-size:0.75rem;"></i></a>
         </div>
         <div style="position:relative;height:260px;"><canvas id="revenueChart"></canvas></div>
     </div>
@@ -598,12 +612,12 @@ $avgDealSize = $openDealsCount > 0 ? round($totalPipeline / $openDealsCount) : 0
     <div class="panel" style="cursor:pointer;" onclick="window.location.href='/analiticas'">
         <div class="panel-head">
             <div class="panel-title">
-                <div class="panel-title-icon" style="background:rgba(168,85,247,.08);color:#a855f7;"><i
-                        class="fas fa-chart-pie"></i></div> Negocios por Etapa
+                <div class="panel-title-icon icon-soft-purple"><i class="fa-solid fa-chart-pie"></i></div> Negocios por
+                Etapa
             </div>
             <a href="<?= url('/analiticas') ?>"
-                style="font-size:0.75rem;color:#6366f1;font-weight:700;text-decoration:none;display:flex;align-items:center;gap:0.3rem;">Ver
-                completo <i class="fas fa-arrow-right" style="font-size:0.65rem;"></i></a>
+                style="font-size:0.85rem;color:var(--text-muted);font-weight:500;text-decoration:none;display:flex;align-items:center;gap:0.3rem;">Ver
+                completo <i class="fa-solid fa-arrow-right" style="font-size:0.75rem;"></i></a>
         </div>
         <div style="position:relative;height:260px;"><canvas id="stageChart"></canvas></div>
     </div>
@@ -611,12 +625,12 @@ $avgDealSize = $openDealsCount > 0 ? round($totalPipeline / $openDealsCount) : 0
     <div class="panel" style="cursor:pointer;" onclick="window.location.href='/analiticas'">
         <div class="panel-head">
             <div class="panel-title">
-                <div class="panel-title-icon" style="background:rgba(245,158,11,.08);color:#f59e0b;"><i
-                        class="fas fa-hourglass-half"></i></div> Embudo de Ventas
+                <div class="panel-title-icon icon-soft-warning"><i class="fa-solid fa-hourglass-half"></i></div> Embudo
+                de Ventas
             </div>
             <a href="<?= url('/analiticas') ?>"
-                style="font-size:0.75rem;color:#6366f1;font-weight:700;text-decoration:none;display:flex;align-items:center;gap:0.3rem;">Ver
-                completo <i class="fas fa-arrow-right" style="font-size:0.65rem;"></i></a>
+                style="font-size:0.85rem;color:var(--text-muted);font-weight:500;text-decoration:none;display:flex;align-items:center;gap:0.3rem;">Ver
+                completo <i class="fa-solid fa-arrow-right" style="font-size:0.75rem;"></i></a>
         </div>
         <?php if (!empty($dealsSummary)):
             $maxCount = max(array_map(fn($s) => (int) $s->deal_count, $dealsSummary)) ?: 1;
@@ -658,10 +672,9 @@ $isManager = in_array($dashRole, ['superadmin', 'admin', 'salesmgr', 'gerente'])
         <div class="panel">
             <div class="panel-head">
                 <div class="panel-title">
-                    <div class="panel-title-icon" style="background:rgba(239,68,68,.08);color:#ef4444;"><i
-                            class="fas fa-fire"></i></div> Oportunidades Top
+                    <div class="panel-title-icon icon-soft-danger"><i class="fa-solid fa-fire"></i></div> Oportunidades Top
                 </div>
-                <span class="panel-badge" style="background:rgba(16,185,129,.08);color:#10b981;">Abiertas</span>
+                <span class="panel-badge badge-success">Abiertas</span>
             </div>
             <?php if (empty($topOpenDeals)): ?>
                 <p style="color:var(--text-muted);text-align:center;padding:2rem .5rem;font-size:.88rem;">Sin oportunidades
@@ -675,7 +688,8 @@ $isManager = in_array($dashRole, ['superadmin', 'admin', 'salesmgr', 'gerente'])
                         <div class="deal-body">
                             <div class="deal-nm"><?= htmlspecialchars($deal->name) ?></div>
                             <div class="deal-sub"><?= htmlspecialchars($deal->account_name ?? '—') ?> ·
-                                <?= htmlspecialchars($deal->stage_name ?? '—') ?></div>
+                                <?= htmlspecialchars($deal->stage_name ?? '—') ?>
+                            </div>
                             <div class="prob-track">
                                 <div class="prob-fill"
                                     style="width:<?= (int) $deal->probability ?>%;background:<?= htmlspecialchars($deal->stage_color ?? '#6366f1') ?>;">
@@ -695,18 +709,20 @@ $isManager = in_array($dashRole, ['superadmin', 'admin', 'salesmgr', 'gerente'])
         <div class="panel">
             <div class="panel-head">
                 <div class="panel-title">
-                    <div class="panel-title-icon" style="background:rgba(99,102,241,.08);color:#6366f1;"><i
-                            class="fas fa-trophy"></i></div> Ranking Vendedores
+                    <div class="panel-title-icon icon-soft-primary"><i class="fa-solid fa-trophy"></i></div> Ranking
+                    Vendedores
                 </div>
             </div>
             <?php if (empty($statsByOwner)): ?>
                 <p style="color:var(--text-muted);text-align:center;padding:2rem .5rem;font-size:.88rem;">Sin datos.</p>
             <?php else: ?>
-                <?php foreach ($statsByOwner as $seller):
+                <?php foreach ($statsByOwner as $idx => $seller):
                     $init = strtoupper(substr($seller->owner_name, 0, 1));
+                    $colors = ['icon-soft-primary', 'icon-soft-success', 'icon-soft-warning', 'icon-soft-purple', 'icon-soft-info'];
+                    $colorClass = $colors[$idx % count($colors)];
                     ?>
                     <div class="seller-row">
-                        <div class="seller-av"><?= $init ?></div>
+                        <div class="seller-av <?= $colorClass ?>"><?= $init ?></div>
                         <div class="seller-body">
                             <div class="seller-nm"><?= htmlspecialchars($seller->owner_name) ?></div>
                             <div class="seller-sub"><?= $seller->total_deals ?> deals · <?= $seller->won_deals ?> ganados</div>
@@ -721,8 +737,7 @@ $isManager = in_array($dashRole, ['superadmin', 'admin', 'salesmgr', 'gerente'])
         <div class="panel">
             <div class="panel-head">
                 <div class="panel-title">
-                    <div class="panel-title-icon" style="background:rgba(245,158,11,.08);color:#f59e0b;"><i
-                            class="fas fa-bolt"></i></div> Actividad Reciente
+                    <div class="panel-title-icon icon-soft-info"><i class="fa-solid fa-bolt"></i></div> Actividad Reciente
                 </div>
             </div>
             <div class="timeline">
@@ -731,20 +746,20 @@ $isManager = in_array($dashRole, ['superadmin', 'admin', 'salesmgr', 'gerente'])
                 <?php else: ?>
                     <?php foreach ($recentActivities as $act):
                         $icons = ['create' => '<i class="fas fa-star"></i>', 'update' => '<i class="fas fa-pencil-alt"></i>', 'delete' => '<i class="fas fa-trash"></i>', 'update_stage' => '<i class="fas fa-layer-group"></i>', 'update_probability' => '<i class="fas fa-percentage"></i>'];
-                        $colors = ['create' => 'rgba(16,185,129,.12)', 'update' => 'rgba(99,102,241,.12)', 'delete' => 'rgba(239,68,68,.12)', 'update_stage' => 'rgba(245,158,11,.12)', 'update_probability' => 'rgba(168,85,247,.12)'];
+                        $colors = ['create' => 'icon-soft-success', 'update' => 'icon-soft-primary', 'delete' => 'icon-soft-danger', 'update_stage' => 'icon-soft-warning', 'update_probability' => 'icon-soft-purple'];
                         $lbls = ['create' => 'Creó', 'update' => 'Actualizó', 'delete' => 'Eliminó', 'update_stage' => 'Movió etapa', 'update_probability' => 'Cambió prob.'];
                         $icon = $icons[$act->action] ?? '<i class="fas fa-thumbtack"></i>';
-                        $bg = $colors[$act->action] ?? 'rgba(99,102,241,.12)';
+                        $bgClass = $colors[$act->action] ?? 'icon-soft-primary';
                         $lbl = $lbls[$act->action] ?? $act->action;
                         $time = (new DateTime($act->created_at))->format('d M, H:i');
                         ?>
                         <div class="tl-item">
-                            <div class="tl-icon" style="background:<?= $bg ?>;"><?= $icon ?></div>
+                            <div class="tl-icon <?= $bgClass ?>"><?= $icon ?></div>
                             <div class="tl-body">
                                 <div class="tl-text">
                                     <?= htmlspecialchars($act->user_name ?? 'Sistema') ?>
                                     <span style="color:var(--text-muted);font-weight:400;"> <?= $lbl ?> </span>
-                                    <?= htmlspecialchars($act->entity_type) ?>            <?php if ($act->entity_id): ?>
+                                    <?= htmlspecialchars($act->entity_type) ?>             <?php if ($act->entity_id): ?>
                                         #<?= $act->entity_id ?><?php endif; ?>
                                 </div>
                                 <div class="tl-time"><?= $time ?></div>
@@ -765,12 +780,12 @@ $isManager = in_array($dashRole, ['superadmin', 'admin', 'salesmgr', 'gerente'])
                 <?php endif; ?>
                 <div class="panel-head">
                     <div class="panel-title">
-                        <div class="panel-title-icon" style="background:rgba(59,130,246,.08);color:#3b82f6;"><i
-                                class="fas fa-check-square"></i></div> Mis Tareas de Hoy
+                        <div class="panel-title-icon icon-soft-primary"><i class="fa-solid fa-check-square"></i></div>
+                        Mis Tareas de Hoy
                     </div>
                     <a href="<?= url('/tareas') ?>"
-                        style="font-size:0.8rem;color:#6366f1;font-weight:600;text-decoration:none;">Ver bitácora <i
-                            class="fas fa-arrow-right"></i></a>
+                        style="font-size:0.85rem;color:var(--text-muted);font-weight:500;text-decoration:none;display:flex;align-items:center;gap:0.3rem;">Ver
+                        bitácora <i class="fa-solid fa-arrow-right" style="font-size:0.75rem;"></i></a>
                 </div>
                 <div class="activity-list">
                     <?php if (!empty($pendingTasks)): ?>
