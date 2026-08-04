@@ -837,6 +837,196 @@ $isManager = in_array($dashRole, ['superadmin', 'admin', 'salesmgr', 'gerente'])
 
     <!-- ═══════════════ CHART.JS ═══════════════ -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+
+<?php if ($isManager): ?>
+<!-- ═══════════════ ANALYTICS DE COTIZACIONES ═══════════════ -->
+<div style="margin-top:2rem;">
+    <!-- ── Cabecera de Sección ── -->
+    <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:1.25rem;">
+        <div style="width:36px;height:36px;border-radius:10px;background:#e0f2fe;color:#0284c7;display:flex;align-items:center;justify-content:center;font-size:1.1rem;">
+            <i class="fa-solid fa-file-contract"></i>
+        </div>
+        <div>
+            <div style="font-size:1.05rem;font-weight:700;color:var(--text-title);">Análisis de Cotizaciones — <?= date('F Y') ?></div>
+            <div style="font-size:.82rem;color:var(--text-muted);">Propuestas entregadas, seguimiento y efectividad por área y vendedor</div>
+        </div>
+    </div>
+
+    <!-- ── Fila 1: KPIs del Mes ── -->
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:1rem;margin-bottom:1.5rem;">
+        <?php
+        $qm = $quotesThisMonth ?? [];
+        $kpis = [
+            ['val' => $qm['total_quotes'] ?? 0,  'lbl' => 'Cotizaciones emitidas', 'icon' => 'fa-file-alt',       'bg' => '#e0e7ff', 'col' => '#4338ca'],
+            ['val' => $qm['vigentes']    ?? 0,  'lbl' => 'Vigentes',              'icon' => 'fa-hourglass-half',  'bg' => '#dcfce7', 'col' => '#15803d'],
+            ['val' => $qm['expiradas']   ?? 0,  'lbl' => 'Expiradas',             'icon' => 'fa-calendar-times',  'bg' => '#fee2e2', 'col' => '#b91c1c'],
+            ['val' => $qm['concretadas'] ?? 0,  'lbl' => 'Concretadas',           'icon' => 'fa-check-circle',    'bg' => '#fef9c3', 'col' => '#a16207'],
+            ['val' => ($qm['conversion_pct'] ?? 0).'%', 'lbl' => 'Tasa de cierre', 'icon' => 'fa-bullseye',       'bg' => '#f3e8ff', 'col' => '#7e22ce'],
+        ];
+        foreach ($kpis as $k): ?>
+        <div class="kpi" style="padding:1.25rem;">
+            <div class="kpi-top">
+                <div class="kpi-dot" style="background:<?= $k['bg'] ?>;color:<?= $k['col'] ?>;width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;">
+                    <i class="fa-solid <?= $k['icon'] ?>"></i>
+                </div>
+            </div>
+            <div class="kpi-val" style="font-size:1.6rem;"><?= $k['val'] ?></div>
+            <div class="kpi-lbl"><?= $k['lbl'] ?></div>
+        </div>
+        <?php endforeach; ?>
+    </div>
+
+    <!-- ── Fila 2: Gráfica por Área + Seguimiento ── -->
+    <div class="dash-grid g-2-1" style="margin-bottom:1.5rem;">
+        <!-- Gráfica: Cotizaciones por Área -->
+        <div class="panel">
+            <div class="panel-head">
+                <div class="panel-title">
+                    <div class="panel-title-icon icon-soft-info"><i class="fa-solid fa-chart-column"></i></div>
+                    Cotizaciones por Área
+                </div>
+                <span class="panel-badge" style="background:#e0f2fe;color:#0284c7;">Mes actual</span>
+            </div>
+            <div style="position:relative;height:240px;">
+                <canvas id="areaQuotesChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Panel: Seguimiento al día siguiente -->
+        <div class="panel">
+            <div class="panel-head">
+                <div class="panel-title">
+                    <div class="panel-title-icon icon-soft-warning"><i class="fa-solid fa-phone-volume"></i></div>
+                    Follow-up al Día Siguiente
+                </div>
+            </div>
+            <?php $qf = $quotesFollowup ?? []; ?>
+            <div style="text-align:center;padding:1rem 0;">
+                <!-- Donut visual simplificado -->
+                <div style="position:relative;width:130px;height:130px;margin:0 auto 1rem;">
+                    <svg viewBox="0 0 36 36" style="transform:rotate(-90deg);width:100%;height:100%;">
+                        <circle cx="18" cy="18" r="15.9" fill="none" stroke="var(--border)" stroke-width="3.5"/>
+                        <?php
+                            $pct = (int) ($qf['followup_pct'] ?? 0);
+                            $dash = round($pct * 100 / 100 * 100, 1);
+                        ?>
+                        <circle cx="18" cy="18" r="15.9" fill="none" stroke="#f59e0b"
+                                stroke-width="3.5"
+                                stroke-dasharray="<?= $pct ?> <?= 100 - $pct ?>"
+                                stroke-linecap="round"/>
+                    </svg>
+                    <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;">
+                        <div style="font-size:1.5rem;font-weight:700;color:var(--text-title);"><?= $pct ?>%</div>
+                        <div style="font-size:.7rem;color:var(--text-muted);">follow-up</div>
+                    </div>
+                </div>
+                <div style="display:flex;justify-content:center;gap:1.5rem;">
+                    <div style="text-align:center;">
+                        <div style="font-size:1.4rem;font-weight:700;color:#10b981;"><?= $qf['with_followup'] ?? 0 ?></div>
+                        <div style="font-size:.8rem;color:var(--text-muted);">Con seguimiento</div>
+                    </div>
+                    <div style="text-align:center;">
+                        <div style="font-size:1.4rem;font-weight:700;color:#ef4444;"><?= $qf['no_followup'] ?? 0 ?></div>
+                        <div style="font-size:.8rem;color:var(--text-muted);">Sin contacto</div>
+                    </div>
+                </div>
+                <p style="font-size:.78rem;color:var(--text-muted);margin-top:1rem;line-height:1.5;">
+                    Cotizaciones que tuvieron actividad registrada<br>en las primeras 24 h tras su emisión.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── Fila 3: Matriz Vendedores (más cotizan / más cierran) ── -->
+    <div class="panel" style="margin-bottom:1.5rem;">
+        <div class="panel-head">
+            <div class="panel-title">
+                <div class="panel-title-icon icon-soft-primary"><i class="fa-solid fa-ranking-star"></i></div>
+                Matriz de Efectividad por Vendedor — Cotiza vs Cierra
+            </div>
+            <span class="panel-badge" style="background:#f3e8ff;color:#7e22ce;">Mes actual</span>
+        </div>
+        <?php if (empty($quoteMatrix)): ?>
+            <p style="text-align:center;color:var(--text-muted);padding:2rem;">Sin datos de cotizaciones en este período.</p>
+        <?php else: ?>
+        <div style="overflow-x:auto;">
+            <table style="width:100%;border-collapse:collapse;font-size:.88rem;">
+                <thead>
+                    <tr style="border-bottom:2px solid var(--border);">
+                        <th style="text-align:left;padding:.75rem 1rem;color:var(--text-muted);font-weight:600;">Vendedor</th>
+                        <th style="text-align:center;padding:.75rem .5rem;color:var(--text-muted);font-weight:600;">Cotizaciones</th>
+                        <th style="text-align:center;padding:.75rem .5rem;color:var(--text-muted);font-weight:600;">Concretadas</th>
+                        <th style="text-align:center;padding:.75rem .5rem;color:var(--text-muted);font-weight:600;">Perdidas</th>
+                        <th style="text-align:center;padding:.75rem .5rem;color:var(--text-muted);font-weight:600;">Abiertas</th>
+                        <th style="text-align:center;padding:.75rem 1rem;color:var(--text-muted);font-weight:600;">Tasa Cierre</th>
+                        <th style="text-align:right;padding:.75rem 1rem;color:var(--text-muted);font-weight:600;">Monto Ganado</th>
+                        <th style="text-align:left;padding:.75rem 1rem;color:var(--text-muted);font-weight:600;">Perfil</th>
+                    </tr>
+                </thead>
+                <tbody>
+                <?php
+                $matrixColors = ['#6366f1','#10b981','#f59e0b','#ef4444','#8b5cf6','#0ea5e9'];
+                foreach ($quoteMatrix as $idx => $seller):
+                    $convPct = (float) $seller->conversion_pct;
+                    // Clasificar perfil
+                    $avgQuotes = array_sum(array_column((array)$quoteMatrix, 'total_quotes')) / max(count((array)$quoteMatrix), 1);
+                    $avgWon    = array_sum(array_column((array)$quoteMatrix, 'won'))          / max(count((array)$quoteMatrix), 1);
+                    $highQ = $seller->total_quotes >= $avgQuotes;
+                    $highW = $seller->won >= $avgWon;
+
+                    if ($highQ && $highW)      { $perfil = '🏆 Alta actividad & cierre'; $pColor = '#15803d'; $pBg = '#dcfce7'; }
+                    elseif ($highQ && !$highW) { $perfil = '📞 Cotizan más, cierran menos'; $pColor = '#b45309'; $pBg = '#fef3c7'; }
+                    elseif (!$highQ && $highW) { $perfil = '🎯 Selectivos & eficaces'; $pColor = '#1d4ed8'; $pBg = '#dbeafe'; }
+                    else                       { $perfil = '📉 Oportunidad de mejora'; $pColor = '#b91c1c'; $pBg = '#fee2e2'; }
+
+                    $barColor = $matrixColors[$idx % count($matrixColors)];
+                    $init = strtoupper(substr($seller->owner_name, 0, 1));
+                ?>
+                <tr style="border-bottom:1px solid var(--border);transition:background .15s ease;" onmouseover="this.style.background='var(--bg-main)'" onmouseout="this.style.background='transparent'">
+                    <td style="padding:.85rem 1rem;">
+                        <div style="display:flex;align-items:center;gap:.75rem;">
+                            <div style="width:34px;height:34px;border-radius:8px;background:<?= $barColor ?>22;color:<?= $barColor ?>;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.95rem;flex-shrink:0;">
+                                <?= $init ?>
+                            </div>
+                            <span style="font-weight:600;color:var(--text-main);"><?= htmlspecialchars($seller->owner_name) ?></span>
+                        </div>
+                    </td>
+                    <td style="text-align:center;padding:.85rem .5rem;">
+                        <span style="font-size:1.2rem;font-weight:700;color:var(--text-title);"><?= $seller->total_quotes ?></span>
+                    </td>
+                    <td style="text-align:center;padding:.85rem .5rem;">
+                        <span style="font-weight:700;color:#15803d;"><?= $seller->won ?></span>
+                    </td>
+                    <td style="text-align:center;padding:.85rem .5rem;">
+                        <span style="font-weight:700;color:#b91c1c;"><?= $seller->lost ?></span>
+                    </td>
+                    <td style="text-align:center;padding:.85rem .5rem;">
+                        <span style="color:var(--text-muted);"><?= $seller->open ?></span>
+                    </td>
+                    <td style="text-align:center;padding:.85rem 1rem;">
+                        <div style="display:flex;flex-direction:column;align-items:center;gap:.3rem;">
+                            <span style="font-weight:700;font-size:1rem;color:<?= $convPct >= 50 ? '#15803d' : ($convPct >= 25 ? '#a16207' : '#b91c1c') ?>;"><?= $convPct ?>%</span>
+                            <div style="width:80px;height:5px;background:var(--border);border-radius:5px;overflow:hidden;">
+                                <div style="width:<?= min($convPct, 100) ?>%;height:100%;background:<?= $convPct >= 50 ? '#10b981' : ($convPct >= 25 ? '#f59e0b' : '#ef4444') ?>;border-radius:5px;"></div>
+                            </div>
+                        </div>
+                    </td>
+                    <td style="text-align:right;padding:.85rem 1rem;font-weight:600;color:var(--text-main);">
+                        $<?= number_format((float)$seller->won_amount, 0, '.', ',') ?>
+                    </td>
+                    <td style="padding:.85rem 1rem;">
+                        <span style="padding:.3rem .7rem;border-radius:999px;font-size:.75rem;font-weight:700;background:<?= $pBg ?>;color:<?= $pColor ?>;"><?= $perfil ?></span>
+                    </td>
+                </tr>
+                <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+        <?php endif; ?>
+    </div>
+</div>
+<?php endif; // end $isManager ?>
+
     <script>
         Chart.defaults.font.family = "'Outfit', sans-serif";
         Chart.defaults.font.weight = '500';
@@ -905,6 +1095,49 @@ $isManager = in_array($dashRole, ['superadmin', 'admin', 'salesmgr', 'gerente'])
                 }
             }
         });
+
+        // ── Gráfica de Cotizaciones por Área ───────
+        const areaEl = document.getElementById('areaQuotesChart');
+        if (areaEl) {
+            const areaLabels = <?= $areaLabels ?? '[]' ?>;
+            const areaTotal  = <?= $areaTotal  ?? '[]' ?>;
+            const areaClosed = <?= $areaClosed ?? '[]' ?>;
+
+            new Chart(areaEl.getContext('2d'), {
+                type: 'bar',
+                data: {
+                    labels: areaLabels.length ? areaLabels : ['Sin datos'],
+                    datasets: [
+                        {
+                            label: 'Total cotizaciones',
+                            data: areaTotal,
+                            backgroundColor: 'rgba(99,102,241,.7)',
+                            borderRadius: 6,
+                            borderSkipped: false
+                        },
+                        {
+                            label: 'Concretadas',
+                            data: areaClosed,
+                            backgroundColor: 'rgba(16,185,129,.75)',
+                            borderRadius: 6,
+                            borderSkipped: false
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    interaction: { mode: 'index', intersect: false },
+                    plugins: {
+                        legend: { labels: { color: textColor, font: { weight: '600', size: 12 }, usePointStyle: true, pointStyle: 'circle' } },
+                        tooltip: { callbacks: { label: ctx => ` ${ctx.dataset.label}: ${ctx.parsed.y}` } }
+                    },
+                    scales: {
+                        x: { grid: { display: false }, ticks: { color: textColor, maxRotation: 30 } },
+                        y: { grid: { color: gridColor }, ticks: { color: textColor, stepSize: 1 }, border: { dash: [4,4] } }
+                    }
+                }
+            });
+        }
 
         // Inventory charts removed
     </script>
