@@ -862,17 +862,14 @@ $isManager = in_array($dashRole, ['superadmin', 'admin', 'salesmgr', 'gerente'])
     <div class="panel">
         <div class="panel-head">
             <div class="panel-title">
-                <div class="panel-title-icon icon-soft-primary"><i class="fa-solid fa-chart-scatter"></i></div>
-                Mapa: Cotizan vs Cierran
+                <div class="panel-title-icon icon-soft-primary"><i class="fa-solid fa-chart-column"></i></div>
+                Cotizadas vs Concretadas
             </div>
             <span class="panel-badge" style="background:#e0e7ff;color:#4338ca;">Mes actual</span>
         </div>
-        <div style="position:relative;height:280px;">
+        <div style="position:relative;height:280px;margin-top:1rem;">
             <canvas id="vendorScatterChart"></canvas>
         </div>
-        <p style="font-size:.75rem;color:var(--text-muted);margin-top:.5rem;text-align:center;">
-            Eje X = cotizaciones emitidas &nbsp;·&nbsp; Eje Y = concretadas &nbsp;·&nbsp; Ideal: arriba a la derecha
-        </p>
     </div>
     <!-- Tabla Vendedores -->
     <div class="panel">
@@ -1077,62 +1074,48 @@ $isManager = in_array($dashRole, ['superadmin', 'admin', 'salesmgr', 'gerente'])
             });
         }
 
-        // ── Scatter: Vendedores Cotizan vs Cierran ──
+        // ── Gráfica: Vendedores Cotizan vs Cierran (Bar) ──
         const scEl = document.getElementById('vendorScatterChart');
         if (scEl) {
-            const matrix = <?= json_encode(array_map(fn($r) => [
-                'x'    => (int)$r->total_quotes,
-                'y'    => (int)$r->won,
-                'name' => $r->owner_name,
-                'pct'  => (float)$r->conversion_pct
-            ], $quoteMatrix ?? [])) ?>;
-
-            const paleta = ['#6366f1','#10b981','#f59e0b','#ef4444','#8b5cf6','#0ea5e9','#ec4899','#14b8a6'];
-
-            const scDatasets = matrix.map((v, i) => ({
-                label: v.name,
-                data: [{ x: v.x, y: v.y }],
-                backgroundColor: paleta[i % paleta.length] + 'cc',
-                borderColor:     paleta[i % paleta.length],
-                borderWidth: 2,
-                pointRadius: 12,
-                pointHoverRadius: 15
-            }));
-
-            const maxQ = Math.max(...matrix.map(v => v.x), 1);
-            const maxW = Math.max(...matrix.map(v => v.y), 1);
+            const matrix = <?= json_encode(array_values($quoteMatrix ?? [])) ?>;
+            
+            const sellerNames = matrix.map(v => v.owner_name);
+            const sellerQuotes = matrix.map(v => parseInt(v.total_quotes));
+            const sellerWon = matrix.map(v => parseInt(v.won));
 
             new Chart(scEl.getContext('2d'), {
-                type: 'scatter',
-                data: { datasets: scDatasets.length ? scDatasets : [{ label: 'Sin datos', data: [{ x:0, y:0 }], backgroundColor: '#94a3b8' }] },
+                type: 'bar',
+                data: {
+                    labels: sellerNames.length ? sellerNames : ['Sin datos'],
+                    datasets: [
+                        {
+                            label: 'Emitidas',
+                            data: sellerQuotes.length ? sellerQuotes : [0],
+                            backgroundColor: 'rgba(99,102,241,.75)',
+                            borderRadius: 4
+                        },
+                        {
+                            label: 'Concretadas',
+                            data: sellerWon.length ? sellerWon : [0],
+                            backgroundColor: 'rgba(16,185,129,.8)',
+                            borderRadius: 4
+                        }
+                    ]
+                },
                 options: {
                     responsive: true, maintainAspectRatio: false,
-                    layout: {
-                        padding: { top: 15, right: 20, bottom: 15, left: 15 }
-                    },
-                    clip: false, // Evita que los puntos en los bordes (ej. y=0) se corten
+                    interaction: { mode: 'index', intersect: false },
                     plugins: {
                         legend: { position: 'bottom', labels: { color: textColor, font: { size: 12, weight: '600' }, usePointStyle: true, pointStyle: 'circle', padding: 10 } },
                         tooltip: {
                             callbacks: {
-                                label: ctx => {
-                                    const d = matrix[ctx.datasetIndex];
-                                    return d ? ` ${d.name} — Emitidas: ${d.x}  Concretadas: ${d.y}  (${d.pct}%)` : '';
-                                }
+                                label: ctx => ` ${ctx.dataset.label}: ${ctx.parsed.y}`
                             }
                         }
                     },
                     scales: {
-                        x: {
-                            title: { display: true, text: 'Cotizaciones emitidas', color: textColor, font: { size: 12 } },
-                            grid: { color: gridColor }, ticks: { color: textColor, stepSize: 1, precision: 0 },
-                            min: 0, suggestedMax: maxQ + 1
-                        },
-                        y: {
-                            title: { display: true, text: 'Concretadas (ganadas)', color: textColor, font: { size: 12 } },
-                            grid: { color: gridColor }, ticks: { color: textColor, stepSize: 1, precision: 0 },
-                            min: 0, suggestedMax: maxW + 1
-                        }
+                        x: { grid: { display: false }, ticks: { color: textColor, maxRotation: 30 } },
+                        y: { grid: { color: gridColor }, ticks: { color: textColor, stepSize: 1, precision: 0 }, border: { dash: [4,4] } }
                     }
                 }
             });
