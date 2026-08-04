@@ -73,6 +73,7 @@ class ContactController
             'country' => $_POST['country'] ?? '',
             'city' => $_POST['city'] ?? '',
             'postal_code' => $_POST['postal_code'] ?? '',
+            'date_of_birth' => !empty($_POST['date_of_birth']) ? $_POST['date_of_birth'] : null,
             'owner_id' => $_SESSION['user_id'] ?? null,
             'account_id' => !empty($_POST['account_id']) ? (int) $_POST['account_id'] : null,
         ];
@@ -137,6 +138,7 @@ class ContactController
             'country' => $_POST['country'] ?? '',
             'city' => $_POST['city'] ?? '',
             'postal_code' => $_POST['postal_code'] ?? '',
+            'date_of_birth' => !empty($_POST['date_of_birth']) ? $_POST['date_of_birth'] : null,
             'account_id' => !empty($_POST['account_id']) ? (int) $_POST['account_id'] : null,
         ];
 
