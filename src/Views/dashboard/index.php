@@ -762,7 +762,8 @@ $isManager = in_array($dashRole, ['superadmin', 'admin', 'salesmgr', 'gerente'])
                 <?php endif; ?>
             </div>
         </div>
-    <?php endif; ?>
+    </div>
+<?php endif; ?>
 
 
     <!-- ═══════════════ CHART.JS ═══════════════ -->
