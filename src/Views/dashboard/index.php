@@ -1095,8 +1095,8 @@ $isManager = in_array($dashRole, ['superadmin', 'admin', 'salesmgr', 'gerente'])
                 backgroundColor: paleta[i % paleta.length] + 'cc',
                 borderColor:     paleta[i % paleta.length],
                 borderWidth: 2,
-                pointRadius: Math.max(10, v.x * 3),
-                pointHoverRadius: Math.max(13, v.x * 3 + 3)
+                pointRadius: 12,
+                pointHoverRadius: 15
             }));
 
             const maxQ = Math.max(...matrix.map(v => v.x), 1);
@@ -1107,6 +1107,10 @@ $isManager = in_array($dashRole, ['superadmin', 'admin', 'salesmgr', 'gerente'])
                 data: { datasets: scDatasets.length ? scDatasets : [{ label: 'Sin datos', data: [{ x:0, y:0 }], backgroundColor: '#94a3b8' }] },
                 options: {
                     responsive: true, maintainAspectRatio: false,
+                    layout: {
+                        padding: { top: 15, right: 20, bottom: 15, left: 15 }
+                    },
+                    clip: false, // Evita que los puntos en los bordes (ej. y=0) se corten
                     plugins: {
                         legend: { position: 'bottom', labels: { color: textColor, font: { size: 12, weight: '600' }, usePointStyle: true, pointStyle: 'circle', padding: 10 } },
                         tooltip: {
