@@ -899,50 +899,56 @@ $isManager = in_array($dashRole, ['superadmin', 'admin', 'salesmgr', 'gerente'])
                     <div class="panel-title-icon icon-soft-warning"><i class="fa-solid fa-phone-volume"></i></div>
                     Follow-up al Día Siguiente
                 </div>
+                <span class="panel-badge" style="background:#fef9c3;color:#a16207;"><?= ($quotesFollowup['total_quotes'] ?? 0) ?> cotizaciones</span>
             </div>
             <?php $qf = $quotesFollowup ?? []; ?>
-            <div style="text-align:center;padding:1rem 0;">
-                <!-- Donut visual simplificado -->
-                <div style="position:relative;width:130px;height:130px;margin:0 auto 1rem;">
-                    <svg viewBox="0 0 36 36" style="transform:rotate(-90deg);width:100%;height:100%;">
-                        <circle cx="18" cy="18" r="15.9" fill="none" stroke="var(--border)" stroke-width="3.5"/>
-                        <?php
-                            $pct = (int) ($qf['followup_pct'] ?? 0);
-                            $dash = round($pct * 100 / 100 * 100, 1);
-                        ?>
-                        <circle cx="18" cy="18" r="15.9" fill="none" stroke="#f59e0b"
-                                stroke-width="3.5"
-                                stroke-dasharray="<?= $pct ?> <?= 100 - $pct ?>"
-                                stroke-linecap="round"/>
-                    </svg>
-                    <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;">
-                        <div style="font-size:1.5rem;font-weight:700;color:var(--text-title);"><?= $pct ?>%</div>
-                        <div style="font-size:.7rem;color:var(--text-muted);">follow-up</div>
-                    </div>
-                </div>
-                <div style="display:flex;justify-content:center;gap:1.5rem;">
-                    <div style="text-align:center;">
-                        <div style="font-size:1.4rem;font-weight:700;color:#10b981;"><?= $qf['with_followup'] ?? 0 ?></div>
-                        <div style="font-size:.8rem;color:var(--text-muted);">Con seguimiento</div>
-                    </div>
-                    <div style="text-align:center;">
-                        <div style="font-size:1.4rem;font-weight:700;color:#ef4444;"><?= $qf['no_followup'] ?? 0 ?></div>
-                        <div style="font-size:.8rem;color:var(--text-muted);">Sin contacto</div>
-                    </div>
-                </div>
-                <p style="font-size:.78rem;color:var(--text-muted);margin-top:1rem;line-height:1.5;">
-                    Cotizaciones que tuvieron actividad registrada<br>en las primeras 24 h tras su emisión.
-                </p>
+            <div style="position:relative;height:180px;">
+                <canvas id="followupDonutChart"></canvas>
             </div>
+            <div style="display:flex;justify-content:center;gap:2rem;margin-top:.75rem;">
+                <div style="text-align:center;">
+                    <div style="font-size:1.5rem;font-weight:700;color:#10b981;"><?= $qf['with_followup'] ?? 0 ?></div>
+                    <div style="font-size:.78rem;color:var(--text-muted);">Con seguimiento</div>
+                </div>
+                <div style="text-align:center;">
+                    <div style="font-size:1.5rem;font-weight:700;color:#ef4444;"><?= $qf['no_followup'] ?? 0 ?></div>
+                    <div style="font-size:.78rem;color:var(--text-muted);">Sin contacto</div>
+                </div>
+                <div style="text-align:center;">
+                    <div style="font-size:1.5rem;font-weight:700;color:#f59e0b;"><?= $qf['followup_pct'] ?? 0 ?>%</div>
+                    <div style="font-size:.78rem;color:var(--text-muted);">Tasa follow-up</div>
+                </div>
+            </div>
+            <p style="font-size:.76rem;color:var(--text-muted);margin-top:.75rem;text-align:center;line-height:1.5;">
+                Actividad registrada en las primeras 24 h tras emitir la cotización.
+            </p>
         </div>
     </div>
 
-    <!-- ── Fila 3: Matriz Vendedores (más cotizan / más cierran) ── -->
-    <div class="panel" style="margin-bottom:1.5rem;">
+    <!-- ── Fila 3: Scatter + Tabla Vendedores ── -->
+    <div class="dash-grid g-1-1" style="margin-bottom:1.5rem;">
+    <!-- Scatter chart cotiza vs cierra -->
+    <div class="panel">
+        <div class="panel-head">
+            <div class="panel-title">
+                <div class="panel-title-icon icon-soft-primary"><i class="fa-solid fa-chart-scatter"></i></div>
+                Mapa: Cotizan vs Cierran
+            </div>
+            <span class="panel-badge" style="background:#e0e7ff;color:#4338ca;">Mes actual</span>
+        </div>
+        <div style="position:relative;height:280px;">
+            <canvas id="vendorScatterChart"></canvas>
+        </div>
+        <p style="font-size:.75rem;color:var(--text-muted);margin-top:.5rem;text-align:center;">
+            Eje X = cotizaciones emitidas &nbsp;·&nbsp; Eje Y = concretadas &nbsp;·&nbsp; Ideal: arriba a la derecha
+        </p>
+    </div>
+    <!-- Tabla Vendedores -->
+    <div class="panel">
         <div class="panel-head">
             <div class="panel-title">
                 <div class="panel-title-icon icon-soft-primary"><i class="fa-solid fa-ranking-star"></i></div>
-                Matriz de Efectividad por Vendedor — Cotiza vs Cierra
+                Efectividad por Vendedor
             </div>
             <span class="panel-badge" style="background:#f3e8ff;color:#7e22ce;">Mes actual</span>
         </div>
@@ -1024,6 +1030,7 @@ $isManager = in_array($dashRole, ['superadmin', 'admin', 'salesmgr', 'gerente'])
         </div>
         <?php endif; ?>
     </div>
+    </div><!-- end dash-grid g-1-1 -->
 </div>
 <?php endif; // end $isManager ?>
 
@@ -1102,26 +1109,13 @@ $isManager = in_array($dashRole, ['superadmin', 'admin', 'salesmgr', 'gerente'])
             const areaLabels = <?= $areaLabels ?? '[]' ?>;
             const areaTotal  = <?= $areaTotal  ?? '[]' ?>;
             const areaClosed = <?= $areaClosed ?? '[]' ?>;
-
             new Chart(areaEl.getContext('2d'), {
                 type: 'bar',
                 data: {
                     labels: areaLabels.length ? areaLabels : ['Sin datos'],
                     datasets: [
-                        {
-                            label: 'Total cotizaciones',
-                            data: areaTotal,
-                            backgroundColor: 'rgba(99,102,241,.7)',
-                            borderRadius: 6,
-                            borderSkipped: false
-                        },
-                        {
-                            label: 'Concretadas',
-                            data: areaClosed,
-                            backgroundColor: 'rgba(16,185,129,.75)',
-                            borderRadius: 6,
-                            borderSkipped: false
-                        }
+                        { label: 'Emitidas', data: areaTotal, backgroundColor: 'rgba(99,102,241,.75)', borderRadius: 6, borderSkipped: false },
+                        { label: 'Concretadas', data: areaClosed, backgroundColor: 'rgba(16,185,129,.8)', borderRadius: 6, borderSkipped: false }
                     ]
                 },
                 options: {
@@ -1133,7 +1127,91 @@ $isManager = in_array($dashRole, ['superadmin', 'admin', 'salesmgr', 'gerente'])
                     },
                     scales: {
                         x: { grid: { display: false }, ticks: { color: textColor, maxRotation: 30 } },
-                        y: { grid: { color: gridColor }, ticks: { color: textColor, stepSize: 1 }, border: { dash: [4,4] } }
+                        y: { grid: { color: gridColor }, ticks: { color: textColor, stepSize: 1, precision: 0 }, border: { dash: [4,4] } }
+                    }
+                }
+            });
+        }
+
+        // ── Follow-up Doughnut ──────────────────────
+        const fuEl = document.getElementById('followupDonutChart');
+        if (fuEl) {
+            const fuWith    = <?= (int)($quotesFollowup['with_followup'] ?? 0) ?>;
+            const fuWithout = <?= (int)($quotesFollowup['no_followup']   ?? 0) ?>;
+            new Chart(fuEl.getContext('2d'), {
+                type: 'doughnut',
+                data: {
+                    labels: ['Con seguimiento', 'Sin contacto'],
+                    datasets: [{
+                        data: fuWith + fuWithout > 0 ? [fuWith, fuWithout] : [0, 1],
+                        backgroundColor: ['#10b981', '#ef4444'],
+                        borderColor: 'transparent',
+                        borderWidth: 0,
+                        hoverOffset: 6
+                    }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false, cutout: '68%',
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: { callbacks: { label: ctx => ` ${ctx.label}: ${ctx.parsed}` } }
+                    }
+                }
+            });
+        }
+
+        // ── Scatter: Vendedores Cotizan vs Cierran ──
+        const scEl = document.getElementById('vendorScatterChart');
+        if (scEl) {
+            const matrix = <?= json_encode(array_map(fn($r) => [
+                'x'    => (int)$r->total_quotes,
+                'y'    => (int)$r->won,
+                'name' => $r->owner_name,
+                'pct'  => (float)$r->conversion_pct
+            ], $quoteMatrix ?? [])) ?>;
+
+            const paleta = ['#6366f1','#10b981','#f59e0b','#ef4444','#8b5cf6','#0ea5e9','#ec4899','#14b8a6'];
+
+            const scDatasets = matrix.map((v, i) => ({
+                label: v.name,
+                data: [{ x: v.x, y: v.y }],
+                backgroundColor: paleta[i % paleta.length] + 'cc',
+                borderColor:     paleta[i % paleta.length],
+                borderWidth: 2,
+                pointRadius: Math.max(10, v.x * 3),
+                pointHoverRadius: Math.max(13, v.x * 3 + 3)
+            }));
+
+            const maxQ = Math.max(...matrix.map(v => v.x), 1);
+            const maxW = Math.max(...matrix.map(v => v.y), 1);
+
+            new Chart(scEl.getContext('2d'), {
+                type: 'scatter',
+                data: { datasets: scDatasets.length ? scDatasets : [{ label: 'Sin datos', data: [{ x:0, y:0 }], backgroundColor: '#94a3b8' }] },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom', labels: { color: textColor, font: { size: 12, weight: '600' }, usePointStyle: true, pointStyle: 'circle', padding: 10 } },
+                        tooltip: {
+                            callbacks: {
+                                label: ctx => {
+                                    const d = matrix[ctx.datasetIndex];
+                                    return d ? ` ${d.name} — Emitidas: ${d.x}  Concretadas: ${d.y}  (${d.pct}%)` : '';
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            title: { display: true, text: 'Cotizaciones emitidas', color: textColor, font: { size: 12 } },
+                            grid: { color: gridColor }, ticks: { color: textColor, stepSize: 1, precision: 0 },
+                            min: 0, suggestedMax: maxQ + 1
+                        },
+                        y: {
+                            title: { display: true, text: 'Concretadas (ganadas)', color: textColor, font: { size: 12 } },
+                            grid: { color: gridColor }, ticks: { color: textColor, stepSize: 1, precision: 0 },
+                            min: 0, suggestedMax: maxW + 1
+                        }
                     }
                 }
             });
