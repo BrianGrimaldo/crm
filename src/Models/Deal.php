@@ -305,4 +305,182 @@ class Deal extends BaseModel
         $stmt->execute([':tenant_id' => $tenantId]);
         return $stmt->fetchAll(PDO::FETCH_OBJ);
     }
+
+    // ─────────────────────────────────────────────────────────
+    //  ANALYTICS DE COTIZACIONES
+    // ─────────────────────────────────────────────────────────
+
+    /**
+     * Resumen de cotizaciones emitidas en el mes actual.
+     * Incluye conteos por estado: vigentes, expiradas, concretadas, perdidas.
+     */
+    public function getQuotesThisMonth(): array
+    {
+        $tenantId = TenantContext::getTenantId();
+        $params   = [':tenant_id' => $tenantId];
+
+        $ownerFilter = '';
+        if (Permission::isRestrictedToOwnRecords()) {
+            $ownerFilter = ' AND d.owner_id = :owner_id';
+            $params[':owner_id'] = $_SESSION['user_id'];
+        }
+
+        $sql = "SELECT
+                    COUNT(*) AS total_quotes,
+                    COUNT(CASE WHEN d.status = 'Ganado'  THEN 1 END) AS concretadas,
+                    COUNT(CASE WHEN d.status = 'Perdido' THEN 1 END) AS perdidas,
+                    COUNT(CASE WHEN d.status = 'Abierto'
+                               AND (d.expires_at IS NULL OR d.expires_at >= CURDATE()) THEN 1 END) AS vigentes,
+                    COUNT(CASE WHEN d.status = 'Abierto'
+                               AND d.expires_at IS NOT NULL
+                               AND d.expires_at < CURDATE() THEN 1 END) AS expiradas,
+                    COALESCE(SUM(d.amount), 0) AS total_amount,
+                    COALESCE(SUM(CASE WHEN d.status = 'Ganado' THEN d.amount END), 0) AS amount_won
+                FROM {$this->table} d
+                WHERE d.tenant_id = :tenant_id
+                  AND MONTH(d.created_at) = MONTH(CURDATE())
+                  AND YEAR(d.created_at)  = YEAR(CURDATE())
+                  {$ownerFilter}";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($params);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        $total = (int) ($row['total_quotes'] ?? 0);
+        $won   = (int) ($row['concretadas']  ?? 0);
+
+        return [
+            'total_quotes'  => $total,
+            'concretadas'   => $won,
+            'perdidas'      => (int) ($row['perdidas']  ?? 0),
+            'vigentes'      => (int) ($row['vigentes']  ?? 0),
+            'expiradas'     => (int) ($row['expiradas'] ?? 0),
+            'total_amount'  => (float) ($row['total_amount'] ?? 0),
+            'amount_won'    => (float) ($row['amount_won']   ?? 0),
+            'conversion_pct'=> $total > 0 ? round(($won / $total) * 100, 1) : 0,
+        ];
+    }
+
+    /**
+     * Estadísticas de seguimiento al día siguiente de crear una cotización.
+     * Retorna cuántas cotizaciones del mes tuvieron actividad registrada
+     * dentro de las primeras 24 horas siguientes a su creación.
+     */
+    public function getQuotesFollowupStats(): array
+    {
+        $tenantId = TenantContext::getTenantId();
+        $params   = [':tenant_id' => $tenantId];
+
+        $ownerFilter = '';
+        if (Permission::isRestrictedToOwnRecords()) {
+            $ownerFilter = ' AND d.owner_id = :owner_id';
+            $params[':owner_id'] = $_SESSION['user_id'];
+        }
+
+        // Cotizaciones del mes con al menos 1 actividad dentro del día siguiente
+        $sql = "SELECT
+                    COUNT(DISTINCT d.id)                AS total_quotes,
+                    COUNT(DISTINCT followup.entity_id)  AS with_followup
+                FROM {$this->table} d
+                LEFT JOIN activities followup
+                       ON followup.entity_type = 'deal'
+                      AND followup.entity_id   = d.id
+                      AND followup.created_at BETWEEN d.created_at
+                                                  AND DATE_ADD(d.created_at, INTERVAL 1 DAY)
+                WHERE d.tenant_id = :tenant_id
+                  AND MONTH(d.created_at) = MONTH(CURDATE())
+                  AND YEAR(d.created_at)  = YEAR(CURDATE())
+                  {$ownerFilter}";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($params);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        $total      = (int) ($row['total_quotes']  ?? 0);
+        $followup   = (int) ($row['with_followup'] ?? 0);
+        $noFollowup = $total - $followup;
+
+        return [
+            'total_quotes'   => $total,
+            'with_followup'  => $followup,
+            'no_followup'    => $noFollowup,
+            'followup_pct'   => $total > 0 ? round(($followup / $total) * 100, 1) : 0,
+        ];
+    }
+
+    /**
+     * Cotizaciones del mes agrupadas por área/departamento.
+     * Incluye total, concretadas y monto para gráfica de barras.
+     */
+    public function getQuotesByArea(): array
+    {
+        $tenantId = TenantContext::getTenantId();
+        $params   = [':tenant_id' => $tenantId];
+
+        $ownerFilter = '';
+        if (Permission::isRestrictedToOwnRecords()) {
+            $ownerFilter = ' AND d.owner_id = :owner_id';
+            $params[':owner_id'] = $_SESSION['user_id'];
+        }
+
+        $sql = "SELECT
+                    COALESCE(NULLIF(d.area, ''), 'Sin Área') AS area,
+                    COUNT(*) AS total_quotes,
+                    COUNT(CASE WHEN d.status = 'Ganado' THEN 1 END) AS concretadas,
+                    COUNT(CASE WHEN d.status = 'Abierto' THEN 1 END) AS vigentes,
+                    COALESCE(SUM(d.amount), 0) AS total_amount
+                FROM {$this->table} d
+                WHERE d.tenant_id = :tenant_id
+                  AND MONTH(d.created_at) = MONTH(CURDATE())
+                  AND YEAR(d.created_at)  = YEAR(CURDATE())
+                  {$ownerFilter}
+                GROUP BY area
+                ORDER BY total_quotes DESC
+                LIMIT 15";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($params);
+        return $stmt->fetchAll(PDO::FETCH_OBJ);
+    }
+
+    /**
+     * Matriz de conversión por vendedor: cuántos cotizan vs cuántos cierran.
+     * Útil para identificar quién cotiza mucho pero cierra poco (y viceversa).
+     */
+    public function getQuoteConversionMatrix(): array
+    {
+        $tenantId = TenantContext::getTenantId();
+        $params   = [':tenant_id' => $tenantId];
+
+        $ownerFilter = '';
+        if (Permission::isRestrictedToOwnRecords()) {
+            $ownerFilter = ' AND d.owner_id = :owner_id';
+            $params[':owner_id'] = $_SESSION['user_id'];
+        }
+
+        $sql = "SELECT
+                    CONCAT(u.first_name, ' ', IFNULL(u.last_name, '')) AS owner_name,
+                    COUNT(*)  AS total_quotes,
+                    COUNT(CASE WHEN d.status = 'Ganado'  THEN 1 END) AS won,
+                    COUNT(CASE WHEN d.status = 'Perdido' THEN 1 END) AS lost,
+                    COUNT(CASE WHEN d.status = 'Abierto' THEN 1 END) AS open,
+                    COALESCE(SUM(d.amount), 0) AS total_amount,
+                    COALESCE(SUM(CASE WHEN d.status = 'Ganado' THEN d.amount END), 0) AS won_amount,
+                    ROUND(
+                        COUNT(CASE WHEN d.status = 'Ganado' THEN 1 END) * 100.0
+                        / NULLIF(COUNT(*), 0)
+                    , 1) AS conversion_pct
+                FROM {$this->table} d
+                JOIN users u ON u.id = d.owner_id
+                WHERE d.tenant_id = :tenant_id
+                  AND MONTH(d.created_at) = MONTH(CURDATE())
+                  AND YEAR(d.created_at)  = YEAR(CURDATE())
+                  {$ownerFilter}
+                GROUP BY u.id, owner_name
+                ORDER BY total_quotes DESC, won DESC";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($params);
+        return $stmt->fetchAll(PDO::FETCH_OBJ);
+    }
 }
