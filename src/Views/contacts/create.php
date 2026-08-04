@@ -90,6 +90,16 @@ require __DIR__ . '/../layouts/header.php';
             </div>
         </div>
 
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+            <div class="form-group">
+                <label for="date_of_birth"><i class="fas fa-birthday-cake" style="color:#f472b6;margin-right:.35rem;"></i>Fecha de Nacimiento</label>
+                <input type="date" id="date_of_birth" name="date_of_birth" class="form-control">
+            </div>
+            <div class="form-group">
+                <!-- espacio reservado para futuros campos -->
+            </div>
+        </div>
+
         <div style="margin-top: 1.5rem; text-align: right;">
             <button type="submit" class="btn btn-primary" style="padding: 1rem 2rem; font-size: 1.1rem;">
                 Guardar Contacto

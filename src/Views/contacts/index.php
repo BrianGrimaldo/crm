@@ -36,53 +36,41 @@ require __DIR__ . '/../layouts/header.php';
         </div>
     </div>
 
-    <div class="table-responsive" style="border-radius: 0 0 12px 12px; overflow: hidden;">
-        <table style="width: 100%; min-width: 1000px; border-collapse: separate; border-spacing: 0;">
-            <thead style="background: var(--bg-main);">
+    <div class="table-responsive" style="border-radius: 0 0 var(--radius-lg) var(--radius-lg); overflow: hidden;">
+        <table>
+            <thead>
                 <tr>
-                    <th
-                        style="padding: 1rem 1.5rem; text-align: left; font-size: 0.8rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid var(--border);">
-                        Contacto</th>
-                    <th
-                        style="padding: 1rem 1.5rem; text-align: left; font-size: 0.8rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid var(--border);">
-                        Empresa / Asignación</th>
-                    <th
-                        style="padding: 1rem 1.5rem; text-align: left; font-size: 0.8rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid var(--border);">
-                        Vías de Contacto</th>
-                    <th
-                        style="padding: 1rem 1.5rem; text-align: left; font-size: 0.8rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid var(--border);">
-                        Estado</th>
-                    <th
-                        style="padding: 1rem 1.5rem; text-align: right; font-size: 0.8rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid var(--border);">
-                        Acciones</th>
+                    <th>Contacto</th>
+                    <th>Empresa / Asignación</th>
+                    <th>Vías de Contacto</th>
+                    <th class="text-center">Estado</th>
+                    <th class="text-right">Acciones</th>
                 </tr>
             </thead>
             <tbody id="contactsTableBody">
                 <?php if (empty($contacts)): ?>
                     <tr>
-                        <td colspan="5" style="text-align: center; padding: 4rem 2rem;">
-                            <div style="font-size: 3rem; color: var(--text-muted); margin-bottom: 1rem;"><i
-                                    class="fas fa-users-slash"></i></div>
-                            <h3 style="color: var(--text-main); font-size: 1.2rem; margin-bottom: 0.5rem;">No se encontraron
-                                contactos</h3>
-                            <p style="color: #94a3b8; font-size: 0.95rem;">Intenta ajustando los filtros de búsqueda o
-                                agrega un nuevo contacto.</p>
+                        <td colspan="5">
+                            <div class="empty-state">
+                                <i class="fas fa-users-slash"></i>
+                                <h3>Aún no hay clientes registrados</h3>
+                                <p>Agrega un nuevo contacto o ajusta los filtros de búsqueda para visualizar los datos de tus clientes.</p>
+                                <a href="<?= url('/contactos/create') ?>" class="btn btn-primary"><i class="fas fa-plus"></i> Nuevo Contacto</a>
+                            </div>
                         </td>
                     </tr>
                 <?php else: ?>
                     <?php foreach ($contacts as $contact): ?>
-                        <tr style="transition: background-color 0.2s ease;"
-                            onmouseover="this.style.backgroundColor='var(--border)'"
-                            onmouseout="this.style.backgroundColor='transparent'">
-                            <td style="padding: 1.2rem 1.5rem; border-bottom: 1px solid var(--border);">
+                        <tr>
+                            <td>
                                 <div style="display: flex; align-items: center; gap: 1rem;">
                                     <div
-                                        style="width: 42px; height: 42px; border-radius: 50%; background: linear-gradient(135deg, var(--primary) 0%, #8b5cf6 100%); color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.1rem; flex-shrink: 0; box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.2);">
+                                        style="width: 42px; height: 42px; border-radius: 50%; background: linear-gradient(135deg, var(--primary) 0%, #8b5cf6 100%); color: white; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 1.1rem; flex-shrink: 0; box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.2);">
                                         <?= strtoupper(substr($contact->first_name, 0, 1) . substr($contact->last_name, 0, 1)) ?>
                                     </div>
                                     <div>
                                         <div
-                                            style="font-weight: 700; color: var(--text-main); font-size: 0.95rem; display: flex; align-items: center; gap: 0.5rem;">
+                                            style="font-weight: 600; color: var(--text-main); font-size: 0.95rem; display: flex; align-items: center; gap: 0.5rem;">
                                             <?= htmlspecialchars($contact->first_name . ' ' . $contact->last_name) ?>
                                             <?php if (!empty($contact->linkedin)): ?>
                                                 <a href="<?= htmlspecialchars($contact->linkedin) ?>" target="_blank"
@@ -97,7 +85,7 @@ require __DIR__ . '/../layouts/header.php';
                                     </div>
                                 </div>
                             </td>
-                            <td style="padding: 1.2rem 1.5rem; border-bottom: 1px solid var(--border);">
+                            <td>
                                 <div style="font-weight: 600; color: var(--text-main); font-size: 0.9rem;"><i
                                         class="far fa-building"
                                         style="margin-right: 0.4rem; color: #94a3b8;"></i><?= htmlspecialchars($contact->account_name ?: 'Independiente') ?>
@@ -107,7 +95,7 @@ require __DIR__ . '/../layouts/header.php';
                                         style="font-weight: 500; color: var(--text-main);"><?= htmlspecialchars($contact->owner_name ?: 'Sin Asignar') ?></span>
                                 </div>
                             </td>
-                            <td style="padding: 1.2rem 1.5rem; border-bottom: 1px solid var(--border);">
+                            <td>
                                 <div style="display: flex; flex-direction: column; gap: 0.5rem;">
                                     <?php if (!empty($contact->email)): ?>
                                         <div style="display: flex; align-items: center; gap: 0.5rem;">
@@ -117,7 +105,7 @@ require __DIR__ . '/../layouts/header.php';
                                                 <?= htmlspecialchars($contact->email) ?></a>
                                             <button
                                                 onclick='openEmailModal(<?= (int) $contact->id ?>, <?= htmlspecialchars(json_encode(trim($contact->first_name . " " . $contact->last_name)), ENT_QUOTES, "UTF-8") ?>)'
-                                                style="padding: 0.2rem 0.5rem; background: #e0f2fe; color: #0284c7; border-radius: 6px; font-size: 0.75rem; border: none; cursor: pointer; transition: all 0.2s;"
+                                                style="padding: 0.2rem 0.5rem; background: #e0f2fe; color: #0284c7; border-radius: var(--radius-md); font-size: 0.75rem; border: none; cursor: pointer; transition: all 0.2s;"
                                                 onmouseover="this.style.background='#bae6fd'"
                                                 onmouseout="this.style.background='#e0f2fe'" title="Enviar correo vía CRM"><i
                                                     class="fas fa-paper-plane"></i></button>
@@ -130,12 +118,13 @@ require __DIR__ . '/../layouts/header.php';
                                     <?php if (!empty($contact->phone)): ?>
                                         <div style="display: flex; align-items: center; gap: 0.5rem;">
                                             <a href="tel:<?= htmlspecialchars($contact->phone) ?>"
+                                                class="tabular-nums"
                                                 style="color: var(--text-main); text-decoration: none; font-size: 0.85rem; display: flex; align-items: center; gap: 0.4rem; font-weight: 500;"><i
                                                     class="fas fa-phone-alt" style="color: #94a3b8; font-size: 0.9rem;"></i>
                                                 <?= htmlspecialchars($contact->phone) ?></a>
                                             <a href="https://wa.me/<?= preg_replace('/[^0-9]/', '', $contact->phone) ?>"
                                                 target="_blank"
-                                                style="padding: 0.2rem 0.5rem; background: #dcfce7; color: #16a34a; border-radius: 6px; font-size: 0.85rem; text-decoration: none; transition: all 0.2s;"
+                                                style="padding: 0.2rem 0.5rem; background: #dcfce7; color: #16a34a; border-radius: var(--radius-md); font-size: 0.85rem; text-decoration: none; transition: all 0.2s;"
                                                 onmouseover="this.style.background='#bbf7d0'"
                                                 onmouseout="this.style.background='#dcfce7'" title="Abrir WhatsApp"><i
                                                     class="fab fa-whatsapp"></i></a>
@@ -146,28 +135,26 @@ require __DIR__ . '/../layouts/header.php';
                                     <?php endif; ?>
                                 </div>
                             </td>
-                            <td style="padding: 1.2rem 1.5rem; border-bottom: 1px solid var(--border);">
+                            <td class="text-center">
                                 <?php
                                 $type = $contact->type ?? 'Prospecto';
-                                $badgeBg = $type === 'Cliente' ? '#dcfce7' : ($type === 'Prospecto' ? '#fef3c7' : 'var(--border)');
-                                $badgeCol = $type === 'Cliente' ? '#166534' : ($type === 'Prospecto' ? '#92400e' : 'var(--text-main)');
+                                $badgeClass = $type === 'Cliente' ? 'badge-success' : ($type === 'Prospecto' ? 'badge-warning' : 'badge-info');
                                 ?>
-                                <span
-                                    style="display: inline-flex; align-items: center; justify-content: center; padding: 0.35rem 0.85rem; background: <?= $badgeBg ?>; color: <?= $badgeCol ?>; border-radius: 999px; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.03em;">
+                                <span class="badge <?= $badgeClass ?>">
                                     <?= htmlspecialchars($type) ?>
                                 </span>
                             </td>
-                            <td style="padding: 1.2rem 1.5rem; border-bottom: 1px solid var(--border); text-align: right;">
+                            <td class="text-right">
                                 <div style="display: flex; justify-content: flex-end; gap: 0.4rem;">
                                     <button
                                         onclick='openCallLogModal(<?= $contact->id ?>, <?= htmlspecialchars(json_encode($contact->first_name . " " . $contact->last_name), ENT_QUOTES, "UTF-8") ?>)'
-                                        style="width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; background: #fff; border: 1px solid var(--border); color: #f59e0b; border-radius: 8px; cursor: pointer; transition: all 0.2s; box-shadow: 0 1px 2px rgba(0,0,0,0.05);"
+                                        style="width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; background: #fff; border: 1px solid var(--border); color: #f59e0b; border-radius: var(--radius-md); cursor: pointer; transition: all 0.2s; box-shadow: 0 1px 2px rgba(0,0,0,0.05);"
                                         onmouseover="this.style.background='#fef3c7'" onmouseout="this.style.background='#fff'"
                                         title="Registrar Llamada"><i class="fas fa-phone-volume"></i></button>
 
                                     <?php if (\App\Core\Permission::has('contacts', 'update')): ?>
                                         <a href="<?= url('/contactos/edit?id=' . $contact->id) ?>"
-                                            style="width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; background: #fff; border: 1px solid var(--border); color: #3b82f6; border-radius: 8px; text-decoration: none; transition: all 0.2s; box-shadow: 0 1px 2px rgba(0,0,0,0.05);"
+                                            style="width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; background: #fff; border: 1px solid var(--border); color: #3b82f6; border-radius: var(--radius-md); text-decoration: none; transition: all 0.2s; box-shadow: 0 1px 2px rgba(0,0,0,0.05);"
                                             onmouseover="this.style.background='#eff6ff'" onmouseout="this.style.background='#fff'"
                                             title="Editar"><i class="fas fa-edit"></i></a>
                                     <?php endif; ?>
@@ -178,7 +165,7 @@ require __DIR__ . '/../layouts/header.php';
                                             style="display: inline; margin: 0;">
                                             <input type="hidden" name="id" value="<?= $contact->id ?>">
                                             <button type="submit"
-                                                style="width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; background: #fff; border: 1px solid var(--border); color: #ef4444; border-radius: 8px; cursor: pointer; transition: all 0.2s; box-shadow: 0 1px 2px rgba(0,0,0,0.05);"
+                                                style="width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; background: #fff; border: 1px solid var(--border); color: #ef4444; border-radius: var(--radius-md); cursor: pointer; transition: all 0.2s; box-shadow: 0 1px 2px rgba(0,0,0,0.05);"
                                                 onmouseover="this.style.background='#fef2f2'"
                                                 onmouseout="this.style.background='#fff'" title="Eliminar"><i
                                                     class="fas fa-trash-alt"></i></button>

@@ -141,4 +141,38 @@ class TenantController
         }
         exit;
     }
+
+    public function destroy(): void
+    {
+        $id = (int)($_POST['id'] ?? 0);
+
+        if ($id <= 0) {
+            $_SESSION['flash_error'] = "ID de empresa inválido.";
+            header('Location: ' . url('/empresas'));
+            exit;
+        }
+
+        // Prevenir eliminar la empresa actualmente en sesión
+        if ($id === (int)($_SESSION['tenant_id'] ?? 0)) {
+            $_SESSION['flash_error'] = "No puedes eliminar la empresa que estás usando actualmente. Cambia de empresa primero.";
+            header('Location: ' . url('/empresas'));
+            exit;
+        }
+
+        $empresa = $this->tenantModel->findById($id);
+        if (!$empresa) {
+            $_SESSION['flash_error'] = "Empresa no encontrada.";
+            header('Location: ' . url('/empresas'));
+            exit;
+        }
+
+        if ($this->tenantModel->delete($id)) {
+            $_SESSION['flash_success'] = "Empresa '{$empresa->name}' eliminada exitosamente junto con todos sus datos.";
+        } else {
+            $_SESSION['flash_error'] = "Error al eliminar la empresa. Intenta de nuevo.";
+        }
+
+        header('Location: ' . url('/empresas'));
+        exit;
+    }
 }

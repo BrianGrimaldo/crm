@@ -270,6 +270,15 @@ class IAController
      */
     private function callGroq(array $messages): array
     {
+        return $this->callGroqWithModel($messages, 'llama-3.3-70b-versatile');
+    }
+
+    /**
+     * Llama a Groq con un modelo específico. Permite reintentar con modelos alternativos.
+     * @return array{0: string, 1: ?string} [reply, error]
+     */
+    private function callGroqWithModel(array $messages, string $model): array
+    {
         $groqKey = $_ENV['GROQ_API_KEY'] ?? '';
         if ($groqKey === '') {
             error_log('[IAController] GROQ_API_KEY no configurada.');
@@ -277,9 +286,9 @@ class IAController
         }
 
         $payload = json_encode([
-            'model' => 'llama-3.3-70b-versatile',
-            'messages' => $messages,
-            'max_tokens' => 1024,
+            'model'       => $model,
+            'messages'    => $messages,
+            'max_tokens'  => 1024,
             'temperature' => 0.4
             // Nota: deliberadamente NO se define 'tools' / function-calling.
             // La IA no debe ejecutar acciones, solo conversar.
@@ -305,12 +314,29 @@ class IAController
 
         if ($curlErrno !== 0) {
             error_log("[IAController] cURL error ({$curlErrno}): {$curlError}");
-            return ['', 'No se pudo conectar con el asistente. Verifica tu conexión e intenta de nuevo.'];
+            return ['', "Error de conexión ({$curlErrno}): {$curlError}"];
         }
 
         if ($httpCode >= 400) {
-            error_log("[IAController] Groq HTTP {$httpCode}: " . substr((string) $response, 0, 500));
-            return ['', 'El asistente no pudo procesar tu mensaje en este momento. Intenta de nuevo en unos segundos.'];
+            $body = (string) $response;
+            error_log("[IAController] Groq HTTP {$httpCode}: " . substr($body, 0, 1000));
+
+            // Detectar error específico de modelo no disponible y reintentar con modelo alternativo
+            $decodedErr = json_decode($body, true);
+            $errMsg = $decodedErr['error']['message'] ?? '';
+
+            if ($httpCode === 429) {
+                return ['', 'Límite de uso de la IA alcanzado (rate limit). Espera unos segundos e intenta de nuevo.'];
+            }
+            if ($httpCode === 401) {
+                return ['', 'La clave de API de Groq es inválida o expiró. Contacta al administrador.'];
+            }
+            if (str_contains($errMsg, 'model') || str_contains($errMsg, 'decommissioned') || str_contains($errMsg, 'not found')) {
+                // Reintentar con modelo de respaldo
+                return $this->callGroqWithModel($messages, 'llama3-8b-8192');
+            }
+
+            return ['', "Error HTTP {$httpCode} de Groq: " . substr($errMsg ?: $body, 0, 200)];
         }
 
         $data = json_decode((string) $response, true);

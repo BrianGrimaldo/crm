@@ -112,10 +112,20 @@ require __DIR__ . '/../layouts/header.php';
                     </select>
                 </div>
 
+                <div class="form-group">
+                    <label for="tipification_id">Tipificación</label>
+                    <select id="tipification_id" name="tipification_id" class="form-control" onchange="this.form.submit()">
+                        <option value="">-- Sin Tipificar --</option>
+                        <?php foreach ($tipifications as $tip): ?>
+                            <option value="<?= $tip->id ?>" <?= $ticket->tipification_id == $tip->id ? 'selected' : '' ?>><?= htmlspecialchars($tip->name) ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+
                 <div class="form-group" style="margin-bottom: 0;">
                     <label for="resolution">Notas de Resolución</label>
                     <textarea id="resolution" name="resolution" class="form-control" rows="3" placeholder="Describe la solución aplicada al ticket..."><?= htmlspecialchars($ticket->resolution ?? '') ?></textarea>
-                    <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 0.8rem; justify-content: center;"><i class="fas fa-check-circle"></i> Guardar Resolución</button>
+                    <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 0.8rem; justify-content: center;"><i class="fas fa-check-circle"></i> Guardar Cambios</button>
                 </div>
             </form>
         </div>

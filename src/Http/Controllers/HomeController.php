@@ -44,8 +44,8 @@ class HomeController
                    || strpos($roleStr, 'cobrador') !== false;
 
         if ($isCobranza) {
-            header('Location: ' . url('/finanzas/cobranza'));
-            exit;
+            $this->cobranzaDashboard($tenantName);
+            return;
         }
 
         $ownerId = \App\Core\Permission::isRestrictedToOwnRecords() ? (int) ($_SESSION['user_id'] ?? 0) : null;
@@ -86,6 +86,17 @@ class HomeController
 
         $chart_estados = [];
         $chart_tipos = [];
+
+        // ── Analytics de Cotizaciones del Mes ──────────────────
+        $quotesThisMonth    = $this->dealModel->getQuotesThisMonth();
+        $quotesFollowup     = $this->dealModel->getQuotesFollowupStats();
+        $quotesByArea       = $this->dealModel->getQuotesByArea();
+        $quoteMatrix        = $this->dealModel->getQuoteConversionMatrix();
+
+        // JSON para gráfica de barras por área
+        $areaLabels  = json_encode(array_map(fn($r) => $r->area, $quotesByArea));
+        $areaTotal   = json_encode(array_map(fn($r) => (int) $r->total_quotes, $quotesByArea));
+        $areaClosed  = json_encode(array_map(fn($r) => (int) $r->concretadas, $quotesByArea));
 
         // Obtener actividades pendientes del día para el usuario
         $pendingTasks = $this->taskModel->getPendingForToday((int) $_SESSION['user_id']);

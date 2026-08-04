@@ -85,6 +85,24 @@ $router->get('/configuracion/embudo/edit', PipelineController::class, 'edit', [T
 $router->post('/configuracion/embudo/update', PipelineController::class, 'update', [TenantMiddleware::class]);
 $router->post('/configuracion/embudo/delete', PipelineController::class, 'delete', [TenantMiddleware::class]);
 
+// Tipifications routes
+use App\Http\Controllers\TipificationController;
+$router->get('/configuracion/tipificaciones', TipificationController::class, 'index', [TenantMiddleware::class]);
+$router->post('/configuracion/tipificaciones', TipificationController::class, 'store', [TenantMiddleware::class]);
+$router->post('/configuracion/tipificaciones/update', TipificationController::class, 'update', [TenantMiddleware::class]);
+$router->post('/configuracion/tipificaciones/delete', TipificationController::class, 'delete', [TenantMiddleware::class]);
+$router->get('/api/tipificaciones', TipificationController::class, 'listJson', [TenantMiddleware::class]);
+
+// Metrics routes
+use App\Http\Controllers\MetricsController;
+$router->get('/metricas', MetricsController::class, 'index', [TenantMiddleware::class]);
+$router->get('/api/metricas/live', MetricsController::class, 'dataJson', [TenantMiddleware::class]);
+
+// SLA Routes
+use App\Http\Controllers\SLAController;
+$router->get('/metricas/sla', SLAController::class, 'index', [TenantMiddleware::class]);
+
+
 // Products / Inventory routes
 use App\Http\Controllers\ProductController;
 $router->get('/productos', ProductController::class, 'index', [TenantMiddleware::class]);
@@ -153,6 +171,7 @@ $router->get('/empresas/create', TenantController::class, 'create', [TenantMiddl
 $router->post('/empresas', TenantController::class, 'store', [TenantMiddleware::class]);
 $router->get('/empresas/edit', TenantController::class, 'edit', [TenantMiddleware::class]);
 $router->post('/empresas/update', TenantController::class, 'update', [TenantMiddleware::class]);
+$router->post('/empresas/delete', TenantController::class, 'destroy', [TenantMiddleware::class]);
 
 // Client Portal Routes (Public / Passwordless Access)
 use App\Http\Controllers\PortalController;

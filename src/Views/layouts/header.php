@@ -13,29 +13,27 @@ $currentPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
     <link rel="icon" type="image/png" href="<?= url('/img/icon.png') ?>">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
             --primary: #002D62;
-            /* Einsur Navy Blue */
             --primary-hover: #004080;
             --primary-light: #e6f0fa;
             --accent: #6edff6;
-            /* Cyan / Light Blue */
             --accent-hover: #4dcde8;
             --bg-sidebar: #001f44;
-            --bg-main: #f3f6f9;
-            /* Softer, modern background */
-            --text-main: #1e293b;
+            --bg-main: #f8fafc;
+            --text-title: #0f172a;
+            --text-main: #334155;
             --text-muted: #64748b;
             --surface: #ffffff;
             --border: #e2e8f0;
             --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
             --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
             --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-            --radius-md: 10px;
-            --radius-lg: 16px;
+            --radius-md: 6px;
+            --radius-lg: 8px;
         }
 
         [data-theme="dark"] {
@@ -44,7 +42,8 @@ $currentPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
             --primary-light: rgba(110, 223, 246, 0.1);
             --bg-main: #0f172a;
             --surface: #1e293b;
-            --text-main: #f8fafc;
+            --text-title: #f8fafc;
+            --text-main: #e2e8f0;
             --text-muted: #94a3b8;
             --border: #334155;
             --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.5);
@@ -92,6 +91,7 @@ $currentPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
             background-color: var(--bg-main);
             color: var(--text-main);
             font-size: 15px;
+            font-weight: 400;
         }
 
         /* Sidebar */
@@ -213,17 +213,22 @@ $currentPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
         /* --- FOOTER PERFIL --- */
         .sidebar-footer {
-            padding: 20px 15px;
-            background: rgba(0, 0, 0, 0.2);
-            backdrop-filter: blur(10px);
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 16px;
+            background: transparent;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .user-card {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 5px;
+            padding: 8px;
+            border-radius: var(--radius-md);
+            transition: background 0.2s;
+        }
+
+        .user-card:hover {
+            background: rgba(255, 255, 255, 0.05);
         }
 
         .user-info {
@@ -234,23 +239,23 @@ $currentPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
         }
 
         .user-avatar {
-            width: 44px;
-            height: 44px;
-            background: linear-gradient(135deg, var(--accent) 0%, #3b82f6 100%);
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.1);
             color: #ffffff;
-            border-radius: 14px;
+            border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: 800;
-            font-size: 1.2rem;
+            font-weight: 600;
+            font-size: 1rem;
             flex-shrink: 0;
-            box-shadow: 0 4px 15px rgba(110, 223, 246, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.15);
         }
 
         .user-details h6 {
             margin: 0;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             font-weight: 600;
             color: #fff;
             white-space: nowrap;
@@ -268,14 +273,14 @@ $currentPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
         .btn-logout-icon {
             color: rgba(255, 255, 255, 0.4);
             transition: all 0.3s ease;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             padding: 8px;
-            border-radius: 10px;
+            border-radius: 8px;
         }
 
         .btn-logout-icon:hover {
-            color: #ef4444;
-            background: rgba(239, 68, 68, 0.15);
+            color: #ffffff;
+            background: rgba(255, 255, 255, 0.1);
         }
 
         /* Main Content */
@@ -295,6 +300,7 @@ $currentPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
             display: flex;
             align-items: center;
             justify-content: flex-end;
+            gap: 1.2rem;
             padding: 0 2.5rem;
             border-bottom: 1px solid rgba(0, 0, 0, 0.04);
             z-index: 900;
@@ -319,8 +325,8 @@ $currentPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
         .page-header h1 {
             font-size: 2rem;
-            font-weight: 800;
-            color: var(--primary);
+            font-weight: 600;
+            color: var(--text-title);
             letter-spacing: -0.5px;
         }
 
@@ -362,23 +368,22 @@ $currentPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
         }
 
         .btn-logout {
-            background: rgba(239, 68, 68, 0.1);
-            color: #ef4444;
+            background: transparent;
+            color: rgba(255, 255, 255, 0.6);
             border: none;
-            padding: 0.6rem 1.2rem;
-            border-radius: 10px;
+            padding: 0.6rem;
+            border-radius: 8px;
             font-weight: 600;
             text-decoration: none;
             transition: all 0.3s ease;
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            justify-content: center;
         }
 
         .btn-logout:hover {
-            background: #ef4444;
+            background: rgba(255, 255, 255, 0.1);
             color: white;
-            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
         }
 
         .card {
@@ -407,21 +412,24 @@ $currentPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
         th {
             background: var(--bg-main);
-            padding: 1.2rem 1.5rem;
-            font-size: 0.8rem;
+            padding: 12px 16px;
+            font-size: 0.85rem;
             text-transform: uppercase;
             letter-spacing: 0.5px;
             color: var(--text-muted);
-            font-weight: 700;
+            font-weight: 600;
             border-bottom: 1px solid var(--border);
+            text-align: left;
         }
 
         td {
-            padding: 1.2rem 1.5rem;
+            padding: 12px 16px;
+            height: 48px;
             border-bottom: 1px solid var(--border);
             color: var(--text-main);
             font-size: 0.95rem;
-            font-weight: 500;
+            font-weight: 400;
+            text-align: left;
         }
 
         tr:last-child td {
@@ -487,6 +495,61 @@ $currentPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
         select.form-control {
             cursor: pointer;
+        }
+
+        /* Utility classes for Tables and Typography */
+        .text-center { text-align: center !important; }
+        .text-right { text-align: right !important; }
+        .text-left { text-align: left !important; }
+        .tabular-nums { font-variant-numeric: tabular-nums; }
+        .font-medium { font-weight: 500; }
+        .font-semibold { font-weight: 600; }
+        .text-title { color: var(--text-title); }
+        .text-muted { color: var(--text-muted); }
+        
+        /* Badges for desaturated states */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        .badge-success { background: #dcfce7; color: #166534; }
+        .badge-warning { background: #fef9c3; color: #854d0e; }
+        .badge-error { background: #fee2e2; color: #991b1b; }
+        .badge-info { background: #dbeafe; color: #1e40af; }
+
+        /* Empty State */
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 48px 24px;
+            text-align: center;
+            background: var(--surface);
+            border-radius: var(--radius-lg);
+            border: 1px dashed var(--border);
+            margin: 24px 0;
+        }
+        .empty-state i {
+            font-size: 48px;
+            color: var(--text-muted);
+            margin-bottom: 16px;
+        }
+        .empty-state h3 {
+            color: var(--text-title);
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        .empty-state p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-bottom: 24px;
+            max-width: 400px;
         }
 
         .btn-theme {
@@ -593,11 +656,8 @@ $currentPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
                     class="<?= strpos($currentPath, 'grupo-einsur') !== false ? 'active' : '' ?>">
                     <i class="fas fa-globe"></i> Grupo EINSUR
                 </a>
-                <a href="<?= url('/dashboard') ?>" class="<?= $currentPath === '/dashboard' ? 'active' : '' ?>"
-                    style="display:flex;align-items:center;justify-content:space-between;">
-                    <span><i class="fas fa-th-large"></i> Dashboard Empresa</span>
-                    <span
-                        style="font-size:.65rem;background:rgba(110,223,246,.15);color:var(--accent);padding:.15rem .45rem;border-radius:6px;white-space:nowrap;max-width:90px;overflow:hidden;text-overflow:ellipsis;"><?= htmlspecialchars($tenantName ?? '') ?></span>
+                <a href="<?= url('/dashboard') ?>" class="<?= $currentPath === '/dashboard' ? 'active' : '' ?>">
+                    <i class="fas fa-th-large"></i> Dashboard Empresa
                 </a>
             <?php else: ?>
                 <a href="<?= url('/dashboard') ?>"
@@ -697,6 +757,15 @@ $currentPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
 
             <?php if (\App\Core\Permission::has('activities', 'view') && !$isCEO && !$isCobranza): ?>
+                <a href="<?= url('/tickets') ?>" class="<?= strpos($currentPath, 'tickets') !== false ? 'active' : '' ?>">
+                    <i class="fas fa-ticket-alt"></i> Tickets de Soporte
+                </a>
+                <a href="<?= url('/metricas') ?>" class="<?= strpos($currentPath, 'metricas') !== false && strpos($currentPath, 'sla') === false ? 'active' : '' ?>">
+                    <i class="fas fa-chart-line"></i> Dashboard Live
+                </a>
+                <a href="<?= url('/metricas/sla') ?>" class="<?= strpos($currentPath, 'sla') !== false ? 'active' : '' ?>">
+                    <i class="fas fa-chart-pie"></i> Reportes SLA
+                </a>
                 <a href="<?= url('/tareas') ?>" class="<?= strpos($currentPath, 'tareas') !== false ? 'active' : '' ?>">
                     <i class="fas fa-check-square"></i> Bitácora de Tareas
                 </a>
@@ -740,23 +809,25 @@ $currentPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
                     class="<?= strpos($currentPath, 'pipeline') !== false ? 'active' : '' ?>">
                     <i class="fas fa-stream"></i> Embudo de Ventas
                 </a>
+                <a href="<?= url('/configuracion/tipificaciones') ?>"
+                    class="<?= strpos($currentPath, 'tipificaciones') !== false ? 'active' : '' ?>">
+                    <i class="fas fa-tags"></i> Tipificaciones
+                </a>
             <?php endif; ?>
         </div>
 
         <div class="sidebar-footer">
             <div class="user-card">
                 <div class="user-info">
-                    <div class="user-avatar"><?= strtoupper(substr($userEmail, 0, 1)) ?></div>
+                    <?php $displayUserName = $_SESSION['user_name'] ?? $userEmail ?? 'Usuario'; ?>
+                    <div class="user-avatar"><?= strtoupper(substr($displayUserName, 0, 1)) ?></div>
                     <div class="user-details">
-                        <h6><?= htmlspecialchars($userEmail) ?></h6>
-                        <span
-                            style="<?= ($_SESSION['user_role'] ?? '') === 'admin' ? 'color: var(--accent-cyan); font-weight: 600;' : '' ?>">
-                            <?= htmlspecialchars(ucfirst($_SESSION['user_role'] ?? 'Usuario')) ?>
-                        </span>
+                        <h6 title="<?= htmlspecialchars($displayUserName) ?>"><?= htmlspecialchars($displayUserName) ?></h6>
+                        <span><?= htmlspecialchars(ucfirst($_SESSION['user_role'] ?? 'Usuario')) ?></span>
                     </div>
                 </div>
                 <a href="<?= url('/logout') ?>" class="btn-logout" title="Cerrar Sesión">
-                    <i class="fas fa-sign-out-alt"></i>
+                    <i class="fa-solid fa-arrow-right-from-bracket"></i>
                 </a>
             </div>
         </div>
@@ -766,13 +837,29 @@ $currentPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
     <main class="main-content">
         <div class="topbar">
             <!-- Botón de menú móvil flotante -->
-            <button class="btn-menu" style="margin-right: auto;"
+            <button class="btn-menu"
                 onclick="document.querySelector('.sidebar').classList.toggle('active')">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"
                     stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                 </svg>
             </button>
+
+            <!-- Logo EJE + Texto Comercial & Eslogan (Lado Izquierdo) -->
+            <div class="topbar-left-brand" style="display: flex; align-items: center; gap: 0; height: 76px; margin-right: auto;">
+                <div style="height: 76px; overflow: hidden; display: flex; align-items: center;">
+                    <img src="<?= url('/img/EJE_Comercial.png') ?>" alt="EJE" style="height: 210px; width: auto; object-fit: contain; margin: -68px -38px -68px -20px;">
+                </div>
+                <div style="display: flex; flex-direction: column; justify-content: center; line-height: 1.15;">
+                    <span style="font-size: 1.4rem; font-weight: 700; color: #1A1F5A; letter-spacing: -0.02em;">Comercial</span>
+                    <span style="font-size: 0.73rem; font-weight: 500; color: var(--text-muted); font-style: italic;">El inicio hacia la transformación</span>
+                </div>
+            </div>
+
+            <!-- Logo Grupo EINSUR (Lado Derecho) -->
+            <div class="topbar-brand" style="display: flex; align-items: center;">
+                <img src="<?= url('/img/grupo_einsur.png') ?>" alt="Grupo EINSUR" style="height: 40px; width: auto; object-fit: contain;">
+            </div>
 
             <!-- Botón Modo Oscuro -->
             <button id="theme-toggle" class="btn-theme" title="Modo Oscuro / Claro">

@@ -28,11 +28,13 @@ class Ticket
         $sql = "SELECT t.*, 
                        c.first_name as contact_first, c.last_name as contact_last, c.email as contact_email,
                        a.name as account_name,
-                       u.name as assigned_name
+                       u.name as assigned_name,
+                       tp.name as tipification_name, tp.color as tipification_color
                 FROM {$this->table} t
                 LEFT JOIN contacts c ON t.contact_id = c.id
                 LEFT JOIN accounts a ON t.account_id = a.id
                 LEFT JOIN users u ON t.assigned_to = u.id
+                LEFT JOIN tipifications tp ON t.tipification_id = tp.id
                 WHERE t.tenant_id = :tenant_id";
 
         // Si el usuario está restringido a sus propios registros
@@ -63,11 +65,13 @@ class Ticket
         $sql = "SELECT t.*, 
                        c.first_name as contact_first, c.last_name as contact_last, c.email as contact_email,
                        a.name as account_name,
-                       u.name as assigned_name
+                       u.name as assigned_name,
+                       tp.name as tipification_name, tp.color as tipification_color
                 FROM {$this->table} t
                 LEFT JOIN contacts c ON t.contact_id = c.id
                 LEFT JOIN accounts a ON t.account_id = a.id
                 LEFT JOIN users u ON t.assigned_to = u.id
+                LEFT JOIN tipifications tp ON t.tipification_id = tp.id
                 WHERE t.id = :id AND t.tenant_id = :tenant_id LIMIT 1";
 
         $stmt = $this->db->prepare($sql);
@@ -85,9 +89,9 @@ class Ticket
         $tenantId = TenantContext::getTenantId();
         
         $sql = "INSERT INTO {$this->table} 
-                (tenant_id, contact_id, account_id, assigned_to, subject, description, priority, status, channel, category, due_date)
+                (tenant_id, contact_id, account_id, assigned_to, subject, description, priority, status, channel, category, due_date, created_by)
                 VALUES 
-                (:tenant_id, :contact_id, :account_id, :assigned_to, :subject, :description, :priority, :status, :channel, :category, :due_date)";
+                (:tenant_id, :contact_id, :account_id, :assigned_to, :subject, :description, :priority, :status, :channel, :category, :due_date, :created_by)";
         
         $stmt = $this->db->prepare($sql);
         $stmt->execute([
@@ -102,6 +106,7 @@ class Ticket
             ':channel'     => $data['channel'] ?? 'web',
             ':category'    => $data['category'] ?? null,
             ':due_date'    => $data['due_date'] ?? null,
+            ':created_by'  => $_SESSION['user_id'] ?? null,
         ]);
 
         return (int)$this->db->lastInsertId();
