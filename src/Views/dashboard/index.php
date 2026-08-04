@@ -897,7 +897,6 @@ $isManager = in_array($dashRole, ['superadmin', 'admin', 'salesmgr', 'gerente'])
                         <th style="text-align:center;padding:.75rem .5rem;color:var(--text-muted);font-weight:600;">Abiertas</th>
                         <th style="text-align:center;padding:.75rem 1rem;color:var(--text-muted);font-weight:600;">Tasa Cierre</th>
                         <th style="text-align:right;padding:.75rem 1rem;color:var(--text-muted);font-weight:600;">Monto Ganado</th>
-                        <th style="text-align:left;padding:.75rem 1rem;color:var(--text-muted);font-weight:600;">Perfil</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -905,16 +904,6 @@ $isManager = in_array($dashRole, ['superadmin', 'admin', 'salesmgr', 'gerente'])
                 $matrixColors = ['#6366f1','#10b981','#f59e0b','#ef4444','#8b5cf6','#0ea5e9'];
                 foreach ($quoteMatrix as $idx => $seller):
                     $convPct = (float) $seller->conversion_pct;
-                    // Clasificar perfil
-                    $avgQuotes = array_sum(array_column((array)$quoteMatrix, 'total_quotes')) / max(count((array)$quoteMatrix), 1);
-                    $avgWon    = array_sum(array_column((array)$quoteMatrix, 'won'))          / max(count((array)$quoteMatrix), 1);
-                    $highQ = $seller->total_quotes >= $avgQuotes;
-                    $highW = $seller->won >= $avgWon;
-
-                    if ($highQ && $highW)      { $perfil = '🏆 Alta actividad & cierre'; $pColor = '#15803d'; $pBg = '#dcfce7'; }
-                    elseif ($highQ && !$highW) { $perfil = '📞 Cotizan más, cierran menos'; $pColor = '#b45309'; $pBg = '#fef3c7'; }
-                    elseif (!$highQ && $highW) { $perfil = '🎯 Selectivos & eficaces'; $pColor = '#1d4ed8'; $pBg = '#dbeafe'; }
-                    else                       { $perfil = '📉 Oportunidad de mejora'; $pColor = '#b91c1c'; $pBg = '#fee2e2'; }
 
                     $barColor = $matrixColors[$idx % count($matrixColors)];
                     $init = strtoupper(substr($seller->owner_name, 0, 1));
@@ -950,9 +939,6 @@ $isManager = in_array($dashRole, ['superadmin', 'admin', 'salesmgr', 'gerente'])
                     </td>
                     <td style="text-align:right;padding:.85rem 1rem;font-weight:600;color:var(--text-main);">
                         $<?= number_format((float)$seller->won_amount, 0, '.', ',') ?>
-                    </td>
-                    <td style="padding:.85rem 1rem;">
-                        <span style="padding:.3rem .7rem;border-radius:999px;font-size:.75rem;font-weight:700;background:<?= $pBg ?>;color:<?= $pColor ?>;"><?= $perfil ?></span>
                     </td>
                 </tr>
                 <?php endforeach; ?>
