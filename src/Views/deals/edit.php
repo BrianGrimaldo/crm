@@ -80,7 +80,20 @@ require __DIR__ . '/../layouts/header.php';
         }
         </script>
 
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 1.5rem;">
+            <div class="form-group">
+                <label for="purchase_order">Orden de Compra</label>
+                <input type="text" id="purchase_order" name="purchase_order" class="form-control" value="<?= htmlspecialchars($deal->purchase_order ?? '') ?>">
+                <small style="color: var(--text-muted);">Para el área de cobranza</small>
+            </div>
+            <div class="form-group">
+                <label for="invoice_folio">Folio de Factura</label>
+                <input type="text" id="invoice_folio" name="invoice_folio" class="form-control" value="<?= htmlspecialchars($deal->invoice_folio ?? '') ?>">
+                <small style="color: var(--text-muted);">Asignado tras emitir factura</small>
+            </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 1.5rem;">
             <div class="form-group">
                 <label for="expected_close_date">Fecha</label>
                 <input type="date" id="expected_close_date" name="expected_close_date" class="form-control" value="<?= htmlspecialchars((string)$deal->expected_close_date) ?>">

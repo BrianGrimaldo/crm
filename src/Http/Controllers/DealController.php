@@ -99,6 +99,8 @@ class DealController
             'expected_close_date' => !empty($_POST['expected_close_date']) ? $_POST['expected_close_date'] : null,
             'source' => $_POST['source'] ?? null,
             'description' => $_POST['description'] ?? null,
+            'purchase_order' => $_POST['purchase_order'] ?? null,
+            'invoice_folio' => $_POST['invoice_folio'] ?? null,
             'owner_id' => $_SESSION['user_id'] ?? null,
         ];
 
@@ -171,6 +173,8 @@ class DealController
             'expected_close_date' => !empty($_POST['expected_close_date']) ? $_POST['expected_close_date'] : null,
             'source' => $_POST['source'] ?? null,
             'description' => $_POST['description'] ?? null,
+            'purchase_order' => $_POST['purchase_order'] ?? null,
+            'invoice_folio' => $_POST['invoice_folio'] ?? null,
         ];
 
         if (empty($data['name']) || empty($data['stage_id'])) {
