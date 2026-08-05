@@ -44,9 +44,9 @@ require __DIR__ . '/../layouts/header.php';
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
             <div class="form-group" style="grid-column: 1 / -1;">
                 <label for="stage_id">Etapa Inicial *</label>
-                <select id="stage_id" name="stage_id" class="form-control" required onchange="updateProbability(this)">
+                <select id="stage_id" name="stage_id" class="form-control" required onchange="updateProbabilityAndAmount(this)">
                     <?php foreach ($stages as $stage): ?>
-                        <option value="<?= $stage->id ?>" data-probability="<?= (int) $stage->probability ?>"><?= htmlspecialchars($stage->name) ?></option>
+                        <option value="<?= $stage->id ?>" data-probability="<?= (int) $stage->probability ?>" data-position="<?= (int) $stage->position ?>"><?= htmlspecialchars($stage->name) ?></option>
                     <?php endforeach; ?>
                 </select>
             </div>
@@ -64,14 +64,25 @@ require __DIR__ . '/../layouts/header.php';
             </div>
         </div>
         <script>
-        function updateProbability(select) {
+        function updateProbabilityAndAmount(select) {
             var opt = select.options[select.selectedIndex];
             var prob = opt.getAttribute('data-probability');
             document.getElementById('probability').value = prob !== null ? prob : '';
+            
+            var pos = parseInt(opt.getAttribute('data-position')) || 0;
+            var amountInput = document.getElementById('amount');
+            if (pos > 0 && pos < 4) {
+                amountInput.readOnly = true;
+                amountInput.value = '';
+                amountInput.placeholder = 'No disponible hasta Propuesta/Cotización';
+            } else {
+                amountInput.readOnly = false;
+                amountInput.placeholder = '0.00';
+            }
         }
         // Auto-fill on page load
         document.addEventListener('DOMContentLoaded', function() {
-            updateProbability(document.getElementById('stage_id'));
+            updateProbabilityAndAmount(document.getElementById('stage_id'));
         });
         </script>
 
